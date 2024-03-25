@@ -1,5 +1,5 @@
 // import { parser } from "../Grammar/Parser.js"
-const parser = require("../Grammar/Parser.js")
+const parser = require("../Analyzer/Parser.js")
 
 function main() {
     try {
