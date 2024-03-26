@@ -7,7 +7,7 @@
 %options case-insensitive
 
 content    ([^\n\"\\]?|\\.)
-var_types "int"|"double"|"char"|"std::string"|"bool"
+var_types int|double|char|std::string|bool
 
 %%
 
@@ -56,7 +56,7 @@ var_types "int"|"double"|"char"|"std::string"|"bool"
 ([a-zA-z])[a-zA-Z0-9_]*   return 'TK_id';
 
 \"{content}*\"              { yytext = yytext.substr(1,yyleng-2); return 'TK_string'; }
-\'{content}\'               return { yytext = yytext.substr(1,yyleng-2); return 'TK_char'; };
+\'{content}\'               { yytext = yytext.substr(1,yyleng-2); return 'TK_char'; };
 
 "+"                       return 'TK_plus';
 "-"                       return 'TK_minus';
@@ -100,14 +100,15 @@ var_types "int"|"double"|"char"|"std::string"|"bool"
 %left TK_plus TK_minus
 %left TK_mul TK_div TK_mod
 %right UMINUS
-%left TK_pow
+%nonassoc TK_pow
 %left TK_incr TK_decr
+%left 'TK_lbracket' 'TK_rbracket'
 // Inicio de gramática
-%start init
+%start INIT
 
 %%
-// Parte sintáctica  - Definición de la gramática
-init : 
+
+INIT: 
     INSTRUCTIONS EOF| 
     EOF
     ;
@@ -118,8 +119,8 @@ INSTRUCTIONS:
     ;
 
 INSTRUCTION:
-    EXECUTE_STATEMENT TK_semicolon |
-    DECLARATION TK_semicolon       |
+    EXECUTE_STATEMENT|
+    DECLARATION       |
     ARRAY_NEW TK_semicolon         |
     ARRAY_ASSIGNMENT TK_semicolon  |
     ASSIGNMENT TK_semicolon        |
@@ -133,7 +134,8 @@ INSTRUCTION:
     FUNCTION                       |
     FUNCTION_CALL   TK_semicolon   |
     INCRE_AND_DECRE TK_semicolon  |
-    NATIVE_FUNCTIONS TK_semicolon
+    NATIVE_FUNCTIONS TK_semicolon  |
+    error { console.log('Error sintáctico', yytext);}
     ;
 
 EXECUTE_STATEMENT:
@@ -141,9 +143,8 @@ EXECUTE_STATEMENT:
     ;
 
 DECLARATION:
-    TK_types TK_id TK_asign EXPRESSION TK_semicolon  |
-    TK_types TK_id TK_semicolon |
-    TK_types IDS TK_asign EXPRESSION TK_semicolon |
+    TK_types IDS TK_asign EXPRESSION TK_semicolon  |
+    TK_types IDS TK_semicolon 
     ;
 
 PRINT:
@@ -157,7 +158,7 @@ IDS:
     ;
 
 ASSIGNMENT:
-    TK_id TK_asign EXPRESSION |
+    TK_id TK_asign EXPRESSION 
     ;
 
 ARRAY_NEW:
@@ -168,11 +169,11 @@ ARRAY_NEW:
     ;
 
 ASIGN_ARRAY:
-    TK_lbracket VALUES_ARRAY TK_rbracket  |
+    TK_lbracket VALUES_ARRAY TK_rbracket  
     ;
 
 ARRAY_BRACKETS:
-    TK_lbracket EXPRESSION TK_rbracket |
+    TK_lbracket EXPRESSION TK_rbracket 
     ;
 
 VALUES_ARRAY:
@@ -196,26 +197,26 @@ ARRAY_ASSIGNMENT:
     ;
 
 EXPRESSION:
-    TK_minus EXPRESSION %prec UMINUS |
-    EXPRESSION TK_plus EXPRESSION |
-    EXPRESSION TK_minus EXPRESSION |
-    EXPRESSION TK_mul EXPRESSION |
-    EXPRESSION TK_div EXPRESSION |
-    EXPRESSION TK_mod EXPRESSION |
-    POW                            |
-    TK_lparen EXPRESSION TK_rparen |
-    EXPRESSION TK_equal EXPRESSION |
-    EXPRESSION TK_notequal EXPRESSION |
-    EXPRESSION TK_less EXPRESSION |
-    EXPRESSION TK_greater EXPRESSION |
-    EXPRESSION TK_less_equal EXPRESSION |
-    EXPRESSION TK_greater_equal EXPRESSION |
-    EXPRESSION TK_and EXPRESSION |
-    EXPRESSION TK_or EXPRESSION |
-    TK_not EXPRESSION |
-    TK_lparen TK_types TK_rparen EXPRESSION |
+    EXPRESSION TK_plus EXPRESSION                         |
+    EXPRESSION TK_minus EXPRESSION                        |
+    EXPRESSION TK_mul EXPRESSION                          |
+    EXPRESSION TK_div EXPRESSION                          |
+    EXPRESSION TK_mod EXPRESSION                          |
+    TK_minus EXPRESSION %prec UMINUS                      |
+    POW                                                   |
+    TK_lparen EXPRESSION TK_rparen                        |
+    EXPRESSION TK_equal EXPRESSION                        |
+    EXPRESSION TK_notequal EXPRESSION                     |
+    EXPRESSION TK_less EXPRESSION                         |
+    EXPRESSION TK_greater EXPRESSION                      |
+    EXPRESSION TK_less_equal EXPRESSION                   |
+    EXPRESSION TK_greater_equal EXPRESSION                |
+    EXPRESSION TK_and EXPRESSION                          |
+    EXPRESSION TK_or EXPRESSION                           |
+    TK_not EXPRESSION                                     |
+    TK_lparen TK_types TK_rparen EXPRESSION %prec UMINUS  |
     EXPRESSION TK_question EXPRESSION TK_colon EXPRESSION |
-    TK_id TK_lbracket EXPRESSION TK_rbracket |
+    TK_id TK_lbracket EXPRESSION TK_rbracket              |
     TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket |
     FUNCTION_CALL   |
     INCRE_AND_DECRE |
@@ -278,6 +279,7 @@ CASES_BLOCK:
     DEFAULT
     ;
 
+
 CASES:
     CASES CASE |
     CASE
@@ -285,7 +287,7 @@ CASES:
 
 CASE:
     TK_case EXPRESSION TK_colon BLOCK |
-    TK_case EXPRESSION TK_colon |
+    TK_case EXPRESSION TK_colon 
     ;
 
 DEFAULT:
