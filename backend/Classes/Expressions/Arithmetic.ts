@@ -15,9 +15,9 @@ export class Arithmetic extends Expression {
                 return this.plus();
             case '-':
                 if (this.exp1 != undefined) {
-                    return this.negative();
+                    return this.minus();
                 }
-                return this.minus();
+                return this.negative();
             case '*':
                 return this.mult();
             case '/':
@@ -113,6 +113,7 @@ export class Arithmetic extends Expression {
             val2 = this.getValue(val2)
             if (val2.value === 0) {
                 //error
+                console.log('Division por 0')
                 return { value: -1, type: Types.NULL }
             }
             result = parseFloat(val1.value) / parseFloat(val2.value)
