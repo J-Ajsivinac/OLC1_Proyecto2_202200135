@@ -16,7 +16,7 @@ content    ([^\n\"\\]?|\\.)
 [\r\t]+                             	    //ignora tabulaciones
 
 \/\/.*                                  {}//comentario simple
-[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]     {}//comentario multilínea
+//[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]     {}//comentario multilínea
 // "int"                     return 'TK_dec_int';
 // "double"                  return 'TK_dec_double';
 // "char"                    return 'TK_dec_char';
@@ -64,19 +64,19 @@ content    ([^\n\"\\]?|\\.)
 "[" 				      return 'TK_lbracket';
 "]" 				      return 'TK_rbracket';
 "?"                       return 'TK_question';
-"=" 				      return 'TK_asign';
 "==" 				      return 'TK_equal';
 "!=" 				      return 'TK_notequal';
 "<<"                      return 'TK_double_less';
-"<" 				      return 'TK_less';
-">" 				      return 'TK_greater';
 "<=" 				      return 'TK_less_equal';
 ">=" 				      return 'TK_greater_equal';
+"<" 				      return 'TK_less';
+">" 				      return 'TK_greater';
 "&&" 				      return 'TK_and';
 "||" 				      return 'TK_or';
 "!" 				      return 'TK_not';
 "++" 				      return 'TK_incr';
 "--" 				      return 'TK_decr';
+"=" 				      return 'TK_asign';
 
 [0-9]+("."[0-9]+)\b       return 'TK_double';
 [0-9]+\b                  return 'TK_integer';
@@ -97,7 +97,8 @@ const {Types} = require('../Classes/Utils/Types')
 //Expresiones
 const {Primitive} = require('../Classes/Expressions/Primitive')
 const {Arithmetic} = require('../Classes/Expressions/Arithmetic')
-
+const {Logic} = require('../Classes/Expressions/Logic')
+const {Relational} = require('../Classes/Expressions/Relational')
 %}
 
 %left TK_question TK_colon
@@ -209,7 +210,7 @@ ARRAY_ASSIGNMENT:
 
 EXPRESSION:
     ARITHMETICS                                         {$$ = $1}  |
-    LOGICAL_EXPRESSION                                    |
+    LOGICAL_EXPRESSION                                  {$$ = $1}  |
     CASTING                                               |
     EXPRESSION TK_question EXPRESSION TK_colon EXPRESSION |
     TK_id TK_lbracket EXPRESSION TK_rbracket              |
@@ -241,15 +242,15 @@ POW:
     ;
 
 LOGICAL_EXPRESSION:
-    EXPRESSION TK_equal EXPRESSION                        |
-    EXPRESSION TK_notequal EXPRESSION                     |
-    EXPRESSION TK_less EXPRESSION                         |
-    EXPRESSION TK_greater EXPRESSION                      |
-    EXPRESSION TK_less_equal EXPRESSION                   |
-    EXPRESSION TK_greater_equal EXPRESSION                |
-    EXPRESSION TK_and EXPRESSION                          |
-    EXPRESSION TK_or EXPRESSION                           |
-    TK_not EXPRESSION                                     
+    EXPRESSION TK_equal EXPRESSION           {$$ = new Relational(@1.first_line,@1.first_column,$1,$2,$3)}             |
+    EXPRESSION TK_notequal EXPRESSION        {$$ = new Relational(@1.first_line,@1.first_column,$1,$2,$3)}             |
+    EXPRESSION TK_less EXPRESSION            {$$ = new Relational(@1.first_line,@1.first_column,$1,$2,$3)}             |
+    EXPRESSION TK_greater EXPRESSION         {$$ = new Relational(@1.first_line,@1.first_column,$1,$2,$3)}             |
+    EXPRESSION TK_less_equal EXPRESSION      {$$ = new Relational(@1.first_line,@1.first_column,$1,$2,$3)}             |
+    EXPRESSION TK_greater_equal EXPRESSION   {$$ = new Relational(@1.first_line,@1.first_column,$1,$2,$3)}             |
+    EXPRESSION TK_and EXPRESSION             {$$ = new Logic(@1.first_line,@1.first_column,$1,$2,$3)}                  |
+    EXPRESSION TK_or EXPRESSION              {$$ = new Logic(@1.first_line,@1.first_column,$1,$2,$3)}                  |
+    TK_not EXPRESSION                        {$$ = new Logic(@1.first_line,@1.first_column,undefined,$1,$2)}                                   
     ;
 
 CASTING:
