@@ -7,22 +7,22 @@
 %options case-insensitive
 
 content    ([^\n\"\\]?|\\.)
-var_types int|double|char|std::string|bool
+
 
 %%
 
 \s+                                 		//ignora espacios
 \n             								//ignora saltos de línea
 [\r\t]+                             	    //ignora tabulaciones
-[/\/]([^\r\n]*)? 	    					//ignora comentarios de una línea
-[/][*][^*]*[*]+([/\*][^*]*[*]+)*[/] 		//ignora comentarios de varias líneas
 
+\/\/.*                                  {}//comentario simple
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]     {}//comentario multilínea
 // "int"                     return 'TK_dec_int';
 // "double"                  return 'TK_dec_double';
 // "char"                    return 'TK_dec_char';
 // "std::string"             return 'TK_dec_string';
 // "bool"                    return 'TK_dec_bool';
-{var_types}               return 'TK_types';
+
 "void"                    return 'TK_void';
 "<<endl"                  return 'TK_endl';
 "pow"                     return 'TK_pow';
@@ -49,14 +49,6 @@ var_types int|double|char|std::string|bool
 "true"                    return 'TK_true';
 "false"                   return 'TK_false';
 "execute"                 return 'TK_execute';
-
-[0-9]+("."[0-9]+)\b       return 'TK_double';
-[0-9]+\b                  return 'TK_integer';
-
-([a-zA-z])[a-zA-Z0-9_]*   return 'TK_id';
-
-\"{content}*\"              { yytext = yytext.substr(1,yyleng-2); return 'TK_string'; }
-\'{content}\'               { yytext = yytext.substr(1,yyleng-2); return 'TK_char'; };
 
 "+"                       return 'TK_plus';
 "-"                       return 'TK_minus';
@@ -86,10 +78,27 @@ var_types int|double|char|std::string|bool
 "++" 				      return 'TK_incr';
 "--" 				      return 'TK_decr';
 
+[0-9]+("."[0-9]+)\b       return 'TK_double';
+[0-9]+\b                  return 'TK_integer';
+
+([a-zA-z])[a-zA-Z0-9_]*   return 'TK_id';
+
+\"{content}*\"              { yytext = yytext.substr(1,yyleng-2); return 'TK_string'; }
+\'{content}\'               { yytext = yytext.substr(1,yyleng-2); return 'TK_char'; };
+
 .					   {    console.log(yylloc.first_line, yylloc.first_column,'Lexico',yytext);    }
 <<EOF>>                   return 'EOF';
 // Finaliza parte de Léxica
 /lex
+
+%{
+const {Types} = require('../Classes/Utils/Types')
+
+//Expresiones
+const {Primitive} = require('../Classes/Expressions/Primitive')
+const {Arithmetic} = require('../Classes/Expressions/Arithmetic')
+
+%}
 
 %left TK_question TK_colon
 %left TK_or
@@ -109,34 +118,36 @@ var_types int|double|char|std::string|bool
 %%
 
 INIT: 
-    INSTRUCTIONS EOF| 
-    EOF
+    INSTRUCTIONS EOF {return $1} |
+    EOF              {return []}
     ;
 
 INSTRUCTIONS:
-    INSTRUCTIONS INSTRUCTION |
-    INSTRUCTION
+    INSTRUCTIONS INSTRUCTION { $$.push($2)}|
+    INSTRUCTION              { $$ = [$1];}
     ;
 
-INSTRUCTION:
-    EXECUTE_STATEMENT|
-    DECLARATION       |
-    ARRAY_NEW TK_semicolon         |
-    ARRAY_ASSIGNMENT TK_semicolon  |
-    ASSIGNMENT TK_semicolon        |
-    PRINT TK_semicolon             |
-    IF                             |
-    LOOP                           |
-    SWITCH                         |
-    RETURN TK_semicolon            |
-    TK_break TK_semicolon             |
-    TK_continue TK_semicolon          |
-    FUNCTION                       |
-    FUNCTION_CALL   TK_semicolon   |
-    INCRE_AND_DECRE TK_semicolon  |
-    NATIVE_FUNCTIONS TK_semicolon  |
-    error { console.log('Error sintáctico', yytext);}
-    ;
+// INSTRUCTION:
+//     EXECUTE_STATEMENT|
+//     DECLARATION       |
+//     ARRAY_NEW TK_semicolon         |
+//     ARRAY_ASSIGNMENT TK_semicolon  |
+//     ASSIGNMENT TK_semicolon        |
+//     PRINT TK_semicolon             |
+//     IF                             |
+//     LOOP                           |
+//     SWITCH                         |
+//     RETURN TK_semicolon            |
+//     TK_break TK_semicolon             |
+//     TK_continue TK_semicolon          |
+//     FUNCTION                       |
+//     FUNCTION_CALL   TK_semicolon   |
+//     INCRE_AND_DECRE TK_semicolon  |
+//     NATIVE_FUNCTIONS TK_semicolon  |
+//     error { console.log('Error sintáctico', yytext);}
+//     ;
+
+INSTRUCTION: TK_execute EXPRESSION TK_semicolon         { $$ =  $2;};
 
 EXECUTE_STATEMENT:
     TK_execute FUNCTION_CALL TK_semicolon
@@ -197,14 +208,39 @@ ARRAY_ASSIGNMENT:
     ;
 
 EXPRESSION:
-    EXPRESSION TK_plus EXPRESSION                         |
-    EXPRESSION TK_minus EXPRESSION                        |
-    EXPRESSION TK_mul EXPRESSION                          |
-    EXPRESSION TK_div EXPRESSION                          |
-    EXPRESSION TK_mod EXPRESSION                          |
-    TK_minus EXPRESSION %prec UMINUS                      |
-    POW                                                   |
-    TK_lparen EXPRESSION TK_rparen                        |
+    ARITHMETICS                                         {$$ = $1}  |
+    LOGICAL_EXPRESSION                                    |
+    CASTING                                               |
+    EXPRESSION TK_question EXPRESSION TK_colon EXPRESSION |
+    TK_id TK_lbracket EXPRESSION TK_rbracket              |
+    TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket |
+    FUNCTION_CALL   |
+    INCRE_AND_DECRE |
+    TK_id |
+    TK_integer   { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.INT) }|
+    TK_double    { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.DOUBLE) }|
+    TK_char      { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.CHAR) }|
+    TK_string    { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.STRING) }|
+    TK_true      { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.BOOLEAN) }|
+    TK_false     { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.BOOLEAN) }
+    ;
+
+ARITHMETICS:
+    EXPRESSION TK_plus EXPRESSION    {$$ = new Arithmetic(@1.first_line,@1.first_column,$1,$2,$3)}         |
+    EXPRESSION TK_minus EXPRESSION   {$$ = new Arithmetic(@1.first_line,@1.first_column,$1,$2,$3)}         |
+    EXPRESSION TK_mul EXPRESSION     {$$ = new Arithmetic(@1.first_line,@1.first_column,$1,$2,$3)}         |
+    EXPRESSION TK_div EXPRESSION     {$$ = new Arithmetic(@1.first_line,@1.first_column,$1,$2,$3)}         |
+    EXPRESSION TK_mod EXPRESSION     {$$ = new Arithmetic(@1.first_line,@1.first_column,$1,$2,$3)}         |
+    TK_minus EXPRESSION %prec UMINUS {$$ = new Arithmetic(@1.first_line,@1.first_column,undefined,$1,$2)}  |
+    TK_lparen EXPRESSION TK_rparen   {$$ = $2}                                                             |
+    POW                              {$$ = $1}                                                               
+    ;
+
+POW:
+    TK_pow TK_lparen EXPRESSION TK_comma EXPRESSION TK_rparen {$$ = new Arithmetic(@1.first_line,@1.first_column,$3,"^",$5)}
+    ;
+
+LOGICAL_EXPRESSION:
     EXPRESSION TK_equal EXPRESSION                        |
     EXPRESSION TK_notequal EXPRESSION                     |
     EXPRESSION TK_less EXPRESSION                         |
@@ -213,24 +249,11 @@ EXPRESSION:
     EXPRESSION TK_greater_equal EXPRESSION                |
     EXPRESSION TK_and EXPRESSION                          |
     EXPRESSION TK_or EXPRESSION                           |
-    TK_not EXPRESSION                                     |
-    TK_lparen TK_types TK_rparen EXPRESSION %prec UMINUS  |
-    EXPRESSION TK_question EXPRESSION TK_colon EXPRESSION |
-    TK_id TK_lbracket EXPRESSION TK_rbracket              |
-    TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket |
-    FUNCTION_CALL   |
-    INCRE_AND_DECRE |
-    TK_id |
-    TK_integer |
-    TK_double |
-    TK_char |
-    TK_string |
-    TK_true |
-    TK_false
+    TK_not EXPRESSION                                     
     ;
 
-POW:
-    TK_pow TK_lparen EXPRESSION TK_comma EXPRESSION TK_rparen
+CASTING:
+    TK_lparen TK_types TK_rparen EXPRESSION %prec UMINUS  
     ;
 
 IF:
