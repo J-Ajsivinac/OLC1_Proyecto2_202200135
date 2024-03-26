@@ -8,7 +8,6 @@
 
 content    ([^\n\"\\]?|\\.)
 
-
 %%
 
 \s+                                 		//ignora espacios
@@ -22,7 +21,7 @@ content    ([^\n\"\\]?|\\.)
 // "char"                    return 'TK_dec_char';
 // "std::string"             return 'TK_dec_string';
 // "bool"                    return 'TK_dec_bool';
-
+(int|double|char|string|bool)               return 'TK_types';
 "void"                    return 'TK_void';
 "<<endl"                  return 'TK_endl';
 "pow"                     return 'TK_pow';
@@ -99,6 +98,7 @@ const {Primitive} = require('../Classes/Expressions/Primitive')
 const {Arithmetic} = require('../Classes/Expressions/Arithmetic')
 const {Logic} = require('../Classes/Expressions/Logic')
 const {Relational} = require('../Classes/Expressions/Relational')
+const {Cast} = require('../Classes/Expressions/Cast')
 %}
 
 %left TK_question TK_colon
@@ -211,7 +211,7 @@ ARRAY_ASSIGNMENT:
 EXPRESSION:
     ARITHMETICS                                         {$$ = $1}  |
     LOGICAL_EXPRESSION                                  {$$ = $1}  |
-    CASTING                                               |
+    CASTING                                             {$$ = $1} |
     EXPRESSION TK_question EXPRESSION TK_colon EXPRESSION |
     TK_id TK_lbracket EXPRESSION TK_rbracket              |
     TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket |
@@ -254,7 +254,7 @@ LOGICAL_EXPRESSION:
     ;
 
 CASTING:
-    TK_lparen TK_types TK_rparen EXPRESSION %prec UMINUS  
+    TK_lparen TK_types TK_rparen EXPRESSION %prec UMINUS  {$$ = new Cast(@1.first_line,@1.first_column,$2,$4)} 
     ;
 
 IF:
