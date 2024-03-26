@@ -3,7 +3,8 @@ export class Controller {
         console.log("Interpreter is running...")
     }
     public parser() {
-        let code = "execute (double) 16;execute (int) 18.2;execute (string) 2; execute (char) 70 ;execute (string) 19.2; execute (int) 'F'; execute (double) 'F';"
+        // let code = "execute (double) 16;execute (int) 18.2;execute (string) 2; execute (char) 70 ;execute (string) 19.2; execute (int) 'F'; execute (double) 'F';"
+        let code = "execute 2==2 ? 3*2 : 3/2;"
         let parser = require('../Analyzer/Parser')
         let ast = parser.parse(code)
 

@@ -54,6 +54,7 @@ content    ([^\n\"\\]?|\\.)
 "*"                       return 'TK_mul';
 "/"                       return 'TK_div';
 ";"                       return 'TK_semicolon';
+":"                       return 'TK_colon';
 "%"                       return 'TK_mod';
 ","                       return 'TK_comma';
 "(" 				      return 'TK_lparen';
@@ -99,6 +100,7 @@ const {Arithmetic} = require('../Classes/Expressions/Arithmetic')
 const {Logic} = require('../Classes/Expressions/Logic')
 const {Relational} = require('../Classes/Expressions/Relational')
 const {Cast} = require('../Classes/Expressions/Cast')
+const {Ternary} = require('../Classes/Expressions/Ternary')
 %}
 
 %left TK_question TK_colon
@@ -209,10 +211,10 @@ ARRAY_ASSIGNMENT:
     ;
 
 EXPRESSION:
-    ARITHMETICS                                         {$$ = $1}  |
-    LOGICAL_EXPRESSION                                  {$$ = $1}  |
-    CASTING                                             {$$ = $1} |
-    EXPRESSION TK_question EXPRESSION TK_colon EXPRESSION |
+    ARITHMETICS                                           {$$ = $1}  |
+    LOGICAL_EXPRESSION                                    {$$ = $1}  |
+    CASTING                                               {$$ = $1} |
+    EXPRESSION TK_question EXPRESSION TK_colon EXPRESSION {$$ = new Ternary(@1.first_line,@1.first_column,$1,$3,$5)}|
     TK_id TK_lbracket EXPRESSION TK_rbracket              |
     TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket |
     FUNCTION_CALL   |
