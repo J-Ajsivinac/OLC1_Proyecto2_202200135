@@ -3,18 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "jison": "jison Analyzer\\Parser.jison -o Analyzer\\Parser.js",
-    "start": "tsc && node ./dist/index.js",
-    "dev": "tsc-watch --OnSuccess \"node ./dist/index.js\""
+    "dev": "ts-node ./App/App.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jison": "0.4.18"
+    "jison": "0.4.18",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
