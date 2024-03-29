@@ -101,6 +101,7 @@ const {Logic} = require('../Classes/Expressions/Logic')
 const {Relational} = require('../Classes/Expressions/Relational')
 const {Cast} = require('../Classes/Expressions/Cast')
 const {Ternary} = require('../Classes/Expressions/Ternary')
+const {InitID} = require('../Classes/Instructions/InitID')
 %}
 
 %left TK_question TK_colon
@@ -130,34 +131,34 @@ INSTRUCTIONS:
     INSTRUCTION              { $$ = [$1];}
     ;
 
-// INSTRUCTION:
-//     EXECUTE_STATEMENT|
-//     DECLARATION       |
-//     ARRAY_NEW TK_semicolon         |
-//     ARRAY_ASSIGNMENT TK_semicolon  |
-//     ASSIGNMENT TK_semicolon        |
-//     PRINT TK_semicolon             |
-//     IF                             |
-//     LOOP                           |
-//     SWITCH                         |
-//     RETURN TK_semicolon            |
-//     TK_break TK_semicolon             |
-//     TK_continue TK_semicolon          |
-//     FUNCTION                       |
-//     FUNCTION_CALL   TK_semicolon   |
-//     INCRE_AND_DECRE TK_semicolon  |
-//     NATIVE_FUNCTIONS TK_semicolon  |
-//     error { console.log('Error sintáctico', yytext);}
-//     ;
+INSTRUCTION:
+    EXECUTE_STATEMENT|
+    DECLARATION                    {$$=$1}|
+    ARRAY_NEW TK_semicolon         |
+    ARRAY_ASSIGNMENT TK_semicolon  |
+    ASSIGNMENT TK_semicolon        |
+    PRINT TK_semicolon             |
+    IF                             |
+    LOOP                           |
+    SWITCH                         |
+    RETURN TK_semicolon            |
+    TK_break TK_semicolon             |
+    TK_continue TK_semicolon          |
+    FUNCTION                       |
+    FUNCTION_CALL   TK_semicolon   |
+    INCRE_AND_DECRE TK_semicolon  |
+    NATIVE_FUNCTIONS TK_semicolon  |
+    error { console.log('Error sintáctico', yytext);}
+    ;
 
-INSTRUCTION: TK_execute EXPRESSION TK_semicolon         { $$ =  $2;};
+// INSTRUCTION: TK_execute EXPRESSION TK_semicolon         { $$ =  $2;};
 
 EXECUTE_STATEMENT:
     TK_execute FUNCTION_CALL TK_semicolon
     ;
 
 DECLARATION:
-    TK_types IDS TK_asign EXPRESSION TK_semicolon  |
+    TK_types IDS TK_asign EXPRESSION TK_semicolon {$$ = new InitID(@1.first_line,@1.first_column,$1,$2,$4)} |
     TK_types IDS TK_semicolon 
     ;
 
@@ -167,12 +168,12 @@ PRINT:
     ;
 
 IDS:
-    IDS TK_comma TK_id |
-    TK_id
+    IDS TK_comma TK_id  {$$.push($3)}     | 
+    TK_id               {$$ = [$1]; }
     ;
 
 ASSIGNMENT:
-    TK_id TK_asign EXPRESSION 
+    TK_id TK_asign EXPRESSION
     ;
 
 ARRAY_NEW:
