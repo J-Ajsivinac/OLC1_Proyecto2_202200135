@@ -2,14 +2,17 @@ import { Expression } from "../Abstracts/Expression";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 import { plus, minus, mult, div, pow, mod } from '../Utils/MatrixOp';
+import { Environment } from "../Env/Environment";
 
 export class Arithmetic extends Expression {
     private type: Types = Types.NULL
+    private env!: Environment;
     constructor(line: number, column: number, public exp1: Expression, public sign: string, public exp2: Expression) {
         super(line, column, TypesExp.ARITHMETIC);
     }
 
-    public execute(): ReturnType {
+    public execute(env: Environment): ReturnType {
+        this.env = env
         switch (this.sign) {
             case '+':
                 return this.plus();
@@ -32,8 +35,8 @@ export class Arithmetic extends Expression {
     }
 
     plus(): ReturnType {
-        let val1: ReturnType = this.exp1.execute();
-        let val2: ReturnType = this.exp2.execute();
+        let val1: ReturnType = this.exp1.execute(this.env);
+        let val2: ReturnType = this.exp2.execute(this.env);
         this.type = plus[val1.type][val2.type];
         let result: any = 'NULL'
         if (this.type === Types.NULL) return { value: null, type: Types.NULL }
@@ -53,8 +56,8 @@ export class Arithmetic extends Expression {
     }
 
     minus(): ReturnType {
-        let val1: ReturnType = this.exp1.execute();
-        let val2: ReturnType = this.exp2.execute();
+        let val1: ReturnType = this.exp1.execute(this.env);
+        let val2: ReturnType = this.exp2.execute(this.env);
         this.type = minus[val1.type][val2.type];
         let result: any = 'NULL'
         if (this.type === Types.NULL) return { value: null, type: Types.NULL }
@@ -73,7 +76,7 @@ export class Arithmetic extends Expression {
     }
 
     negative(): ReturnType {
-        let value: ReturnType = this.exp2.execute();
+        let value: ReturnType = this.exp2.execute(this.env);
         this.type = value.type
         if (this.type === Types.INT || this.type === Types.DOUBLE) {
             return { value: -value.value, type: this.type }
@@ -82,8 +85,8 @@ export class Arithmetic extends Expression {
     }
 
     mult(): ReturnType {
-        let val1: ReturnType = this.exp1.execute();
-        let val2: ReturnType = this.exp2.execute();
+        let val1: ReturnType = this.exp1.execute(this.env);
+        let val2: ReturnType = this.exp2.execute(this.env);
         this.type = mult[val1.type][val2.type];
         let result: any = 'NULL'
         if (this.type === Types.NULL) return { value: null, type: Types.NULL }
@@ -102,8 +105,8 @@ export class Arithmetic extends Expression {
     }
 
     div(): ReturnType {
-        let val1: ReturnType = this.exp1.execute();
-        let val2: ReturnType = this.exp2.execute();
+        let val1: ReturnType = this.exp1.execute(this.env);
+        let val2: ReturnType = this.exp2.execute(this.env);
         this.type = div[val1.type][val2.type];
         let result: any = 'NULL'
         if (this.type === Types.NULL) return { value: null, type: Types.NULL }
@@ -122,8 +125,8 @@ export class Arithmetic extends Expression {
     }
 
     pow(): ReturnType {
-        let val1: ReturnType = this.exp1.execute();
-        let val2: ReturnType = this.exp2.execute();
+        let val1: ReturnType = this.exp1.execute(this.env);
+        let val2: ReturnType = this.exp2.execute(this.env);
         this.type = pow[val1.type][val2.type];
         let result: any = 'NULL'
         if (this.type === Types.NULL) return { value: null, type: Types.NULL }
@@ -140,8 +143,8 @@ export class Arithmetic extends Expression {
     }
 
     mod(): ReturnType {
-        let val1: ReturnType = this.exp1.execute();
-        let val2: ReturnType = this.exp2.execute();
+        let val1: ReturnType = this.exp1.execute(this.env);
+        let val2: ReturnType = this.exp2.execute(this.env);
         this.type = mod[val1.type][val2.type];
         let result: any = 'NULL'
         if (this.type === Types.NULL) return { value: null, type: Types.NULL }

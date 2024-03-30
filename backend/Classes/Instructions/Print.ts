@@ -9,7 +9,7 @@ export class Print extends Instruction {
     }
 
     public execute(env: Environment) {
-        let value = this.toPrint ? this.toPrint.execute() : null;
+        let value = this.toPrint ? this.toPrint.execute(env) : null;
 
         if (this.type) {
             env.setPrint(value ? value.value + "\n" : "");

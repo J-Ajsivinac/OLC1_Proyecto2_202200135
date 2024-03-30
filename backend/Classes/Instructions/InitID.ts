@@ -13,7 +13,7 @@ export class InitID extends Instruction {
 
     public execute(env: Environment) {
         if (this.value) {
-            const val: ReturnType = this.value.execute()
+            const val: ReturnType = this.value.execute(env)
 
             if (val.type !== this.type) {
                 console.log(`Error: no se puede asignar el valor de tipo ${val.type} a la variable de tipo ${this.type}`)

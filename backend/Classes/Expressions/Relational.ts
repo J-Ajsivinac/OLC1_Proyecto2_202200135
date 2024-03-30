@@ -1,14 +1,17 @@
 import { Expression } from "../Abstracts/Expression";
+import { Environment } from "../Env/Environment";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 
 export class Relational extends Expression {
     private type: Types = Types.NULL
+    private env!: Environment
     constructor(line: number, column: number, public exp1: Expression, public sign: string, public exp2: Expression) {
         super(line, column, TypesExp.RELATIONAL)
     }
 
-    public execute(): ReturnType {
+    public execute(env: Environment): ReturnType {
+        this.env = env
         switch (this.sign) {
             case '==':
                 return this.equal()
@@ -28,8 +31,8 @@ export class Relational extends Expression {
     }
 
     equal(): ReturnType {
-        let val1: ReturnType = this.exp1.execute()
-        let val2: ReturnType = this.exp2.execute()
+        let val1: ReturnType = this.exp1.execute(this.env)
+        let val2: ReturnType = this.exp2.execute(this.env)
         this.type = Types.BOOLEAN
 
         if (val1.type === Types.INT || val1.type === Types.DOUBLE || val1.type === Types.CHAR) {
@@ -48,8 +51,8 @@ export class Relational extends Expression {
     }
 
     different(): ReturnType {
-        let val1: ReturnType = this.exp1.execute()
-        let val2: ReturnType = this.exp2.execute()
+        let val1: ReturnType = this.exp1.execute(this.env)
+        let val2: ReturnType = this.exp2.execute(this.env)
         this.type = Types.BOOLEAN
 
         if (val1.type === Types.INT || val1.type === Types.DOUBLE || val1.type === Types.CHAR) {
@@ -70,8 +73,8 @@ export class Relational extends Expression {
     }
 
     greater(): ReturnType {
-        let val1: ReturnType = this.exp1.execute()
-        let val2: ReturnType = this.exp2.execute()
+        let val1: ReturnType = this.exp1.execute(this.env)
+        let val2: ReturnType = this.exp2.execute(this.env)
         this.type = Types.BOOLEAN
 
         if (val1.type === Types.INT || val1.type === Types.DOUBLE || val1.type === Types.CHAR) {
@@ -86,8 +89,8 @@ export class Relational extends Expression {
     }
 
     less(): ReturnType {
-        let val1: ReturnType = this.exp1.execute()
-        let val2: ReturnType = this.exp2.execute()
+        let val1: ReturnType = this.exp1.execute(this.env)
+        let val2: ReturnType = this.exp2.execute(this.env)
         this.type = Types.BOOLEAN
 
         if (val1.type === Types.INT || val1.type === Types.DOUBLE || val1.type === Types.CHAR) {
@@ -102,8 +105,8 @@ export class Relational extends Expression {
     }
 
     greaterEqual(): ReturnType {
-        let val1: ReturnType = this.exp1.execute()
-        let val2: ReturnType = this.exp2.execute()
+        let val1: ReturnType = this.exp1.execute(this.env)
+        let val2: ReturnType = this.exp2.execute(this.env)
         this.type = Types.BOOLEAN
 
         if (val1.type === Types.INT || val1.type === Types.DOUBLE || val1.type === Types.CHAR) {
@@ -118,8 +121,8 @@ export class Relational extends Expression {
     }
 
     lessEqual(): ReturnType {
-        let val1: ReturnType = this.exp1.execute()
-        let val2: ReturnType = this.exp2.execute()
+        let val1: ReturnType = this.exp1.execute(this.env)
+        let val2: ReturnType = this.exp2.execute(this.env)
         this.type = Types.BOOLEAN
 
         if (val1.type === Types.INT || val1.type === Types.DOUBLE || val1.type === Types.CHAR) {

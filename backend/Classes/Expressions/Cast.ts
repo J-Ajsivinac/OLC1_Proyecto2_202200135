@@ -1,13 +1,16 @@
 import { Expression } from "../Abstracts/Expression";
+import { Environment } from "../Env/Environment";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 
 export class Cast extends Expression {
+    private env!: Environment;
     constructor(line: number, column: number, public targetT: string, public exp: Expression) {
         super(line, column, TypesExp.CAST);
     }
 
-    public execute(): ReturnType {
+    public execute(env: Environment): ReturnType {
+        this.env = env;
         let targetType = this.targetT.toLowerCase();
         switch (targetType) {
             case "int":
@@ -24,7 +27,7 @@ export class Cast extends Expression {
     }
 
     toInt(): ReturnType {
-        let val: ReturnType = this.exp.execute();
+        let val: ReturnType = this.exp.execute(this.env);
         if (val.type === Types.DOUBLE || val.type === Types.CHAR) {
             if (val.type === Types.CHAR) {
                 let temp = val.value.charCodeAt(0);
@@ -36,7 +39,7 @@ export class Cast extends Expression {
     }
 
     toDouble(): ReturnType {
-        let val: ReturnType = this.exp.execute();
+        let val: ReturnType = this.exp.execute(this.env);
         if (val.type === Types.INT || val.type === Types.CHAR) {
             if (val.type === Types.CHAR) {
                 let temp = val.value.charCodeAt(0);
@@ -50,7 +53,7 @@ export class Cast extends Expression {
     }
 
     tostring(): ReturnType {
-        let val: ReturnType = this.exp.execute();
+        let val: ReturnType = this.exp.execute(this.env);
         if (val.type === Types.INT || val.type === Types.DOUBLE) {
             return { value: val.value.toString(), type: Types.STRING };
         }
@@ -58,7 +61,7 @@ export class Cast extends Expression {
     }
 
     toChar(): ReturnType {
-        let val: ReturnType = this.exp.execute();
+        let val: ReturnType = this.exp.execute(this.env);
         if (val.type === Types.INT) {
             let temp = String.fromCharCode(val.value);
             return { value: temp, type: Types.CHAR };

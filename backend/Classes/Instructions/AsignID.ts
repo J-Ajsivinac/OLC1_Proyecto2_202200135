@@ -10,7 +10,7 @@ export class AsignID extends Instruction {
     }
 
     public execute(env: Environment) {
-        const val: ReturnType = this.value.execute()
+        const val: ReturnType = this.value.execute(env)
         env.reasignID(this.id, val)
     }
 
