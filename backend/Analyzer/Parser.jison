@@ -49,8 +49,6 @@ content    ([^\n\"\\]?|\\.)
 "false"                   return 'TK_false';
 "execute"                 return 'TK_execute';
 
-"+"                       return 'TK_plus';
-"-"                       return 'TK_minus';
 "*"                       return 'TK_mul';
 "/"                       return 'TK_div';
 ";"                       return 'TK_semicolon';
@@ -77,6 +75,8 @@ content    ([^\n\"\\]?|\\.)
 "++" 				      return 'TK_incr';
 "--" 				      return 'TK_decr';
 "=" 				      return 'TK_asign';
+"+"                       return 'TK_plus';
+"-"                       return 'TK_minus';
 
 [0-9]+("."[0-9]+)\b       return 'TK_double';
 [0-9]+\b                  return 'TK_integer';
@@ -100,6 +100,8 @@ const {Arithmetic} = require('../Classes/Expressions/Arithmetic')
 const {Logic} = require('../Classes/Expressions/Logic')
 const {Relational} = require('../Classes/Expressions/Relational')
 const {Cast} = require('../Classes/Expressions/Cast')
+const {IncrDecr} = require('../Classes/Expressions/IncrDecr')
+
 const {Ternary} = require('../Classes/Expressions/Ternary')
 const {InitID} = require('../Classes/Instructions/InitID')
 const {Print} = require('../Classes/Instructions/Print')
@@ -220,7 +222,7 @@ EXPRESSION:
     TK_id TK_lbracket EXPRESSION TK_rbracket              |
     TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket |
     FUNCTION_CALL   |
-    INCRE_AND_DECRE |
+    INCRE_AND_DECRE {$$=$1}|
     TK_id |
     TK_integer   { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.INT) }|
     TK_double    { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.DOUBLE) }|
@@ -293,8 +295,8 @@ UPDATE:
     ;
 
 INCRE_AND_DECRE:
-    TK_id TK_incr |
-    TK_id TK_decr
+    TK_id TK_incr  {$$ = new IncrDecr(@1.first_line, @1.first_column, $1, $2)}|
+    TK_id TK_decr  {$$ = new IncrDecr(@1.first_line, @1.first_column, $1, $2)}
     ;
 
 SWITCH:
