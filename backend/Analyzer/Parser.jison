@@ -23,7 +23,7 @@ content    ([^\n\"\\]?|\\.)
 // "bool"                    return 'TK_dec_bool';
 (int|double|char|string|bool)               return 'TK_types';
 "void"                    return 'TK_void';
-"<<endl"                  return 'TK_endl';
+"endl"                    return 'TK_endl';
 "pow"                     return 'TK_pow';
 "if"                      return 'TK_if';
 "else"                    return 'TK_else';
@@ -102,6 +102,7 @@ const {Relational} = require('../Classes/Expressions/Relational')
 const {Cast} = require('../Classes/Expressions/Cast')
 const {Ternary} = require('../Classes/Expressions/Ternary')
 const {InitID} = require('../Classes/Instructions/InitID')
+const {Print} = require('../Classes/Instructions/Print')
 %}
 
 %left TK_question TK_colon
@@ -147,8 +148,7 @@ INSTRUCTION:
     FUNCTION                       |
     FUNCTION_CALL   TK_semicolon   |
     INCRE_AND_DECRE TK_semicolon  |
-    NATIVE_FUNCTIONS TK_semicolon  |
-    error { console.log('Error sintáctico', yytext);}
+    NATIVE_FUNCTIONS TK_semicolon  
     ;
 
 // INSTRUCTION: TK_execute EXPRESSION TK_semicolon         { $$ =  $2;};
@@ -163,9 +163,10 @@ DECLARATION:
     ;
 
 PRINT:
-    TK_cout TK_double_less EXPRESSION  |
-    Tk_cout TK_double_less EXPRESSION TK_endl
+    TK_cout TK_double_less EXPRESSION                               {$$=new Print(@1.first_line,@1.first_column, $3, false)}     |
+    TK_cout TK_double_less EXPRESSION TK_double_less TK_endl        {$$=new Print(@1.first_line,@1.first_column, $3, true)} 
     ;
+
 
 IDS:
     IDS TK_comma TK_id  {$$.push($3)}     | 
