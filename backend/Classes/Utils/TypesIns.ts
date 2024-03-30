@@ -15,4 +15,5 @@ export enum TypesInstruction {
     LOOP_DO_WHILE = 'LOOP_DO_WHILE',
     SWITCH = 'SWITCH',
     CASE = 'CASE',
+    PRINT = 'PRINT',
 }

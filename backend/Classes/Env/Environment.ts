@@ -1,7 +1,7 @@
 import { ReturnType, Types } from "../Utils/Types";
 import { Symbol } from "./Symbol";
 import { symbolTable } from "./SymbolTable";
-
+import { printConsole } from "../Utils/Outs";
 export class Environment {
     private ids: Map<string, Symbol> = new Map<string, Symbol>();
     // public funcs: Map<string,> = new Map<string, string>();
@@ -69,5 +69,9 @@ export class Environment {
         for (let [key, value] of this.ids) {
             console.log(`${value.id}\t${this.getTypeOf(value.type)}\t${value.value}\t${this.name}`)
         }
+    }
+
+    public setPrint(value: any) {
+        printConsole.push(value)
     }
 }
