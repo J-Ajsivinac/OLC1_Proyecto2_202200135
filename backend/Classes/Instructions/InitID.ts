@@ -1,6 +1,8 @@
 import { Expression } from "../Abstracts/Expression";
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { convertToType } from "../Utils/ConvertTypes";
+import { getValueDefaultValue } from "../Utils/Defaults";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
 
@@ -8,7 +10,7 @@ export class InitID extends Instruction {
     private type: Types;
     constructor(line: number, column: number, private temptype: string, private ids: string[], private value: Expression) {
         super(line, column, TypesInstruction.INIT_ID)
-        this.type = this.convertToType(this.temptype)
+        this.type = convertToType(this.temptype)
     }
 
     public execute(env: Environment) {
@@ -25,45 +27,9 @@ export class InitID extends Instruction {
 
         } else {
             this.ids.forEach(id => {
-                switch (this.type) {
-                    case Types.INT:
-                        env.saveId(id, 0, this.type, this.line, this.column)
-                        break
-                    case Types.DOUBLE:
-                        env.saveId(id, 0.0, this.type, this.line, this.column)
-                        break
-                    case Types.BOOLEAN:
-                        env.saveId(id, true, this.type, this.line, this.column)
-                        break
-                    case Types.CHAR:
-                        env.saveId(id, '0', this.type, this.line, this.column)
-                        break
-                    case Types.STRING:
-                        env.saveId(id, "", this.type, this.line, this.column)
-                        break
-                }
+                env.saveId(id, getValueDefaultValue(this.type), this.type, this.line, this.column)
             });
         }
-    }
-
-    convertToType(type: String): Types {
-        type = type.toLowerCase();
-        if (type === 'int') {
-            return Types.INT
-        }
-        if (type === 'double') {
-            return Types.DOUBLE
-        }
-        if (type === 'boolean') {
-            return Types.BOOLEAN
-        }
-        if (type === 'char') {
-            return Types.CHAR
-        }
-        if (type === 'String') {
-            return Types.STRING
-        }
-        return Types.NULL
     }
 
     private getType(type: Types): string {

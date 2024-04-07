@@ -41,6 +41,33 @@ export class Environment {
         return false
     }
 
+    public saveArray(id: string, type: Types, values: any, line: number, column: number) {
+        let env: Environment = this;
+        if (env.ids.has(id.toLowerCase())) {
+            console.log(`Error: Variable ${id} already exists`)
+            return
+        }
+        env.ids.set(id.toLowerCase(), new Symbol(values, id, Types.ARRAY, type));
+        symbolTable.push(line, column, id.toLowerCase(), 'Variable', this.getTypeOf(type), env.name);
+    }
+
+    public getValueArray(id: string, i: number): Symbol | null {
+        let env: Environment | null = this;
+        while (env !== null) {
+            if (env.ids.has(id.toLowerCase())) {
+                let symbol: Symbol = env.ids.get(id.toLowerCase())!
+                if (symbol.type === Types.ARRAY) {
+                    return symbol.value[i]
+                } else {
+                    console.log(`Error: Variable ${id} is not an array`)
+                    return null
+                }
+            }
+            env = env.prev;
+        }
+        return null
+    }
+
     getTypeOf(type: Types): string {
         if (type === Types.INT) {
             return 'int'
@@ -67,7 +94,15 @@ export class Environment {
         console.log('Symbol Table:')
         console.log('Name\tType\tValue\tEnv')
         for (let [key, value] of this.ids) {
-            console.log(`${value.id}\t${this.getTypeOf(value.type)}\t${value.value}\t${this.name}`)
+            // console.log(`${value.id}\t${this.getTypeOf(value.type)}\t${value.value}\t${this.name}`)
+            if (value.type === Types.ARRAY) {
+                for (let i = 0; i < value.value.length; i++) {
+
+                    console.log(`${value.id}[${i}]\t${this.getTypeOf(value.type)}\t${value.value[i].value}\t${this.name}`)
+                }
+            } else {
+                console.log(`${value.id}\t${this.getTypeOf(value.type)}\t${value.value}\t${this.name}`)
+            }
         }
     }
 
