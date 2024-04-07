@@ -101,10 +101,12 @@ const {Logic} = require('../Classes/Expressions/Logic')
 const {Relational} = require('../Classes/Expressions/Relational')
 const {Cast} = require('../Classes/Expressions/Cast')
 const {IncrDecr} = require('../Classes/Expressions/IncrDecr')
-
 const {Ternary} = require('../Classes/Expressions/Ternary')
+
 const {InitID} = require('../Classes/Instructions/InitID')
 const {Print} = require('../Classes/Instructions/Print')
+const {InitArray} = require('../Classes/Instructions/InitArray')
+const {InitMatrix} = require('../Classes/Instructions/InitMatrix')
 %}
 
 %left TK_question TK_colon
@@ -180,33 +182,28 @@ ASSIGNMENT:
     ;
 
 ARRAY_NEW:
-    TK_types TK_id TK_lbracket TK_rbracket TK_asign TK_new TK_types ARRAY_BRACKETS |
-    TK_types TK_id TK_lbracket TK_rbracket TK_lbracket TK_rbracket TK_asign TK_new TK_types ARRAY_BRACKETS ARRAY_BRACKETS |
-    TK_types TK_id TK_lbracket TK_rbracket TK_asign ASIGN_ARRAY |
-    TK_types TK_id TK_lbracket TK_rbracket TK_lbracket TK_rbracket TK_asign ASIGN_ARRAY
+    TK_types TK_id TK_lbracket TK_rbracket TK_asign TK_new TK_types ARRAY_BRACKETS {$$ = new InitArray(@1.first_line,@1.first_column,$2,$1,$8,undefined)} |
+    TK_types TK_id TK_lbracket TK_rbracket TK_lbracket TK_rbracket TK_asign TK_new TK_types ARRAY_BRACKETS ARRAY_BRACKETS {$$ = new InitMatrix(@1.first_line, @1.first_column,$2,$1,$10,$11,undefined)}|
+    TK_types TK_id TK_lbracket TK_rbracket TK_asign ASIGN_ARRAY {$$ = new InitArray(@1.first_line,@1.first_column,$2,$1,undefined,$6)} |
+    TK_types TK_id TK_lbracket TK_rbracket TK_lbracket TK_rbracket TK_asign ASIGN_ARRAY {$$ = new InitMatrix(@1.first_line, @1.first_column,$2,$1,undefined,undefined,$8)}
     ;
 
 ASIGN_ARRAY:
-    TK_lbracket VALUES_ARRAY TK_rbracket  
+    TK_lbracket VALUES_ARRAY TK_rbracket  {$$ = $2}
     ;
 
 ARRAY_BRACKETS:
-    TK_lbracket EXPRESSION TK_rbracket 
+    TK_lbracket EXPRESSION TK_rbracket  {$$ = $2}
     ;
 
 VALUES_ARRAY:
-    VALUES_ARRAY TK_comma VALUE_ARRAY |
-    VALUE_ARRAY
+    VALUES_ARRAY TK_comma VALUE_ARRAY {$$.push($3)} |
+    VALUE_ARRAY                       {$$ = [$1]}
     ;
 
 VALUE_ARRAY:
-    TK_integer |
-    TK_double |
-    TK_char |
-    TK_string |
-    TK_true |
-    TK_false |
-    ASIGN_ARRAY 
+    EXPRESSION          {$$ = $1} |
+    ASIGN_ARRAY         {$$ = $1}
     ;
 
 ARRAY_ASSIGNMENT:
