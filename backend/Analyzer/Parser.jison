@@ -57,7 +57,7 @@ content    ([^\n\"\\]?|\\.)
 ","                       return 'TK_comma';
 "(" 				      return 'TK_lparen';
 ")" 				      return 'TK_rparen';
-"{" 				      return 'TL_lbrace';
+"{" 				      return 'TK_lbrace';
 "}" 				      return 'TK_rbrace';
 "[" 				      return 'TK_lbracket';
 "]" 				      return 'TK_rbracket';
@@ -102,11 +102,17 @@ const {Relational} = require('../Classes/Expressions/Relational')
 const {Cast} = require('../Classes/Expressions/Cast')
 const {IncrDecr} = require('../Classes/Expressions/IncrDecr')
 const {Ternary} = require('../Classes/Expressions/Ternary')
+const {AccessID} = require('../Classes/Expressions/AccessID')
 
 const {InitID} = require('../Classes/Instructions/InitID')
+const {AsignID} = require('../Classes/Instructions/AsignID')
 const {Print} = require('../Classes/Instructions/Print')
 const {InitArray} = require('../Classes/Instructions/InitArray')
 const {InitMatrix} = require('../Classes/Instructions/InitMatrix')
+const {While} = require('../Classes/Instructions/While')
+const {For} = require('../Classes/Instructions/For')
+const {Block} = require('../Classes/Instructions/Block')
+const {If} = require('../Classes/Instructions/If')
 %}
 
 %left TK_question TK_colon
@@ -178,7 +184,7 @@ IDS:
     ;
 
 ASSIGNMENT:
-    TK_id TK_asign EXPRESSION
+    TK_id TK_asign EXPRESSION {$$ = new AsignID(@1.first_line,@1.first_column,$1,$3)}
     ;
 
 ARRAY_NEW:
@@ -220,7 +226,7 @@ EXPRESSION:
     TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket |
     FUNCTION_CALL   |
     INCRE_AND_DECRE {$$=$1}|
-    TK_id |
+    TK_id        {$$ = new AccessID(@1.first_line,@1.first_column,$1)} |
     TK_integer   { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.INT) }|
     TK_double    { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.DOUBLE) }|
     TK_char      { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.CHAR) }|
@@ -261,34 +267,34 @@ CASTING:
     ;
 
 IF:
-    TK_if TK_lparen EXPRESSION TK_rparen BLOCK |
-    TK_if TK_lparen EXPRESSION TK_rparen BLOCK TK_else BLOCK |
-    TK_if TK_lparen EXPRESSION TK_rparen BLOCK TK_else IF
+    TK_if TK_lparen EXPRESSION TK_rparen BLOCK                {$$ = new If(@1.first_line, @1.first_column, $3, $5, undefined)} |
+    TK_if TK_lparen EXPRESSION TK_rparen BLOCK TK_else BLOCK  {$$ = new If(@1.first_line, @1.first_column, $3, $5, $7)}|
+    TK_if TK_lparen EXPRESSION TK_rparen BLOCK TK_else IF     {$$ = new If(@1.first_line, @1.first_column, $3, $5, $7)}
     ;
 
 BLOCK:
-    TK_lbrace INSTRUCTIONS TK_rbrace |
-    TK_lbrace TK_rbrace
+    TK_lbrace INSTRUCTIONS TK_rbrace {$$ = new Block(@1.first_line, @1.first_column,$2)}  |
+    TK_lbrace TK_rbrace              {$$ = new Block(@1.first_line, @1.first_column,[])}
     ;
 
 LOOP:
-    TK_while TK_lparen EXPRESSION TK_rparen BLOCK |
-    TK_do BLOCK TK_while TK_lparen EXPRESSION TK_rparen |
-    TK_for TK_lparen FOR_LOOP TK_rparen BLOCK
+    TK_while TK_lparen EXPRESSION TK_rparen BLOCK  {$$ = new While(@1.first_line,@1.first_column,$3,$5)}|
+    TK_do BLOCK TK_while TK_lparen EXPRESSION TK_rparen  |
+    TK_for TK_lparen FOR_LOOP TK_rparen BLOCK {$$ = new For(@1.first_line,@1.first_column,$3[0],$3[1],$3[2],$5)}
     ;
 
 FOR_LOOP:
-    ID_FOR TK_semicolon EXPRESSION TK_semicolon UPDATE 
+    ID_FOR TK_semicolon EXPRESSION TK_semicolon UPDATE  {$$ = [$1,$3,$5]}
     ;
 
 ID_FOR:
-    TK_types TK_id TK_asign EXPRESSION |
-    ASSIGNMENT
+    TK_types TK_id TK_asign EXPRESSION {$$ = new InitID(@1.first_line,@1.first_column,$1,$2,$4)} |
+    ASSIGNMENT {$$ = $1}
     ;
 
 UPDATE:
-    INCRE_AND_DECRE |
-    ASSIGNMENT
+    INCRE_AND_DECRE  {$$=$1} |
+    ASSIGNMENT       {$$=$1}
     ;
 
 INCRE_AND_DECRE:
