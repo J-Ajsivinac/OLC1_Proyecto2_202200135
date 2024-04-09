@@ -3,18 +3,21 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "jison": "jison Grammar\\Parser.jison -o Grammar\\Parser.js",
-    "start": "tsc && node ./dist/index.js",
-    "dev": "tsc-watch --OnSuccess \"node ./dist/index.js\""
+    "jison": "jison Analyzer\\Parser.jison -o Analyzer\\Parser.js",
+    "dev": "ts-node ./App/App.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jison": "0.4.18"
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "jison": "0.4.18",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@types/node": "^20.11.30",
