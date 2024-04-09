@@ -6,7 +6,7 @@ export class Controller {
     }
     public parser() {
         // let code = "execute (double) 16;execute (int) 18.2;execute (string) 2; execute (char) 70 ;execute (string) 19.2; execute (int) 'F'; execute (double) 'F';"
-        let code = "int i = 0; while(i < 2){ cout << 2 ; i++; }"
+        let code = "do {cout << 2; }while(false)"
         let parser = require('../Analyzer/Parser')
         let ast = parser.parse(code)
         const global: Environment = new Environment(null, 'Global')
