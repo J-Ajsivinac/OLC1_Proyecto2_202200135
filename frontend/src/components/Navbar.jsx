@@ -3,9 +3,10 @@ import { FaSquarePlus, FaFolderClosed, FaFloppyDisk, FaPlay, FaFile } from "reac
 // import { LuFile } from "react-icons/lu";
 import { Button } from './Button';
 import Modal from './Modal'
+import { useMain } from "../context/mainContext";
 
 export function Navbar() {
-
+    const { interpreter } = useMain();
     const opciones = [
         { text: 'Errores', link: null },
         { text: 'Árbol AST', link: null },
@@ -20,7 +21,9 @@ export function Navbar() {
                     <Button text="Search" icon={<FaFloppyDisk size={24} />} />
                 </div>
                 <div className='flex'>
-                    <button type="submit" className="flex items-center align-top px-2 py-2 bg-panel-dark rounded-md text-green-400 hover:text-green-200 transition-transform hover:transition-all ease-in-out duration-150 ">{<FaPlay size={24} />}</button>
+                    <button onClick={interpreter} type="submit" className="flex items-center align-top px-2 py-2 bg-panel-dark rounded-md text-green-400 hover:text-green-200 transition-transform hover:transition-all ease-in-out duration-150 ">
+                        {<FaPlay size={24} />}
+                    </button>
                     <Modal opciones={opciones} name="Reportes" position={66} Icon={FaFile} />
                 </div>
             </div>
