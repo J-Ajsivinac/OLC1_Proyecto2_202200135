@@ -1,5 +1,7 @@
 import { Expression } from "../Abstracts/Expression";
 import { Environment } from "../Env/Environment";
+import { Error, TypesError } from "../Utils/Error";
+import { errores } from "../Utils/Outs";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 
@@ -22,6 +24,7 @@ export class Cast extends Expression {
             case "char":
                 return this.toChar();
             default:
+                // errores.push(new Error(this.line, this.column, Types.SINTACTICO, `No se puede castear a ${targetType}`));
                 return { value: 'NULL', type: Types.NULL };
         }
     }
@@ -35,6 +38,7 @@ export class Cast extends Expression {
             }
             return { value: parseInt(val.value), type: Types.INT };
         }
+        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede castear a int el tipo ${val.type}`));
         return { value: 'NULL', type: Types.NULL };
     }
 
@@ -49,6 +53,7 @@ export class Cast extends Expression {
             return { value: temp, type: Types.DOUBLE };
         }
 
+        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede castear a double el tipo ${val.type}`));
         return { value: 'NULL', type: Types.NULL };
     }
 
@@ -57,6 +62,7 @@ export class Cast extends Expression {
         if (val.type === Types.INT || val.type === Types.DOUBLE) {
             return { value: val.value.toString(), type: Types.STRING };
         }
+        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede castear a string el tipo ${val.type}`));
         return { value: 'NULL', type: Types.NULL };
     }
 
@@ -66,6 +72,7 @@ export class Cast extends Expression {
             let temp = String.fromCharCode(val.value);
             return { value: temp, type: Types.CHAR };
         }
+        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede castear a char el tipo ${val.type}`));
         return { value: 'NULL', type: Types.NULL };
     }
 

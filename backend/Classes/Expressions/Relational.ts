@@ -1,5 +1,7 @@
 import { Expression } from "../Abstracts/Expression";
 import { Environment } from "../Env/Environment";
+import { Error, TypesError } from "../Utils/Error";
+import { errores } from "../Utils/Outs";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 
@@ -41,12 +43,14 @@ export class Relational extends Expression {
                 val2 = this.getValue(val2)
                 return { value: val1.value === val2.value, type: this.type }
             }
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, 'No se puede comparar el tipo ' + val1.type + ' con ' + val2.type))
             return { value: -1, type: Types.NULL }
         }
 
         if (val1.type === Types.STRING && val2.type === Types.STRING) {
             return { value: val1.value === val2.value, type: this.type }
         }
+        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, 'No se puede comparar el tipo ' + val1.type + ' con ' + val2.type))
         return { value: -1, type: Types.NULL }
     }
 
@@ -61,6 +65,7 @@ export class Relational extends Expression {
                 val2 = this.getValue(val2)
                 return { value: val1.value !== val2.value, type: this.type }
             }
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, 'No se puede comparar el tipo ' + val1.type + ' con ' + val2.type))
             return { value: -1, type: Types.NULL }
         }
 
@@ -69,6 +74,7 @@ export class Relational extends Expression {
             val2 = this.getValue(val2)
             return { value: val1.value !== val2.value, type: this.type }
         }
+        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, 'No se puede comparar el tipo ' + val1.type + ' con ' + val2.type))
         return { value: -1, type: Types.NULL }
     }
 
@@ -83,8 +89,10 @@ export class Relational extends Expression {
                 val2 = this.getValue(val2)
                 return { value: val1.value > val2.value, type: this.type }
             }
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, 'No se puede comparar el tipo ' + val1.type + ' con ' + val2.type))
             return { value: -1, type: Types.NULL }
         }
+        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, 'No se puede comparar el tipo ' + val1.type + ' con ' + val2.type))
         return { value: -1, type: Types.NULL }
     }
 
@@ -99,8 +107,10 @@ export class Relational extends Expression {
                 val2 = this.getValue(val2)
                 return { value: val1.value < val2.value, type: this.type }
             }
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, 'No se puede comparar el tipo ' + val1.type + ' con ' + val2.type))
             return { value: -1, type: Types.NULL }
         }
+        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, 'No se puede comparar el tipo ' + val1.type + ' con ' + val2.type))
         return { value: -1, type: Types.NULL }
     }
 

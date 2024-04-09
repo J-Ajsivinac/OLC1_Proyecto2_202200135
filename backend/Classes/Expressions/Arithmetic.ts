@@ -3,7 +3,8 @@ import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 import { plus, minus, mult, div, pow, mod } from '../Utils/MatrixOp';
 import { Environment } from "../Env/Environment";
-
+import { errores } from "../Utils/Outs";
+import { Error, TypesError } from "../Utils/Error";
 export class Arithmetic extends Expression {
     private type: Types = Types.NULL
     private env!: Environment;
@@ -30,6 +31,7 @@ export class Arithmetic extends Expression {
             case '%':
                 return this.mod();
             default:
+                errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, 'Operador no valido en operacion aritmetica'))
                 return { value: -1, type: Types.NULL };
         }
     }
@@ -39,7 +41,10 @@ export class Arithmetic extends Expression {
         let val2: ReturnType = this.exp2.execute(this.env);
         this.type = plus[val1.type][val2.type];
         let result: any = 'NULL'
-        if (this.type === Types.NULL) return { value: null, type: Types.NULL }
+        if (this.type === Types.NULL) {
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede sumar los tipos de datos ${val1.type},${val2.type}`));
+            return { value: null, type: Types.NULL }
+        }
 
         if (this.type === Types.INT) {
             val1 = this.getValue(val1)
@@ -60,7 +65,10 @@ export class Arithmetic extends Expression {
         let val2: ReturnType = this.exp2.execute(this.env);
         this.type = minus[val1.type][val2.type];
         let result: any = 'NULL'
-        if (this.type === Types.NULL) return { value: null, type: Types.NULL }
+        if (this.type === Types.NULL) {
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede restar los tipos de datos ${val1.type},${val2.type}`));
+            return { value: null, type: Types.NULL }
+        }
 
         if (this.type === Types.INT) {
             val1 = this.getValue(val1)
@@ -81,6 +89,7 @@ export class Arithmetic extends Expression {
         if (this.type === Types.INT || this.type === Types.DOUBLE) {
             return { value: -value.value, type: this.type }
         }
+        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede negar el tipo de dato ${value.type}`))
         return { value: 'NULL', type: Types.NULL }
     }
 
@@ -89,7 +98,10 @@ export class Arithmetic extends Expression {
         let val2: ReturnType = this.exp2.execute(this.env);
         this.type = mult[val1.type][val2.type];
         let result: any = 'NULL'
-        if (this.type === Types.NULL) return { value: null, type: Types.NULL }
+        if (this.type === Types.NULL) {
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede multiplicar los tipos de datos ${val1.type},${val2.type}`));
+            return { value: null, type: Types.NULL }
+        }
 
         if (this.type === Types.INT) {
             val1 = this.getValue(val1)
@@ -109,7 +121,10 @@ export class Arithmetic extends Expression {
         let val2: ReturnType = this.exp2.execute(this.env);
         this.type = div[val1.type][val2.type];
         let result: any = 'NULL'
-        if (this.type === Types.NULL) return { value: null, type: Types.NULL }
+        if (this.type === Types.NULL) {
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede dividir los tipos de datos ${val1.type},${val2.type}`));
+            return { value: null, type: Types.NULL }
+        }
 
         else if (this.type === Types.DOUBLE) {
             val1 = this.getValue(val1)
@@ -129,7 +144,10 @@ export class Arithmetic extends Expression {
         let val2: ReturnType = this.exp2.execute(this.env);
         this.type = pow[val1.type][val2.type];
         let result: any = 'NULL'
-        if (this.type === Types.NULL) return { value: null, type: Types.NULL }
+        if (this.type === Types.NULL) {
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede realizar la potencia entre los tipos de datos ${val1.type},${val2.type}`));
+            return { value: null, type: Types.NULL }
+        }
 
         if (this.type === Types.INT) {
             result = val1.value ** val2.value
@@ -147,7 +165,10 @@ export class Arithmetic extends Expression {
         let val2: ReturnType = this.exp2.execute(this.env);
         this.type = mod[val1.type][val2.type];
         let result: any = 'NULL'
-        if (this.type === Types.NULL) return { value: null, type: Types.NULL }
+        if (this.type === Types.NULL) {
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede aplicar el modulo entre los tipos de datos ${val1.type},${val2.type}`));
+            return { value: null, type: Types.NULL }
+        }
 
         if (this.type === Types.DOUBLE) {
             if (val2.value === 0) {
