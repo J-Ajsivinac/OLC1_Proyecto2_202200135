@@ -1,5 +1,7 @@
 %{
-    // Importar librerías
+    let {Error} = require('../Classes/Utils/Error')
+    let {TypesError} = require('../Classes/Utils/Error')
+    let {errores} = require('../Classes/Utils/Outs')
 %}
 
 %lex // Inicia parte léxica
@@ -86,7 +88,8 @@ content    ([^\n\"\\]?|\\.)
 \"{content}*\"              { yytext = yytext.substr(1,yyleng-2); return 'TK_string'; }
 \'{content}\'               { yytext = yytext.substr(1,yyleng-2); return 'TK_char'; };
 
-.					   {    console.log(yylloc.first_line, yylloc.first_column,'Lexico',yytext);    }
+// .					   {    console.log(yylloc.first_line, yylloc.first_column,'Lexico',yytext);    }
+.                          {errores.push(new Error(yylloc.first_line, yylloc.first_column+1, TypesError.LEXICO,`Caracter no reconocido, ${yytext}`));}
 <<EOF>>                   return 'EOF';
 // Finaliza parte de Léxica
 /lex
@@ -110,6 +113,7 @@ const {Print} = require('../Classes/Instructions/Print')
 const {InitArray} = require('../Classes/Instructions/InitArray')
 const {InitMatrix} = require('../Classes/Instructions/InitMatrix')
 const {While} = require('../Classes/Instructions/While')
+const {DoWhile} = require('../Classes/Instructions/DoWhile')
 const {For} = require('../Classes/Instructions/For')
 const {Block} = require('../Classes/Instructions/Block')
 const {If} = require('../Classes/Instructions/If')
@@ -145,12 +149,12 @@ INSTRUCTIONS:
 INSTRUCTION:
     EXECUTE_STATEMENT|
     DECLARATION                    {$$=$1}|
-    ARRAY_NEW TK_semicolon         |
+    ARRAY_NEW TK_semicolon         {$$=$1}|
     ARRAY_ASSIGNMENT TK_semicolon  |
-    ASSIGNMENT TK_semicolon        |
-    PRINT TK_semicolon             |
-    IF                             |
-    LOOP                           |
+    ASSIGNMENT TK_semicolon        {$$=$1}|
+    PRINT TK_semicolon             {$$=$1}|
+    IF                             {$$=$1}|
+    LOOP                           {$$=$1}|
     SWITCH                         |
     RETURN TK_semicolon            |
     TK_break TK_semicolon             |
@@ -158,7 +162,8 @@ INSTRUCTION:
     FUNCTION                       |
     FUNCTION_CALL   TK_semicolon   |
     INCRE_AND_DECRE TK_semicolon  |
-    NATIVE_FUNCTIONS TK_semicolon  
+    NATIVE_FUNCTIONS TK_semicolon |
+    error {errores.push(new Error($1.first_line, $1.first_column, TypesError.SINTACTICO,`No se esperaba ${yytext}`))}
     ;
 
 // INSTRUCTION: TK_execute EXPRESSION TK_semicolon         { $$ =  $2;};
@@ -222,17 +227,17 @@ EXPRESSION:
     LOGICAL_EXPRESSION                                    {$$ = $1}  |
     CASTING                                               {$$ = $1} |
     EXPRESSION TK_question EXPRESSION TK_colon EXPRESSION {$$ = new Ternary(@1.first_line,@1.first_column,$1,$3,$5)}|
-    TK_id TK_lbracket EXPRESSION TK_rbracket              |
-    TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket |
+    TK_id TK_lbracket EXPRESSION TK_rbracket                                             |
+    TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket          |
     FUNCTION_CALL   |
     INCRE_AND_DECRE {$$=$1}|
-    TK_id        {$$ = new AccessID(@1.first_line,@1.first_column,$1)} |
-    TK_integer   { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.INT) }|
-    TK_double    { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.DOUBLE) }|
-    TK_char      { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.CHAR) }|
-    TK_string    { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.STRING) }|
+    TK_id        {$$ = new AccessID(@1.first_line,@1.first_column,$1)}                   |
+    TK_integer   { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.INT) }    | 
+    TK_double    { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.DOUBLE) } |
+    TK_char      { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.CHAR) }   |
+    TK_string    { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.STRING) } |
     TK_true      { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.BOOLEAN) }|
-    TK_false     { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.BOOLEAN) }
+    TK_false     { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.BOOLEAN) } 
     ;
 
 ARITHMETICS:
@@ -268,7 +273,7 @@ CASTING:
 
 IF:
     TK_if TK_lparen EXPRESSION TK_rparen BLOCK                {$$ = new If(@1.first_line, @1.first_column, $3, $5, undefined)} |
-    TK_if TK_lparen EXPRESSION TK_rparen BLOCK TK_else BLOCK  {$$ = new If(@1.first_line, @1.first_column, $3, $5, $7)}|
+    TK_if TK_lparen EXPRESSION TK_rparen BLOCK TK_else BLOCK  {$$ = new If(@1.first_line, @1.first_column, $3, $5, $7)}        |
     TK_if TK_lparen EXPRESSION TK_rparen BLOCK TK_else IF     {$$ = new If(@1.first_line, @1.first_column, $3, $5, $7)}
     ;
 
@@ -278,9 +283,9 @@ BLOCK:
     ;
 
 LOOP:
-    TK_while TK_lparen EXPRESSION TK_rparen BLOCK  {$$ = new While(@1.first_line,@1.first_column,$3,$5)}|
-    TK_do BLOCK TK_while TK_lparen EXPRESSION TK_rparen  |
-    TK_for TK_lparen FOR_LOOP TK_rparen BLOCK {$$ = new For(@1.first_line,@1.first_column,$3[0],$3[1],$3[2],$5)}
+    TK_while TK_lparen EXPRESSION TK_rparen BLOCK        {$$ = new While(@1.first_line,@1.first_column,$3,$5)}              |
+    TK_do BLOCK TK_while TK_lparen EXPRESSION TK_rparen  {$$ = new DoWhile(@1.first_line,@1.first_column,$5,$2)}            |
+    TK_for TK_lparen FOR_LOOP TK_rparen BLOCK            {$$ = new For(@1.first_line,@1.first_column,$3[0],$3[1],$3[2],$5)}
     ;
 
 FOR_LOOP:

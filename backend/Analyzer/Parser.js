@@ -95,8 +95,11 @@ break;
 case 4:
  this.$ = [$$[$0]];
 break;
-case 6: case 48: case 86: case 87:
+case 6: case 11: case 12: case 48: case 86: case 87:
 this.$=$$[$0]
+break;
+case 7: case 9: case 10:
+this.$=$$[$0-1]
 break;
 case 22:
 this.$ = new InitID(_$[$0-4].first_line,_$[$0-4].first_column,$$[$0-4],$$[$0-3],$$[$0-1])
@@ -193,6 +196,9 @@ this.$ = new Block(_$[$0-1].first_line, _$[$0-1].first_column,[])
 break;
 case 80:
 this.$ = new While(_$[$0-4].first_line,_$[$0-4].first_column,$$[$0-2],$$[$0])
+break;
+case 81:
+this.$ = new DoWhile(_$[$0-5].first_line,_$[$0-5].first_column,$$[$0-1],$$[$0-4])
 break;
 case 82:
 this.$ = new For(_$[$0-4].first_line,_$[$0-4].first_column,$$[$0-2][0],$$[$0-2][1],$$[$0-2][2],$$[$0])
@@ -377,6 +383,7 @@ const {Print} = require('../Classes/Instructions/Print')
 const {InitArray} = require('../Classes/Instructions/InitArray')
 const {InitMatrix} = require('../Classes/Instructions/InitMatrix')
 const {While} = require('../Classes/Instructions/While')
+const {DoWhile} = require('../Classes/Instructions/DoWhile')
 const {For} = require('../Classes/Instructions/For')
 const {Block} = require('../Classes/Instructions/Block')
 const {If} = require('../Classes/Instructions/If')
