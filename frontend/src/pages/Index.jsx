@@ -10,10 +10,18 @@ import { useMain } from "../context/mainContext";
 function Index() {
     const error = "---> Este es un error de ejemplo  \n---> Error No. 2";
     const [isOpen, setIsOpen] = useState(false);
-    const { value, setValue } = useMain();
+    const { value, setValue, consolePrint } = useMain();
+
     const onChange = useCallback((val) => {
         setValue(val);
     }, []);
+
+    // useEffect(() => {
+    //     codeMirror.current = consolePrint;
+    //     console.log("consolePrint")
+    //     setConsolePrint("")
+    // }, [consolePrint])
+
 
     // const handlerClick = () => {
     //     console.log(value)
@@ -34,7 +42,7 @@ function Index() {
                         <div className="flex flex-col w-full rounded-md bg-panel-dark h-full px-4">
                             <span className="text-[#bdbec0] pt-3 pb-5 font-bold">Consola</span>
                             <div className="w-full h-full flex flex-col mb-2 gap-y-4">
-                                <textarea name="" id="" className="w-full h-full bg-panel-dark text-[#adb6c4] outline-none resize-none" readOnly></textarea>
+                                <textarea value={consolePrint} name="" id="" className="w-full h-full bg-panel-dark text-[#adb6c4] outline-none resize-none" readOnly wrap="off"></textarea>
 
                                 <div
                                     className={`group flex flex-col gap-2 rounded-lg bg-panel-dark border-2 border-gray-200/10 p-5 text-white ${isOpen ? 'group-focus:-translate-y-5' : ''}`}

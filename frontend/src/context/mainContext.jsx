@@ -14,18 +14,23 @@ export const useMain = () => {
 
 export const MainProvider = ({ children }) => {
     const [value, setValue] = useState("");
+    const [consolePrint, setConsolePrint] = useState("");
 
     const interpreter = async () => {
         try {
-            const res = await runInterpreter(value)
-            console.log(res)
+            const valuetoSend = {
+                code: value
+            }
+            const res = await runInterpreter(valuetoSend)
+            console.log(res.data)
+            setConsolePrint(res.data.console)
         } catch (error) {
             console.error(error)
         }
     }
 
     return (
-        <MainContext.Provider value={{ value, setValue, interpreter }}>
+        <MainContext.Provider value={{ value, setValue, interpreter, consolePrint, setConsolePrint }}>
             {children}
         </MainContext.Provider>
     );
