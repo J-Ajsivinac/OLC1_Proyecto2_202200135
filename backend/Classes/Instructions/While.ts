@@ -10,7 +10,7 @@ export class While extends Instruction {
 
     public execute(env: Environment) {
         const whileEnv = new Environment(env, `${env.name} while`)
-        let condition: ReturnType | null = this.condition.execute(env)
+        let condition: ReturnType | null = this.condition.execute(whileEnv)
         while (condition?.value) {
             let block: ReturnType = this.block.execute(whileEnv)
             if (block) {

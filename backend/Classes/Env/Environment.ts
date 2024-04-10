@@ -17,8 +17,9 @@ export class Environment {
 
     public getValue(id: string): Symbol | null {
         let env: Environment | null = this;
-        while (env !== null) {
+        while (env) {
             if (env.ids.has(id.toLowerCase())) {
+                console.log(id.toLowerCase(), env.ids.get(id.toLowerCase()))
                 return env.ids.get(id.toLowerCase()) as Symbol;
             }
             env = env.prev;

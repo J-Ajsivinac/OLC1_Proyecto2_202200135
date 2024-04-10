@@ -1,8 +1,8 @@
 export enum Types {
     INT,
     DOUBLE,
-    STRING,
     CHAR,
+    STRING,
     BOOLEAN,
     ARRAY,
     NULL

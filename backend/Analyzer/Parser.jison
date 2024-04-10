@@ -174,7 +174,7 @@ EXECUTE_STATEMENT:
 
 DECLARATION:
     TK_types IDS TK_asign EXPRESSION TK_semicolon {$$ = new InitID(@1.first_line,@1.first_column,$1,$2,$4)} |
-    TK_types IDS TK_semicolon 
+    TK_types IDS TK_semicolon                     {$$ = new InitID(@1.first_line,@1.first_column,$1,$2,undefined) } 
     ;
 
 PRINT:
@@ -231,7 +231,7 @@ EXPRESSION:
     TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket          |
     FUNCTION_CALL   |
     INCRE_AND_DECRE {$$=$1}|
-    TK_id        {$$ = new AccessID(@1.first_line,@1.first_column,$1)}                   |
+    TK_id        { $$ = new AccessID(@1.first_line,@1.first_column,$1)}                   |
     TK_integer   { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.INT) }    | 
     TK_double    { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.DOUBLE) } |
     TK_char      { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.CHAR) }   |

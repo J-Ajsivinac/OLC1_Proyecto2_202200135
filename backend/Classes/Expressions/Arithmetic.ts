@@ -40,6 +40,7 @@ export class Arithmetic extends Expression {
         let val1: ReturnType = this.exp1.execute(this.env);
         let val2: ReturnType = this.exp2.execute(this.env);
         this.type = plus[val1.type][val2.type];
+        // console.log('type 1', val1.type, 'type 2', val2.type)
         let result: any = 'NULL'
         if (this.type === Types.NULL) {
             errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede sumar los tipos de datos ${val1.type},${val2.type}`));

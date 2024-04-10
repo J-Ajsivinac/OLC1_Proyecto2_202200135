@@ -107,6 +107,9 @@ break;
 case 23:
 this.$ = new InitID(_$[$0-4].first_line,_$[$0-4].first_column,$$[$0-4],$$[$0-3],$$[$0-1])
 break;
+case 24:
+this.$ = new InitID(_$[$0-2].first_line,_$[$0-2].first_column,$$[$0-2],$$[$0-1],undefined) 
+break;
 case 25:
 this.$=new Print(_$[$0-2].first_line,_$[$0-2].first_column, $$[$0], false)
 break;

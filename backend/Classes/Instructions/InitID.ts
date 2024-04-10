@@ -10,13 +10,14 @@ export class InitID extends Instruction {
     private type: Types;
     constructor(line: number, column: number, private temptype: string, private ids: string[], private value: Expression) {
         super(line, column, TypesInstruction.INIT_ID)
+        // console.log(this.temptype)
         this.type = convertToType(this.temptype)
     }
 
     public execute(env: Environment) {
         if (this.value) {
             const val: ReturnType = this.value.execute(env)
-
+            // console.log(val.type, this.type, val.value)
             if (val.type !== this.type) {
                 console.log(`Error: no se puede asignar el valor de tipo ${val.type} a la variable de tipo ${this.type}`)
                 return
