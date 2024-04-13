@@ -193,7 +193,7 @@ export class Arithmetic extends Expression {
         //validar limites de enteros
         if (value.type === Types.INT) {
             if (value.value < -2147483648 || value.value > 2147483647) {
-                //error
+                errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Valor entero fuera de rango`))
                 return { value: null, type: Types.NULL }
             }
         }

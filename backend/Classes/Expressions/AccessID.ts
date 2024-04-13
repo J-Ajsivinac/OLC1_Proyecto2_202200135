@@ -12,18 +12,15 @@ export class AccessID extends Expression {
 
     public execute(env: Environment): ReturnType {
         const value: Symbol | null = env.getValue(this.id);
-        // console.log("AccessID", value, this.id)
-        if (value) {
-            if (value.type === Types.ARRAY) {
-                this.type = Types.STRING
-                return { value: value.value, type: this.type }
-            }
-            this.type = value.type
-            // console.log("valor Encontrado", value.value, value.type)
-            // console.log("AccessID", value.value, value.type)
-            return { value: value.value, type: this.type };
+        if (!value) {
+            throw new Error(`Identifier ${this.id} doesn't exist`);
         }
-        throw new Error(`Identifier ${this.id} doesn't exist`);
+        if (value.type === Types.ARRAY) {
+            this.type = Types.STRING
+            return { value: value.value, type: this.type }
+        }
+        this.type = value.type
+        return { value: value.value, type: this.type };
     }
 
 }

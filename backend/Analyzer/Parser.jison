@@ -51,6 +51,7 @@ content    ([^\n\"\\]?|\\.)
 "false"                   return 'TK_false';
 "execute"                 return 'TK_execute';
 
+"."                       return 'TK_dot';
 "*"                       return 'TK_mul';
 "/"                       return 'TK_div';
 ";"                       return 'TK_semicolon';
@@ -108,6 +109,7 @@ const {IncrDecr} = require('../Classes/Expressions/IncrDecr')
 const {Ternary} = require('../Classes/Expressions/Ternary')
 const {AccessID} = require('../Classes/Expressions/AccessID')
 const {Parameter} = require('../Classes/Expressions/Parameter')
+const {Natives} = require('../Classes/Expressions/Natives')
 
 const {InitID} = require('../Classes/Instructions/InitID')
 const {AsignID} = require('../Classes/Instructions/AsignID')
@@ -371,11 +373,11 @@ PARAMETERS_CALL:
     ;
 
 NATIVE_FUNCTIONS:
-    TK_tolower TK_lparen EXPRESSION TK_rparen  |
-    TK_toupper TK_lparen EXPRESSION TK_rparen  |
-    TK_length TK_lparen EXPRESSION TK_rparen   |
-    TK_round TK_lparen EXPRESSION TK_rparen    |
-    TK_typeof TK_lparen EXPRESSION TK_rparen   |
-    TK_tostring TK_lparen EXPRESSION TK_rparen |
-    TK_c_str TK_lparen EXPRESSION TK_rparen
+    TK_tolower TK_lparen EXPRESSION TK_rparen       {$$ = Natives(@1.first_line,@1.first_column,$3,$1)}|
+    TK_toupper TK_lparen EXPRESSION TK_rparen       {$$ = Natives(@1.first_line,@1.first_column,$3,$1)}|
+    EXPRESSION TK_dot TK_length TK_lparen TK_rparen {$$ = Natives(@1.first_line,@1.first_column,$1,$3)}|
+    TK_round TK_lparen EXPRESSION TK_rparen         {$$ = Natives(@1.first_line,@1.first_column,$3,$1)}|
+    TK_typeof TK_lparen EXPRESSION TK_rparen        {$$ = Natives(@1.first_line,@1.first_column,$3,$1)}|
+    TK_tostring TK_lparen EXPRESSION TK_rparen      {$$ = Natives(@1.first_line,@1.first_column,$1,$3)}|
+    EXPRESSION TK_dot TK_c_str TK_lparen TK_rparen
     ;
