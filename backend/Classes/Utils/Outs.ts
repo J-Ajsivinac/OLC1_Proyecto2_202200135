@@ -14,6 +14,7 @@ export function getConsoleString(): string {
 
 export function getErrorsString(): string {
     let result: string = "";
+    console.log(errores)
     errores.forEach(element => {
         result += element.toString();
     });

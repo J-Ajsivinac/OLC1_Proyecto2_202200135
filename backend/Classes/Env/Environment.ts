@@ -1,10 +1,13 @@
 import { ReturnType, Types } from "../Utils/Types";
 import { Symbol } from "./Symbol";
 import { symbolTable } from "./SymbolTable";
-import { printConsole } from "../Utils/Outs";
+import { errores, printConsole } from "../Utils/Outs";
+import { Function } from "../Instructions/Function";
+import { error } from "console";
+import { Error, TypesError } from "../Utils/Error";
 export class Environment {
-    private ids: Map<string, Symbol> = new Map<string, Symbol>();
-    // public funcs: Map<string,> = new Map<string, string>();
+    public ids: Map<string, Symbol> = new Map<string, Symbol>();
+    public functions: Map<string, Function> = new Map<string, Function>();
     constructor(private prev: Environment | null, public name: string) { }
 
     public saveId(id: string, value: any, type: Types, line: number, column: number) {
@@ -19,7 +22,7 @@ export class Environment {
         let env: Environment | null = this;
         while (env) {
             if (env.ids.has(id.toLowerCase())) {
-                console.log(id.toLowerCase(), env.ids.get(id.toLowerCase()))
+                // console.log(id.toLowerCase(), env.ids.get(id.toLowerCase()))
                 return env.ids.get(id.toLowerCase()) as Symbol;
             }
             env = env.prev;
@@ -90,12 +93,43 @@ export class Environment {
         }
         return 'NULL'
     }
+    //funcion para obtener el entorno global
+    getGlobal(): Environment {
+        let env: Environment = this;
+        while (env.prev) {
+            env = env.prev;
+        }
+        return env;
+    }
+
+    public saveFunction(id: string, func: Function) {
+        let env: Environment = this;
+        if (env.functions.has(id.toLowerCase())) {
+            this.setErrore(func.line, func.column, `La función ${id} ya existe`)
+            return
+        }
+        console.log("se guardo la funcion", id.toLowerCase())
+        env.functions.set(id.toLowerCase(), func);
+        let typeFunc: string = this.getTypeOfFunc(func.types)
+        symbolTable.push(func.line, func.column + 1, id.toLowerCase(), 'Function', typeFunc == 'void' ? 'Método' : 'Función', env.name);
+    }
+
+    public setErrore(line: number, column: number, description: string) {
+        if (this.matchError(line, column + 1, description)) return
+        errores.push(new Error(line, column + 1, TypesError.SEMANTICO, description))
+    }
+
+    public matchError(line: number, column: number, err: string): boolean {
+        for (const s of errores) {
+            if (s.line === line && s.column === column && s.description === err) return true
+        }
+        return false
+    }
 
     public printSymTab() {
         console.log('Symbol Table:')
         console.log('Name\tType\tValue\tEnv')
         for (let [key, value] of this.ids) {
-            // console.log(`${value.id}\t${this.getTypeOf(value.type)}\t${value.value}\t${this.name}`)
             if (value.type === Types.ARRAY) {
                 for (let i = 0; i < value.value.length; i++) {
 
@@ -105,9 +139,44 @@ export class Environment {
                 console.log(`${value.id}\t${this.getTypeOf(value.type)}\t${value.value}\t${this.name}`)
             }
         }
+        console.log('Function Table:')
+        console.log('Name\tType\tEnv')
+        for (let [key, value] of this.functions) {
+            console.log(`${key}\t${this.getTypeOfFunc(value.types)}\t${this.name}`)
+        }
+    }
+
+    public getFunction(id: string): Function | null {
+        let env: Environment | null = this
+        while (env) {
+            if (env.functions.has(id.toLowerCase())) {
+                return env.functions.get(id.toLowerCase())!
+            }
+            env = env.prev
+        }
+        return null
     }
 
     public setPrint(value: any) {
         printConsole.push(value)
+    }
+
+    getTypeOfFunc(type: Types): string {
+        if (type === Types.INT) {
+            return 'int'
+        }
+        if (type === Types.DOUBLE) {
+            return 'double'
+        }
+        if (type === Types.BOOLEAN) {
+            return 'boolean'
+        }
+        if (type === Types.CHAR) {
+            return 'char'
+        }
+        if (type === Types.STRING) {
+            return 'string'
+        }
+        return 'void'
     }
 }

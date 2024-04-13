@@ -14,7 +14,7 @@ export function convertToType(type: String): Types {
     if (type === 'char') {
         return Types.CHAR
     }
-    if (type === 'string') {
+    if (type === 'std::string') {
         return Types.STRING
     }
     return Types.NULL
