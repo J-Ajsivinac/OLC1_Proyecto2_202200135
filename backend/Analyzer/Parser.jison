@@ -17,13 +17,13 @@ content    ([^\n\"\\]?|\\.)
 [\r\t]+                             	    //ignora tabulaciones
 
 \/\/.*                                  {}//comentario simple
+//DESCOMENTAR PARA COMENTARIOS MULTILINEA
 //[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]     {}//comentario multilínea
 // "int"                     return 'TK_dec_int';
 // "double"                  return 'TK_dec_double';
 // "char"                    return 'TK_dec_char';
 // "std::string"             return 'TK_dec_string';
 // "bool"                    return 'TK_dec_bool';
-(int|double|char|string|bool)               return 'TK_types';
 "void"                    return 'TK_void';
 "endl"                    return 'TK_endl';
 "pow"                     return 'TK_pow';
@@ -55,6 +55,7 @@ content    ([^\n\"\\]?|\\.)
 "/"                       return 'TK_div';
 ";"                       return 'TK_semicolon';
 ":"                       return 'TK_colon';
+(int|double|char|std\:\:string|bool)               return 'TK_types';
 "%"                       return 'TK_mod';
 ","                       return 'TK_comma';
 "(" 				      return 'TK_lparen';
@@ -106,6 +107,7 @@ const {Cast} = require('../Classes/Expressions/Cast')
 const {IncrDecr} = require('../Classes/Expressions/IncrDecr')
 const {Ternary} = require('../Classes/Expressions/Ternary')
 const {AccessID} = require('../Classes/Expressions/AccessID')
+const {Parameter} = require('../Classes/Expressions/Parameter')
 
 const {InitID} = require('../Classes/Instructions/InitID')
 const {AsignID} = require('../Classes/Instructions/AsignID')
@@ -117,6 +119,11 @@ const {DoWhile} = require('../Classes/Instructions/DoWhile')
 const {For} = require('../Classes/Instructions/For')
 const {Block} = require('../Classes/Instructions/Block')
 const {If} = require('../Classes/Instructions/If')
+const {Function} = require('../Classes/Instructions/Function')
+const {CallFunction} = require('../Classes/Instructions/CallFunction')
+const {Switch} = require('../Classes/Instructions/Switch')
+const {Case} = require('../Classes/Instructions/Case')
+const {Break} = require('../Classes/Instructions/Break')
 %}
 
 %left TK_question TK_colon
@@ -142,27 +149,27 @@ INIT:
     ;
 
 INSTRUCTIONS:
-    INSTRUCTIONS INSTRUCTION { $$.push($2)}|
-    INSTRUCTION              { $$ = [$1];}
+    INSTRUCTIONS INSTRUCTION {$$.push($2)}|
+    INSTRUCTION              {$$ = [$1];}
     ;
 
 INSTRUCTION:
     EXECUTE_STATEMENT|
-    DECLARATION                    {$$=$1}|
-    ARRAY_NEW TK_semicolon         {$$=$1}|
+    DECLARATION                    {$$ = $1}|
+    ARRAY_NEW TK_semicolon         {$$ = $1}|
     ARRAY_ASSIGNMENT TK_semicolon  |
-    ASSIGNMENT TK_semicolon        {$$=$1}|
-    PRINT TK_semicolon             {$$=$1}|
-    IF                             {$$=$1}|
-    LOOP                           {$$=$1}|
-    SWITCH                         |
+    ASSIGNMENT TK_semicolon        {$$ = $1}|
+    PRINT TK_semicolon             {$$ = $1}|
+    IF                             {$$ = $1}|
+    LOOP                           {$$ = $1}|
+    SWITCH                         {$$ = $1}|
     RETURN TK_semicolon            |
-    TK_break TK_semicolon             |
-    TK_continue TK_semicolon          |
-    FUNCTION                       |
-    FUNCTION_CALL   TK_semicolon   |
-    INCRE_AND_DECRE TK_semicolon  |
-    NATIVE_FUNCTIONS TK_semicolon |
+    TK_break TK_semicolon          {$$ = new Break(@1.first_line,@1.first_column)}|
+    TK_continue TK_semicolon       |
+    FUNCTION                       {$$ = $1}|
+    FUNCTION_CALL   TK_semicolon   {$$ = $1}|
+    INCRE_AND_DECRE TK_semicolon   {$$ = $1}|
+    NATIVE_FUNCTIONS TK_semicolon  |
     error {errores.push(new Error($1.first_line, $1.first_column, TypesError.SINTACTICO,`No se esperaba ${yytext}`))}
     ;
 
@@ -173,12 +180,12 @@ EXECUTE_STATEMENT:
     ;
 
 DECLARATION:
-    TK_types IDS TK_asign EXPRESSION TK_semicolon {$$ = new InitID(@1.first_line,@1.first_column,$1,$2,$4)} |
+    TK_types IDS TK_asign EXPRESSION TK_semicolon {$$ = new InitID(@1.first_line,@1.first_column,$1,$2,$4)}         |
     TK_types IDS TK_semicolon                     {$$ = new InitID(@1.first_line,@1.first_column,$1,$2,undefined) } 
     ;
 
 PRINT:
-    TK_cout TK_double_less EXPRESSION                               {$$=new Print(@1.first_line,@1.first_column, $3, false)}     |
+    TK_cout TK_double_less EXPRESSION                               {$$=new Print(@1.first_line,@1.first_column, $3, false)}  |
     TK_cout TK_double_less EXPRESSION TK_double_less TK_endl        {$$=new Print(@1.first_line,@1.first_column, $3, true)} 
     ;
 
@@ -193,9 +200,9 @@ ASSIGNMENT:
     ;
 
 ARRAY_NEW:
-    TK_types TK_id TK_lbracket TK_rbracket TK_asign TK_new TK_types ARRAY_BRACKETS {$$ = new InitArray(@1.first_line,@1.first_column,$2,$1,$8,undefined)} |
+    TK_types TK_id TK_lbracket TK_rbracket TK_asign TK_new TK_types ARRAY_BRACKETS {$$ = new InitArray(@1.first_line,@1.first_column,$2,$1,$8,undefined)}                                              |
     TK_types TK_id TK_lbracket TK_rbracket TK_lbracket TK_rbracket TK_asign TK_new TK_types ARRAY_BRACKETS ARRAY_BRACKETS {$$ = new InitMatrix(@1.first_line, @1.first_column,$2,$1,$10,$11,undefined)}|
-    TK_types TK_id TK_lbracket TK_rbracket TK_asign ASIGN_ARRAY {$$ = new InitArray(@1.first_line,@1.first_column,$2,$1,undefined,$6)} |
+    TK_types TK_id TK_lbracket TK_rbracket TK_asign ASIGN_ARRAY {$$ = new InitArray(@1.first_line,@1.first_column,$2,$1,undefined,$6)}                                                                 |
     TK_types TK_id TK_lbracket TK_rbracket TK_lbracket TK_rbracket TK_asign ASIGN_ARRAY {$$ = new InitMatrix(@1.first_line, @1.first_column,$2,$1,undefined,undefined,$8)}
     ;
 
@@ -225,19 +232,19 @@ ARRAY_ASSIGNMENT:
 EXPRESSION:
     ARITHMETICS                                           {$$ = $1}  |
     LOGICAL_EXPRESSION                                    {$$ = $1}  |
-    CASTING                                               {$$ = $1} |
+    CASTING                                               {$$ = $1}  |
     EXPRESSION TK_question EXPRESSION TK_colon EXPRESSION {$$ = new Ternary(@1.first_line,@1.first_column,$1,$3,$5)}|
-    TK_id TK_lbracket EXPRESSION TK_rbracket                                             |
-    TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket          |
-    FUNCTION_CALL   |
-    INCRE_AND_DECRE {$$=$1}|
-    TK_id        { $$ = new AccessID(@1.first_line,@1.first_column,$1)}                   |
-    TK_integer   { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.INT) }    | 
-    TK_double    { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.DOUBLE) } |
-    TK_char      { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.CHAR) }   |
-    TK_string    { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.STRING) } |
-    TK_true      { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.BOOLEAN) }|
-    TK_false     { $$ = new Primitive(@1.first_line, @1.first_column, $1,Types.BOOLEAN) } 
+    TK_id TK_lbracket EXPRESSION TK_rbracket                                               |
+    TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket            |
+    FUNCTION_CALL   {$$ = $1}                                                              |
+    INCRE_AND_DECRE {$$ = $1}                                                              |
+    TK_id           {$$ = new AccessID(@1.first_line,@1.first_column,$1)}                  |
+    TK_integer      {$$ = new Primitive(@1.first_line, @1.first_column, $1,Types.INT) }    | 
+    TK_double       {$$ = new Primitive(@1.first_line, @1.first_column, $1,Types.DOUBLE) } |
+    TK_char         {$$ = new Primitive(@1.first_line, @1.first_column, $1,Types.CHAR) }   |
+    TK_string       {$$ = new Primitive(@1.first_line, @1.first_column, $1,Types.STRING) } |
+    TK_true         {$$ = new Primitive(@1.first_line, @1.first_column, $1,Types.BOOLEAN) }|
+    TK_false        {$$ = new Primitive(@1.first_line, @1.first_column, $1,Types.BOOLEAN) } 
     ;
 
 ARITHMETICS:
@@ -308,29 +315,28 @@ INCRE_AND_DECRE:
     ;
 
 SWITCH:
-    TK_switch TK_lparen EXPRESSION TK_rparen TK_lbrace CASES_BLOCK TK_rbrace
+    TK_switch TK_lparen EXPRESSION TK_rparen TK_lbrace CASES_BLOCK TK_rbrace {$$ = new Switch(@1.first_line,@1.first_column,$3,$6[0],$6[1])}
     ;
 
 CASES_BLOCK:
-    CASES DEFAULT |
-    CASES |
-    DEFAULT
+    CASES DEFAULT {$$ = [$1,$2]}        |
+    CASES         {$$ = [$1,undefined]} |
+    DEFAULT       {$$ = [undefined,$1]}
     ;
 
-
 CASES:
-    CASES CASE |
-    CASE
+    CASES CASE {$$.push($2)} |
+    CASE       {$$ = [$1]  }
     ;
 
 CASE:
-    TK_case EXPRESSION TK_colon BLOCK |
-    TK_case EXPRESSION TK_colon 
+    TK_case EXPRESSION TK_colon INSTRUCTIONS {$$ = new Case(@1.first_line, @1.first_column, $2, new Block(@4.first_line, @4.first_column, $4))}     |
+    TK_case EXPRESSION TK_colon       {$$ = new Case(@1.first_line, @1.first_column, $2, new Block(@4.first_line, @4.first_column, []))}
     ;
 
 DEFAULT:
-    TK_default TK_colon BLOCK |
-    TK_default TK_colon
+    TK_default TK_colon INSTRUCTIONS {$$ = new Block(@1.first_line, @1.first_column, $3)} |
+    TK_default TK_colon       {$$ = new Block(@1.first_line, @1.first_column, [])}
     ;
 
 RETURN:
@@ -339,37 +345,37 @@ RETURN:
     ;
 
 FUNCTION:
-    TK_types TK_id TK_lparen PARAMETERS TK_rparen BLOCK |
-    TK_types TK_id TK_lparen TK_rparen BLOCK |  
-    TK_void TK_id TK_lparen PARAMETERS TK_rparen BLOCK |
-    TK_void TK_id TK_lparen TK_rparen BLOCK 
+    TK_types TK_id TK_lparen PARAMETERS TK_rparen BLOCK  {$$ = new Function(@1.first_line,@1.first_column,$2,$4,$6,$1 )}         |
+    TK_types TK_id TK_lparen TK_rparen BLOCK             {$$ = new Function(@1.first_line,@1.first_column,$2,[],$6,$1 )}         |  
+    TK_void TK_id TK_lparen PARAMETERS TK_rparen BLOCK   {$$ = new Function(@1.first_line,@1.first_column,$2,$4,$6,$1 )} |
+    TK_void TK_id TK_lparen TK_rparen BLOCK              {$$ = new Function(@1.first_line,@1.first_column,$2,[],$6,$1 )} 
     ;
 
 PARAMETERS:
-    PARAMETERS TK_comma PARAMETER |
-    PARAMETER 
+    PARAMETERS TK_comma PARAMETER  {$$.push($3)} |
+    PARAMETER                      {$$ = [$1]  }
     ;
 
 PARAMETER:
-    TK_types TK_id 
+    TK_types TK_id {$$ = new Parameter(@1.first_line,@1.first_column,$2,$1)}
     ;
 
 FUNCTION_CALL:
-    TK_id TK_lparen PARAMETERS_CALL TK_rparen |
-    TK_id TK_lparen TK_rparen
+    TK_id TK_lparen PARAMETERS_CALL TK_rparen {$$ = new CallFunction(@1.first_line,@1.first_column, $1, $3)}|
+    TK_id TK_lparen TK_rparen                 {$$ = new CallFunction(@1.first_line,@1.first_column, $1, [])}
     ;
 
 PARAMETERS_CALL:
-    PARAMETERS_CALL TK_comma EXPRESSION |
-    EXPRESSION
+    PARAMETERS_CALL TK_comma EXPRESSION {$$.push($3)} |
+    EXPRESSION                          {$$ = [$1]  }
     ;
 
 NATIVE_FUNCTIONS:
-    TK_tolower TK_lparen EXPRESSION TK_rparen |
-    TK_toupper TK_lparen EXPRESSION TK_rparen |
-    TK_length TK_lparen EXPRESSION TK_rparen |
-    TK_round TK_lparen EXPRESSION TK_rparen |
-    TK_typeof TK_lparen EXPRESSION TK_rparen |
+    TK_tolower TK_lparen EXPRESSION TK_rparen  |
+    TK_toupper TK_lparen EXPRESSION TK_rparen  |
+    TK_length TK_lparen EXPRESSION TK_rparen   |
+    TK_round TK_lparen EXPRESSION TK_rparen    |
+    TK_typeof TK_lparen EXPRESSION TK_rparen   |
     TK_tostring TK_lparen EXPRESSION TK_rparen |
     TK_c_str TK_lparen EXPRESSION TK_rparen
     ;
