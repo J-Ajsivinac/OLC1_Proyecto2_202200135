@@ -13,25 +13,26 @@ export class Controller {
     }
     public parser(req: Request, res: Response) {
         let code: string = req.body.code
-        console.log("Code", code)
+        console.log("Code", code, "fin")
         // console.log(typeof code)
         let parser = require('../Analyzer/Parser')
         try {
             resetOuts()
             let ast = parser.parse(code)
             const global: Environment = new Environment(null, 'Global')
-            console.log(ast.length)
+            // console.log(ast.length)
             for (let instruction of ast) {
-                // console.log("Instruction", instruction)
+                console.log("Instruction", instruction, "-")
                 try {
                     // if (instruction instanceof Function || instruction instanceof InitID || instruction instanceof InitArray || instruction instanceof CallFunction) {
                     //     console.log("Instruction", instruction)
                     //     instruction.execute(global)
                     // }
+                    // console.log(instruction)
                     instruction.execute(global)
                     // console.log(getErrorsString())
-                    console.log(getConsoleString())
-                    // global.printSymTab()
+                    // console.log(getConsoleString())
+                    global.printSymTab()
                 } catch (err) {
                     console.error(err)
                     res.json({
