@@ -1,6 +1,6 @@
 import { Expression } from "../Abstracts/Expression";
 import { Environment } from "../Env/Environment";
-import { ReturnType } from "../Utils/Types";
+import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 import { Function } from "./Function";
 import { errores } from "../Utils/Outs";
@@ -19,6 +19,8 @@ export class CallFunction extends Expression {
             env.setErrore(this.line, this.column, `La función ${this.id} no existe`)
             return
         }
+
+        let isFunction: boolean = func.types === Types.NULL ? false : true
 
         const envFunc: Environment = new Environment(env, `Funcion ${this.id.toLowerCase()}`);
         if (func.params.length != this.params.length) {
@@ -47,7 +49,7 @@ export class CallFunction extends Expression {
         }
 
         let execute: any = func.block.execute(envFunc)
-
+        console.log("Execute", execute)
         if (execute) {
             if (execute.value === TypesExp.RETURN) {
                 return
