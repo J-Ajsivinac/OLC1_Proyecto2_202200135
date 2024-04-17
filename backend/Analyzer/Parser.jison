@@ -206,13 +206,14 @@ ASSIGNMENT:
 ARRAY_NEW:
     TK_types TK_lbracket TK_rbracket TK_id TK_asign TK_new TK_types ARRAY_BRACKETS {$$ = new InitArray(@1.first_line,@1.first_column,$2,$1,$8,undefined)}                                              |
     TK_types TK_lbracket TK_rbracket TK_id TK_lbracket TK_rbracket TK_asign TK_new TK_types ARRAY_BRACKETS ARRAY_BRACKETS {$$ = new InitMatrix(@1.first_line, @1.first_column,$2,$1,$10,$11,undefined)}|
-    TK_types TK_lbracket TK_rbracket TK_id TK_asign ASIGN_ARRAY {$$ = new InitArray(@1.first_line,@1.first_column,$2,$1,undefined,$6)}                                                                 |
+    TK_types TK_lbracket TK_rbracket TK_id TK_asign ASIGN_ARRAY {$$ = new InitArray(@1.first_line,@1.first_column,$4,$1,undefined,$6)}                                                                 |
     TK_types TK_lbracket TK_rbracket TK_id TK_lbracket TK_rbracket TK_asign ASIGN_ARRAY {$$ = new InitMatrix(@1.first_line, @1.first_column,$2,$1,undefined,undefined,$8)} 
     // TK_types TK_lbrace TK_rbrace TK_equal EXPRESSION
     ;
 
 ASIGN_ARRAY:
-    TK_lbracket VALUES_ARRAY TK_rbracket  {$$ = $2}
+    TK_lbracket VALUES_ARRAY TK_rbracket  {$$ = $2} |
+    EXPRESSION TK_dot TK_c_str TK_lparen TK_rparen  {$$ = [new Natives(@1.first_line,@1.first_column,$1,$3)]} 
     ;
 
 ARRAY_BRACKETS:
@@ -392,6 +393,6 @@ NATIVE_FUNCTION:
     TK_round TK_lparen EXPRESSION TK_rparen         {$$ = new Natives(@1.first_line,@1.first_column,$3,$1)}|
     TK_typeof TK_lparen EXPRESSION TK_rparen        {$$ = new Natives(@1.first_line,@1.first_column,$3,$1)}|
     TK_tostring TK_lparen EXPRESSION TK_rparen      {$$ = new Natives(@1.first_line,@1.first_column,$3,"tostring")}|
-    EXPRESSION TK_dot TK_length TK_lparen TK_rparen {$$ = new Natives(@1.first_line,@1.first_column,$1,$3)}|
-    EXPRESSION TK_dot TK_c_str TK_lparen TK_rparen  {$$ = new Natives(@1.first_line,@1.first_column,$1,$3)}
+    EXPRESSION TK_dot TK_length TK_lparen TK_rparen {$$ = new Natives(@1.first_line,@1.first_column,$1,$3)}
+    // EXPRESSION TK_dot TK_c_str TK_lparen TK_rparen  {$$ = new Natives(@1.first_line,@1.first_column,$1,$3)}
     ;
