@@ -112,6 +112,7 @@ const {Ternary} = require('../Classes/Expressions/Ternary')
 const {AccessID} = require('../Classes/Expressions/AccessID')
 const {Parameter} = require('../Classes/Expressions/Parameter')
 const {Natives} = require('../Classes/Expressions/Natives')
+const {Return} = require('../Classes/Expressions/Return')
 
 const {InitID} = require('../Classes/Instructions/InitID')
 const {AsignID} = require('../Classes/Instructions/AsignID')
@@ -128,6 +129,7 @@ const {CallFunction} = require('../Classes/Instructions/CallFunction')
 const {Switch} = require('../Classes/Instructions/Switch')
 const {Case} = require('../Classes/Instructions/Case')
 const {Break} = require('../Classes/Instructions/Break')
+const {Continue} = require('../Classes/Instructions/Continue')
 %}
 
 %left TK_question TK_colon
@@ -166,14 +168,14 @@ INSTRUCTION:
     IF                             {$$ = $1}|
     LOOP                           {$$ = $1}|
     SWITCH                         {$$ = $1}|
-    RETURN TK_semicolon            |
-    TK_break TK_semicolon          {$$ = new Break(@1.first_line,@1.first_column)}|
-    TK_continue TK_semicolon       |
     PRINT TK_semicolon             {$$ = $1}|
     NATIVE_FUNCTIONS TK_semicolon  {$$ = $1}|
     FUNCTION                       {$$ = $1}|
     FUNCTION_CALL   TK_semicolon   {$$ = $1}|
     INCRE_AND_DECRE TK_semicolon   {$$ = $1}|
+    RETURN TK_semicolon            {$$ = $1}|
+    TK_continue TK_semicolon       {$$ = new Continue(@1.first_line,@1.first_column) }|
+    TK_break TK_semicolon          {$$ = new Break(@1.first_line,@1.first_column)}|
     error {errores.push(new Error($1.first_line, $1.first_column, TypesError.SINTACTICO,`No se esperaba ${yytext}`))}
     ;
 
@@ -357,8 +359,8 @@ DEFAULT:
     ;
 
 RETURN:
-    TK_return EXPRESSION |
-    TK_return
+    TK_return EXPRESSION {$$ = new Return(@1.first_line,@1.first_column, $2)} |
+    TK_return            {$$ = new Return(@1.first_line,@1.first_column, undefined)}
     ;
 
 FUNCTION:
