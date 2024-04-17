@@ -17,5 +17,8 @@ export function convertToType(type: String): Types {
     if (type === 'std::string') {
         return Types.STRING
     }
+    if (type === 'array') {
+        return Types.ARRAY
+    }
     return Types.NULL
 }

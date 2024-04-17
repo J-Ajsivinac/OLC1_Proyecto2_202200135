@@ -130,6 +130,7 @@ export class Environment {
         console.log('Symbol Table:')
         console.log('Name\tType\tValue\tEnv')
         for (let [key, value] of this.ids) {
+            // console.log(value.id, value.type, value.value, this.name)
             if (value.type === Types.ARRAY) {
                 for (let i = 0; i < value.value.length; i++) {
 

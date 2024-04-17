@@ -22,7 +22,7 @@ export class Controller {
             const global: Environment = new Environment(null, 'Global')
             // console.log(ast.length)
             for (let instruction of ast) {
-                console.log("Instruction", instruction, "-")
+                // console.log("Instruction", instruction, "-")
                 try {
                     // if (instruction instanceof Function || instruction instanceof InitID || instruction instanceof InitArray || instruction instanceof CallFunction) {
                     //     console.log("Instruction", instruction)

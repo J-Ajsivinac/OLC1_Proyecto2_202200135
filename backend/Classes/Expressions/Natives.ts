@@ -6,6 +6,7 @@ import { TypesExp } from "../Utils/TypesExp";
 import { errores } from "../Utils/Outs";
 import { Error, TypesError } from "../Utils/Error";
 import { error } from "console";
+import { Primitive } from "./Primitive";
 
 
 export class Natives extends Expression {
@@ -101,8 +102,13 @@ export class Natives extends Expression {
 
     getCStr(value: ReturnType): ReturnType {
         if (value.type === Types.STRING) {
-            let array = value.value.split('')
-            return { value: array, type: Types.ARRAY }
+            // let array = value.value.split('')
+            // return { value: array, type: Types.ARRAY }
+            let charArray: Primitive[] = []
+            for (let char of value.value) {
+                charArray.push(new Primitive(this.line, this.column, char, Types.CHAR))
+            }
+            return { value: charArray, type: Types.CHAR }
         }
         errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede obtener el valor c_str del tipo de dato ${value.type}`));
         return { value: 'NULL', type: Types.NULL }
