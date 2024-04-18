@@ -1,6 +1,7 @@
 import { Expression } from "../Abstracts/Expression";
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
 
@@ -24,5 +25,9 @@ export class Case extends Instruction {
             let block: ReturnType = this.block.execute(envCase)
             if (block) return block
         }
+    }
+
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
     }
 }

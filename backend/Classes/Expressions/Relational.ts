@@ -1,5 +1,6 @@
 import { Expression } from "../Abstracts/Expression";
 import { Environment } from "../Env/Environment";
+import { AST, ReturnAST } from "../Utils/AST";
 import { Error, TypesError } from "../Utils/Error";
 import { errores } from "../Utils/Outs";
 import { ReturnType, Types } from "../Utils/Types";
@@ -148,5 +149,17 @@ export class Relational extends Expression {
 
     getValue(value: ReturnType): ReturnType {
         return value.type === Types.CHAR ? { value: value.value.charCodeAt(0), type: Types.INT } : value
+    }
+
+    public ast(ast: AST): ReturnAST {
+        const id = ast.getNewID()
+        var dot = `node_${id} [label="${this.sign}", fillcolor="LightBlue", shape="box", style="filled", fontsize="15"]\n`
+        let value1: ReturnAST = this.exp1.ast(ast)
+        dot += '\n' + value1.dot
+        dot += `\nnode_${id} -> node_${value1.id}\n`
+        let value2: ReturnAST = this.exp2.ast(ast)
+        dot += '\n' + value2.dot
+        dot += `\nnode_${id} -> node_${value2.id}\n`
+        return { dot: dot, id: id }
     }
 }

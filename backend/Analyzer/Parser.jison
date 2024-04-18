@@ -196,9 +196,9 @@ PRINT:
     ;
 
 
-IDS:
+IDS: // 
     IDS TK_comma TK_id  {$$.push($3)}     | 
-    TK_id               {$$ = [$1]; }
+    TK_id               {$$ = [$1]; } 
     ;
 
 ASSIGNMENT:

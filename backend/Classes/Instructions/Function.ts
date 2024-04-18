@@ -2,6 +2,7 @@ import { Expression } from "../Abstracts/Expression";
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
 import { Parameter } from "../Expressions/Parameter";
+import { AST, ReturnAST } from "../Utils/AST";
 import { convertToType } from "../Utils/ConvertTypes";
 import { Types } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
@@ -15,5 +16,9 @@ export class Function extends Instruction {
     public execute(env: Environment) {
         console.log("-Funcion-", this.id)
         env.saveFunction(this.id, this)
+    }
+
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
     }
 }

@@ -1,12 +1,14 @@
 import { Expression } from "../Abstracts/Expression";
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 import { TypesInstruction } from "../Utils/TypesIns";
 import { Case } from "./Case";
 
 export class Switch extends Instruction {
+
     constructor(line: number, column: number, private exp: Expression, private cases: Case[], private defaultCase: Instruction) {
         super(line, column, TypesInstruction.SWITCH);
     }
@@ -37,6 +39,10 @@ export class Switch extends Instruction {
             }
 
         }
+    }
+
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
     }
 
 }

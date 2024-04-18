@@ -1,6 +1,7 @@
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
 import { IncrDecr } from "../Expressions/IncrDecr";
+import { AST, ReturnAST } from "../Utils/AST";
 import { TypesInstruction } from "../Utils/TypesIns";
 
 export class Block extends Instruction {
@@ -20,4 +21,8 @@ export class Block extends Instruction {
         }
     }
 
+
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
+    }
 }

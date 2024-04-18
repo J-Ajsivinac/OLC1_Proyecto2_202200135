@@ -1,5 +1,6 @@
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
 
@@ -26,4 +27,7 @@ export class DoWhile extends Instruction {
         } while (condition?.value);
     }
 
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
+    }
 }

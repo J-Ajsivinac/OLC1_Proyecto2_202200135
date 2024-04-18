@@ -1,12 +1,14 @@
 import { Expression } from "../Abstracts/Expression";
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { AST, ReturnAST } from "../Utils/AST";
 import { convertToType } from "../Utils/ConvertTypes";
 import { getValueDefaultArray } from "../Utils/Defaults";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
 
 export class InitMatrix extends Instruction {
+
     private type: Types;
     constructor(line: number, column: number, private id: string, private typeTemp: string, private size: Expression, private size2: Expression, private values: any[]) {
         super(line, column, TypesInstruction.INIT_ARRAY)
@@ -40,6 +42,10 @@ export class InitMatrix extends Instruction {
             }
         }
         return l;
+    }
+
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
     }
 
 }

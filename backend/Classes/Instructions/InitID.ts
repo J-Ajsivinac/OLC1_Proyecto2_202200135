@@ -1,6 +1,7 @@
 import { Expression } from "../Abstracts/Expression";
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { AST, ReturnAST } from "../Utils/AST";
 import { convertToType } from "../Utils/ConvertTypes";
 import { getValueDefaultValue } from "../Utils/Defaults";
 import { ReturnType, Types } from "../Utils/Types";
@@ -50,5 +51,9 @@ export class InitID extends Instruction {
             default:
                 return "NULL"
         }
+    }
+
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
     }
 }

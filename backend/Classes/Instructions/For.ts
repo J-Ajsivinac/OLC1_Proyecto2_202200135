@@ -1,5 +1,6 @@
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
 
@@ -31,5 +32,7 @@ export class For extends Instruction {
             condition = this.condition.execute(forEnv)
         }
     }
-
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
+    }
 }

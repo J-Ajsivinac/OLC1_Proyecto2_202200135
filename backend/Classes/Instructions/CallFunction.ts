@@ -7,6 +7,7 @@ import { errores } from "../Utils/Outs";
 import { Parameter } from "../Expressions/Parameter";
 import { Symbol } from "../Env/Symbol";
 import { symbolTable } from "../Env/SymbolTable";
+import { AST, ReturnAST } from "../Utils/AST";
 
 export class CallFunction extends Expression {
     constructor(line: number, column: number, public id: string, public params: Expression[]) {
@@ -56,5 +57,9 @@ export class CallFunction extends Expression {
             }
             return execute
         }
+    }
+
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
     }
 }

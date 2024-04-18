@@ -7,6 +7,7 @@ import { errores } from "../Utils/Outs";
 import { Error, TypesError } from "../Utils/Error";
 import { error } from "console";
 import { Primitive } from "./Primitive";
+import { AST, ReturnAST } from "../Utils/AST";
 
 
 export class Natives extends Expression {
@@ -112,6 +113,12 @@ export class Natives extends Expression {
         }
         errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede obtener el valor c_str del tipo de dato ${value.type}`));
         return { value: 'NULL', type: Types.NULL }
+    }
+
+    public ast(ast: AST): ReturnAST {
+        const id = ast.getNewID()
+        var dot = `node_${id}[label="${this.typeF}" color="white" fontcolor="white"];`
+        return { dot: dot, id: id }
     }
 
 }

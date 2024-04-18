@@ -1,5 +1,6 @@
 import { Expression } from "../Abstracts/Expression";
 import { Environment } from "../Env/Environment";
+import { AST, ReturnAST } from "../Utils/AST";
 import { Error, TypesError } from "../Utils/Error";
 import { errores } from "../Utils/Outs";
 import { ReturnType, Types } from "../Utils/Types";
@@ -74,6 +75,17 @@ export class Cast extends Expression {
         }
         errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede castear a char el tipo ${val.type}`));
         return { value: 'NULL', type: Types.NULL };
+    }
+
+    public ast(ast: AST): ReturnAST {
+        const id = ast.getNewID()
+        var dot = `node_${id}[label="CAST" color="white" fontcolor="white"];`
+        let value1: ReturnAST = this.exp.ast(ast)
+        dot += '\n' + value1.dot
+        dot += `\nnode_${id}_type[label="${this.targetT.toLowerCase()}" color="white" fontcolor="white"];`
+        dot += `\nnode_${id} -> node_${value1.id};`
+        dot += `\nnode_${id} -> node_${id}_type;`
+        return { dot: dot, id: id }
     }
 
 }

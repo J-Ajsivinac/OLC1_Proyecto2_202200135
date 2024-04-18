@@ -1,9 +1,11 @@
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
 
 export class While extends Instruction {
+
     constructor(line: number, column: number, private condition: any, private block: Instruction) {
         super(line, column, TypesInstruction.LOOP_WHILE)
     }
@@ -24,5 +26,9 @@ export class While extends Instruction {
             }
             condition = this.condition.execute(whileEnv)
         }
+    }
+
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
     }
 }

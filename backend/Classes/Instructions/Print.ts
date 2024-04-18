@@ -1,9 +1,11 @@
 import { Expression } from "../Abstracts/Expression";
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { AST, ReturnAST } from "../Utils/AST";
 import { TypesInstruction } from "../Utils/TypesIns";
 
 export class Print extends Instruction {
+
     constructor(line: number, column: number, private toPrint: Expression, public type: boolean) {
         super(line, column, TypesInstruction.PRINT);
     }
@@ -17,5 +19,9 @@ export class Print extends Instruction {
         } else {
             env.setPrint(value ? value.value : "");
         }
+    }
+
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
     }
 }

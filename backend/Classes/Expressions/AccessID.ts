@@ -1,6 +1,7 @@
 import { Expression } from "../Abstracts/Expression";
 import { Environment } from "../Env/Environment";
 import { Symbol } from "../Env/Symbol";
+import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 
@@ -22,5 +23,9 @@ export class AccessID extends Expression {
         this.type = value.type
         return { value: value.value, type: this.type };
     }
-
+    public ast(ast: AST): ReturnAST {
+        const id = ast.getNewID()
+        var dot = `node_${id}[label="${this.id}" color="white" fontcolor="white"];`
+        return { dot: dot, id: id }
+    }
 }

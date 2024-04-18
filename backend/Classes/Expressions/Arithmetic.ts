@@ -5,6 +5,7 @@ import { plus, minus, mult, div, pow, mod } from '../Utils/MatrixOp';
 import { Environment } from "../Env/Environment";
 import { errores } from "../Utils/Outs";
 import { Error, TypesError } from "../Utils/Error";
+import { AST, ReturnAST } from "../Utils/AST";
 export class Arithmetic extends Expression {
     private type: Types = Types.NULL
     private env!: Environment;
@@ -198,6 +199,21 @@ export class Arithmetic extends Expression {
             }
         }
         return value
+    }
+
+    public ast(ast: AST): ReturnAST {
+        const id = ast.getNewID()
+        var dot = `node_${id}[label="${this.sign}" color="white" fontcolor="white"];`
+        let value1: ReturnAST
+        if (this.exp1 != undefined) {
+            value1 = this.exp1.ast(ast)
+            dot += '\n' + value1.dot
+            dot += `\nnode_${id} -> node_${value1.id};`
+        }
+        let value2: ReturnAST = this.exp2.ast(ast)
+        dot += '\n' + value2.dot
+        dot += `\nnode_${id} -> node_${value2.id};`
+        return { dot: dot, id: id }
     }
 
 }

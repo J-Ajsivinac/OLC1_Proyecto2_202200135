@@ -1,9 +1,11 @@
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
 
 export class If extends Instruction {
+
     constructor(line: number, column: number, private condition: any, private block: Instruction, private elseBlock: Instruction | null) {
         super(line, column, TypesInstruction.IF);
     }
@@ -23,6 +25,10 @@ export class If extends Instruction {
                 return elseBlock;
             }
         }
+    }
+
+    public ast(ast: AST): ReturnAST {
+        throw new Error("Method not implemented.");
     }
 
 }

@@ -1,4 +1,5 @@
 import { Expression } from "../Abstracts/Expression";
+import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 
@@ -31,5 +32,11 @@ export class Primitive extends Expression {
                 this.value = this.value.replace(/\\\\/g, '\\')
                 return { value: this.value, type: this.typeValue }
         }
+    }
+
+    public ast(ast: AST): ReturnAST {
+        const id = ast.getNewID()
+        var dot = `node_${id} [label="${this.value}", fillcolor="LightBlue", shape="box", style="filled", fontsize="15"]\n`
+        return { dot: dot, id: id }
     }
 }
