@@ -5,6 +5,7 @@ import { errores, printConsole } from "../Utils/Outs";
 import { Function } from "../Instructions/Function";
 import { error } from "console";
 import { Error, TypesError } from "../Utils/Error";
+import { Primitive } from "../Expressions/Primitive";
 export class Environment {
     public ids: Map<string, Symbol> = new Map<string, Symbol>();
     public functions: Map<string, Function> = new Map<string, Function>();
@@ -42,6 +43,51 @@ export class Environment {
             env = env.prev
         }
         console.log(`Error: Variable ${id} not found`)
+        return false
+    }
+
+    public reasignArrayList(id: string, index: number, value: Primitive): boolean {
+        let env: Environment | null = this
+        while (env) {
+            if (env.ids.has(id.toLowerCase())) {
+                let symbol: Symbol = env.ids.get(id.toLowerCase())!
+                // console.log("symbol", symbol.type, "value", value.typeValue)
+                let temp: ReturnType = symbol.value[index]
+                if (temp.type !== value.typeValue) {
+                    this.setErrore(value.line, value.column, `Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
+                    console.log(`Error: Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
+                    return false
+
+                }
+                symbol.value[index] = value
+                env.ids.set(id.toLowerCase(), symbol)
+                return true
+            }
+            env = env.prev
+        }
+        this.setErrore(value.line, value.column, `Variable ${id} not found`)
+        return false
+    }
+
+    public reasignMatrix(id: string, i: number, j: number, value: Primitive): boolean {
+        let env: Environment | null = this
+        while (env) {
+            if (env.ids.has(id.toLowerCase())) {
+                let symbol: Symbol = env.ids.get(id.toLowerCase())!
+                let temp: ReturnType = symbol.value[i][j]
+                if (temp.type !== value.typeValue) {
+                    this.setErrore(value.line, value.column, `Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
+                    console.log(`Error: Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
+                    return false
+
+                }
+                symbol.value[i][j] = value
+                env.ids.set(id.toLowerCase(), symbol)
+                return true
+            }
+            env = env.prev
+        }
+        this.setErrore(value.line, value.column, `Variable ${id} not found`)
         return false
     }
 

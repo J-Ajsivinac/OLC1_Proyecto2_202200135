@@ -132,6 +132,8 @@ const {Switch} = require('../Classes/Instructions/Switch')
 const {Case} = require('../Classes/Instructions/Case')
 const {Break} = require('../Classes/Instructions/Break')
 const {Continue} = require('../Classes/Instructions/Continue')
+const {AsignArray} = require('../Classes/Instructions/AsignArray')
+const {AsignMatrix} = require('../Classes/Instructions/AsignMatrix')
 %}
 
 %left TK_question TK_colon
@@ -235,8 +237,8 @@ VALUE_ARRAY:
     ;
 
 ARRAY_ASSIGNMENT:
-    TK_id TK_lbracket EXPRESSION TK_rbracket TK_asign EXPRESSION |
-    TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket TK_asign EXPRESSION
+    TK_id TK_lbracket EXPRESSION TK_rbracket TK_asign EXPRESSION {$$ = new AsignArray(@1.first_line, @1.first_column, $1, $3, $6)} |
+    TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket TK_asign EXPRESSION {$$ = new AsignMatrix(@1.first_line, @1.first_column, $1, $3, $6, $9)}
     ;
 
 EXPRESSION:

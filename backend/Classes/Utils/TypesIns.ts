@@ -4,6 +4,7 @@ export enum TypesInstruction {
     ASSIGNMENT_ID = 'ASSIGNMENT_ID',
     INIT_ARRAY = 'INIT_ARRAY',
     ASSIGNMENT_ARRAY = 'ASSIGNMENT_ARRAY',
+    ASSIGNMENT_MATRIX = 'ASSIGNMENT_MATRIX',
     BLOCK = 'BLOCK',
     IF = 'IF',
     ELSE = 'ELSE',
