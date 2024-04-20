@@ -57,15 +57,11 @@ export class Environment {
 
     public getValueArray(id: string, i: number): Symbol | null {
         let env: Environment | null = this;
-        while (env !== null) {
+        while (env) {
+            console.log("tttttt", env.ids, id.toLowerCase())
             if (env.ids.has(id.toLowerCase())) {
                 let symbol: Symbol = env.ids.get(id.toLowerCase())!
-                if (symbol.type === Types.ARRAY) {
-                    return symbol.value[i]
-                } else {
-                    console.log(`Error: Variable ${id} is not an array`)
-                    return null
-                }
+                return symbol.value[i]
             }
             env = env.prev;
         }

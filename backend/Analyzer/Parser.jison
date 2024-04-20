@@ -113,6 +113,7 @@ const {AccessID} = require('../Classes/Expressions/AccessID')
 const {Parameter} = require('../Classes/Expressions/Parameter')
 const {Natives} = require('../Classes/Expressions/Natives')
 const {Return} = require('../Classes/Expressions/Return')
+const {AccessArray} = require('../Classes/Expressions/AccessArray')
 
 const {InitID} = require('../Classes/Instructions/InitID')
 const {AsignID} = require('../Classes/Instructions/AsignID')
@@ -206,10 +207,10 @@ ASSIGNMENT:
     ;
 
 ARRAY_NEW:
-    TK_types TK_lbracket TK_rbracket TK_id TK_asign TK_new TK_types ARRAY_BRACKETS {$$ = new InitArray(@1.first_line,@1.first_column,$2,$1,$8,undefined)}                                              |
-    TK_types TK_lbracket TK_rbracket TK_id TK_lbracket TK_rbracket TK_asign TK_new TK_types ARRAY_BRACKETS ARRAY_BRACKETS {$$ = new InitMatrix(@1.first_line, @1.first_column,$2,$1,$10,$11,undefined)}|
-    TK_types TK_lbracket TK_rbracket TK_id TK_asign ASIGN_ARRAY {$$ = new InitArray(@1.first_line,@1.first_column,$4,$1,undefined,$6)}                                                                 |
-    TK_types TK_lbracket TK_rbracket TK_id TK_lbracket TK_rbracket TK_asign ASIGN_ARRAY {$$ = new InitMatrix(@1.first_line, @1.first_column,$2,$1,undefined,undefined,$8)} 
+    TK_types TK_id TK_lbracket TK_rbracket TK_asign TK_new TK_types ARRAY_BRACKETS {$$ = new InitArray(@1.first_line,@1.first_column,$2,$1,$8,undefined)}                                              |
+    TK_types TK_id TK_lbracket TK_rbracket TK_lbracket TK_rbracket TK_asign TK_new TK_types ARRAY_BRACKETS ARRAY_BRACKETS {$$ = new InitMatrix(@1.first_line, @1.first_column,$2,$1,$10,$11,undefined)}|
+    TK_types TK_id TK_lbracket TK_rbracket TK_asign ASIGN_ARRAY {$$ = new InitArray(@1.first_line,@1.first_column,$2,$1,undefined,$6)}                                                                 |
+    TK_types TK_id TK_lbracket TK_rbracket TK_lbracket TK_rbracket TK_asign ASIGN_ARRAY {$$ = new InitMatrix(@1.first_line, @1.first_column,$2,$1,undefined,undefined,$8)} 
     // TK_types TK_lbrace TK_rbrace TK_equal EXPRESSION
     ;
 
@@ -233,7 +234,7 @@ VALUE_ARRAY:
     ;
 
 ARRAY_ASSIGNMENT:
-    TK_id TK_lbracket TK_types TK_rbracket TK_asign EXPRESSION |
+    TK_id TK_lbracket EXPRESSION TK_rbracket TK_asign EXPRESSION |
     TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket TK_asign EXPRESSION
     ;
 
@@ -258,7 +259,7 @@ EXPRESSION:
     ;
 
 ACCESARRAY:
-    TK_id TK_lbracket EXPRESSION TK_rbracket                                               |
+    TK_id TK_lbracket EXPRESSION TK_rbracket  {$$ = new AccessArray(@1.first_line,@1.first_column,$1,$3)}                                           |
     TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket            
     ;
 
