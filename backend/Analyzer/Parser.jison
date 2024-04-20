@@ -167,7 +167,7 @@ INSTRUCTION:
     EXECUTE_STATEMENT|
     DECLARATION                    {$$ = $1}|
     ARRAY_NEW TK_semicolon         {$$ = $1}|
-    ARRAY_ASSIGNMENT TK_semicolon  |
+    ARRAY_ASSIGNMENT TK_semicolon  {$$ = $1}|
     ASSIGNMENT TK_semicolon        {$$ = $1}|
     IF                             {$$ = $1}|
     LOOP                           {$$ = $1}|
@@ -380,7 +380,8 @@ PARAMETERS:
     ;
 
 PARAMETER:
-    TK_types TK_id {$$ = new Parameter(@1.first_line,@1.first_column,$2,$1)}
+    TK_types TK_id {$$ = new Parameter(@1.first_line,@1.first_column,$2,$1)} |
+    TK_types TK_id TK_lbracket TK_rbracket {$$ = new Parameter(@1.first_line,@1.first_column,$2,$1,true)} 
     ;
 
 FUNCTION_CALL:

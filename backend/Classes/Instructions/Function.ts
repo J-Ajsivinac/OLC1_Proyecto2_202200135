@@ -19,6 +19,16 @@ export class Function extends Instruction {
     }
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node${id} [label="Function"];\n`
+        //Hijo 1
+        dot += `node${id} [label="Function"];\n`
+        //Hijo 1
+        dot += `node${id} [label="Function"];\n`
+        //Hijo 1
+        dot += `node${id} [label="Function"];\n`
+        //Hijo 1
+        dot += `node${id} [label="Function"];\n`
+        return { dot: dot, id: id }
     }
 }

@@ -7,7 +7,7 @@ import { TypesExp } from "../Utils/TypesExp";
 
 export class Parameter extends Expression {
     public type = Types.NULL
-    constructor(line: number, column: number, public id: string, public tempType: string) {
+    constructor(line: number, column: number, public id: string, public tempType: string, public isArray: boolean = false) {
         super(line, column, TypesExp.PARAMS);
         this.type = convertToType(tempType)
     }

@@ -42,7 +42,27 @@ export class Switch extends Instruction {
     }
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID();
+        var dot = `node${id} [label="Switch"];\n`;
+        //Hijo 1
+        const exp = this.exp.ast(ast);
+        dot += exp.dot;
+        dot += `node${id} -> node${exp.id}\n`;
+        if (this.cases) {
+            for (let case_ of this.cases) {
+                //Hijo 2
+                const caseDot = case_.ast(ast);
+                dot += caseDot.dot;
+                dot += `node${id} -> node${caseDot.id}\n`;
+            }
+        }
+        if (this.defaultCase) {
+            //Hijo 3
+            const defaultCase = this.defaultCase.ast(ast);
+            dot += defaultCase.dot;
+            dot += `node${id} -> node${defaultCase.id}\n`;
+        }
+        return { dot: dot, id: id };
     }
 
 }

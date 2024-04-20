@@ -14,6 +14,8 @@ export class Break extends Instruction {
     }
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node${id} [label="Break"];\n`
+        return { dot: dot, id: id }
     }
 }

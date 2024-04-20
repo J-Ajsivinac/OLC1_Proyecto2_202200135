@@ -23,6 +23,13 @@ export class Block extends Instruction {
 
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node${id} [label="Bloque"];\n`
+        for (let instruction of this.instructions) {
+            const ins = instruction.ast(ast)
+            dot += ins.dot
+            dot += `node${id} -> node${ins.id}\n`
+        }
+        return { dot: dot, id: id }
     }
 }

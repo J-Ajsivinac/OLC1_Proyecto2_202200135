@@ -29,7 +29,9 @@ export class AccessMatrix extends Expression {
     }
 
     public ast(ast: AST): ReturnAST {
-        return { dot: '', id: 0 };
+        const id = ast.getNewID()
+        var dot = `node${id} [label="${this.id}"];\n`
+        return { dot: dot, id: id }
     }
 
 

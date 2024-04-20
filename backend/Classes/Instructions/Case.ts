@@ -28,6 +28,16 @@ export class Case extends Instruction {
     }
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node${id} [label="Case"];\n`
+        //Hijo 1
+        const exp = this.exp.ast(ast)
+        dot += exp.dot
+        dot += `node${id} -> node${exp.id}\n`
+        //Hijo 2
+        const block = this.block.ast(ast)
+        dot += block.dot
+        dot += `node${id} -> node${block.id}\n`
+        return { dot: dot, id: id }
     }
 }

@@ -45,7 +45,17 @@ export class InitMatrix extends Instruction {
     }
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node${id} [label="InitMatrix"];\n`
+        //Hijo 1
+        const size = this.size.ast(ast)
+        dot += size.dot
+        dot += `node${id} -> node${size.id}\n`
+        //Hijo 2
+        const size2 = this.size2.ast(ast)
+        dot += size2.dot
+        dot += `node${id} -> node${size2.id}\n`
+        return { dot: dot, id: id }
     }
 
 }

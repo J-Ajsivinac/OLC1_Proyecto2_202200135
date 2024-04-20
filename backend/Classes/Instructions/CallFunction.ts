@@ -60,6 +60,19 @@ export class CallFunction extends Expression {
     }
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node${id} [label="Call Function"];\n`
+        //Hijo 1
+        dot += `node${id}1 [label="${this.id}"];\n`
+        dot += `node${id} -> node${id}1\n`
+        //Hijo 2
+        const params: ReturnAST[] = []
+        this.params.forEach((param: Expression) => {
+            const p = param.ast(ast)
+            dot += p.dot
+            dot += `node${id} -> node${p.id}\n`
+            params.push(p)
+        });
+        return { dot: dot, id: id }
     }
 }

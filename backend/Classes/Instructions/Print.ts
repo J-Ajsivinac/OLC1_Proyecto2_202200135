@@ -22,6 +22,13 @@ export class Print extends Instruction {
     }
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node${id} [label="Print"];\n`
+        if (this.toPrint) {
+            const value = this.toPrint.ast(ast)
+            dot += value.dot
+            dot += `node${id} -> node${value.id}\n`
+        }
+        return { dot: dot, id: id }
     }
 }

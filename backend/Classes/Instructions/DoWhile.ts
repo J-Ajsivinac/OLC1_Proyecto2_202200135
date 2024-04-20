@@ -28,6 +28,16 @@ export class DoWhile extends Instruction {
     }
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID();
+        var dot = `node${id} [label="Do While"];\n`;
+        //Hijo 1
+        const condition = this.condition.ast(ast);
+        dot += condition.dot;
+        dot += `node${id} -> node${condition.id}\n`;
+        //Hijo 2
+        const block = this.block.ast(ast);
+        dot += block.dot;
+        dot += `node${id} -> node${block.id}\n`;
+        return { dot: dot, id: id };
     }
 }

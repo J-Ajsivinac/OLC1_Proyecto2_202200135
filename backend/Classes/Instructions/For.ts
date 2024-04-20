@@ -33,6 +33,22 @@ export class For extends Instruction {
         }
     }
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node${id} [label="For"];\n`
+        const init = this.init.ast(ast)
+        dot += init.dot
+        dot += `node${id} -> node${init.id}\n`
+        const condition = this.condition.ast(ast)
+        dot += condition.dot
+        dot += `node${id} -> node${condition.id}\n`
+        const increment = this.increment.ast(ast)
+        dot += increment.dot
+        dot += `node${id} -> node${increment.id}\n`
+        const block = this.block.ast(ast)
+        dot += block.dot
+        dot += `node${id} -> node${block.id}\n`
+        return {
+            dot: dot, id: id
+        }
     }
 }

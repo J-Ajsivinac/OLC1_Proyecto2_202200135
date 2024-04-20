@@ -17,7 +17,13 @@ export class AsignID extends Instruction {
     }
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node${id} [label="Asignacion ID"];\n`
+        //Hijo 1
+        const value = this.value.ast(ast)
+        dot += value.dot
+        dot += `node${id} -> node${value.id}\n`
+        return { dot: dot, id: id }
     }
 
 }

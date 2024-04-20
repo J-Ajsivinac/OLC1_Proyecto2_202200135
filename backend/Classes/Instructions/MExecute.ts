@@ -14,6 +14,11 @@ export class MExecute extends Instruction {
     }
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node${id} [label="Execute"];\n`
+        const call = this.CallF.ast(ast)
+        dot += call.dot
+        dot += `node${id} -> node${call.id}\n`
+        return { dot: dot, id: id }
     }
 }

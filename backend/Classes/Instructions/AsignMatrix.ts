@@ -19,7 +19,21 @@ export class AsignMatrix extends Instruction {
         env.reasignMatrix(this.id, index.value, index2.value, primitive)
     }
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node${id} [label="Asignacion Matriz"];\n`
+        //Hijo 1
+        const index = this.index.ast(ast)
+        dot += index.dot
+        dot += `node${id} -> node${index.id}\n`
+        //Hijo 2
+        const index2 = this.index2.ast(ast)
+        dot += index2.dot
+        dot += `node${id} -> node${index2.id}\n`
+        //Hijo 3
+        const value = this.value.ast(ast)
+        dot += value.dot
+        dot += `node${id} -> node${value.id}\n`
+        return { dot: dot, id: id }
     }
 
 }
