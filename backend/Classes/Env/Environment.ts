@@ -58,10 +58,22 @@ export class Environment {
     public getValueArray(id: string, i: number): Symbol | null {
         let env: Environment | null = this;
         while (env) {
-            console.log("tttttt", env.ids, id.toLowerCase())
+            // console.log("tttttt", env.ids, id.toLowerCase())
             if (env.ids.has(id.toLowerCase())) {
                 let symbol: Symbol = env.ids.get(id.toLowerCase())!
                 return symbol.value[i]
+            }
+            env = env.prev;
+        }
+        return null
+    }
+
+    getValueMatrix(id: string, i: number, j: number): Symbol | null {
+        let env: Environment | null = this;
+        while (env) {
+            if (env.ids.has(id.toLowerCase())) {
+                let symbol: Symbol = env.ids.get(id.toLowerCase())!
+                return symbol.value[i][j]
             }
             env = env.prev;
         }

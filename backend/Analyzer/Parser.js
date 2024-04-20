@@ -167,6 +167,9 @@ break;
 case 58:
 this.$ = new AccessArray(_$[$0-3].first_line,_$[$0-3].first_column,$$[$0-3],$$[$0-1])
 break;
+case 59:
+this.$ = new AccessMatrix(_$[$0-6].first_line,_$[$0-6].first_column,$$[$0-6],$$[$0-4],$$[$0-1])
+break;
 case 60:
 this.$ = new Ternary(_$[$0-4].first_line,_$[$0-4].first_column,$$[$0-4],$$[$0-2],$$[$0])
 break;
@@ -552,6 +555,7 @@ const {Parameter} = require('../Classes/Expressions/Parameter')
 const {Natives} = require('../Classes/Expressions/Natives')
 const {Return} = require('../Classes/Expressions/Return')
 const {AccessArray} = require('../Classes/Expressions/AccessArray')
+const {AccessMatrix} = require('../Classes/Expressions/AccessMatrix')
 
 const {InitID} = require('../Classes/Instructions/InitID')
 const {AsignID} = require('../Classes/Instructions/AsignID')

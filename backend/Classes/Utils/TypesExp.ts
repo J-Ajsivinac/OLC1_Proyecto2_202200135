@@ -5,6 +5,7 @@ export enum TypesExp {
     LOGICAL = "LOGICAL",
     ACCESS_ID = "ACCESS_ID",
     ACCESS_ARRAY = "ACCESS_ARRAY",
+    ACCESS_MATRIX = "ACCESS_MATRIX",
     CALL = "CALL",
     TERNARY = "TERNARY",
     INC = "INC",

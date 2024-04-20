@@ -114,6 +114,7 @@ const {Parameter} = require('../Classes/Expressions/Parameter')
 const {Natives} = require('../Classes/Expressions/Natives')
 const {Return} = require('../Classes/Expressions/Return')
 const {AccessArray} = require('../Classes/Expressions/AccessArray')
+const {AccessMatrix} = require('../Classes/Expressions/AccessMatrix')
 
 const {InitID} = require('../Classes/Instructions/InitID')
 const {AsignID} = require('../Classes/Instructions/AsignID')
@@ -259,8 +260,8 @@ EXPRESSION:
     ;
 
 ACCESARRAY:
-    TK_id TK_lbracket EXPRESSION TK_rbracket  {$$ = new AccessArray(@1.first_line,@1.first_column,$1,$3)}                                           |
-    TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket            
+    TK_id TK_lbracket EXPRESSION TK_rbracket  {$$ = new AccessArray(@1.first_line,@1.first_column,$1,$3)}  |
+    TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket  {$$ = new AccessMatrix(@1.first_line,@1.first_column,$1,$3,$6)}           
     ;
 
 TERNARY:
