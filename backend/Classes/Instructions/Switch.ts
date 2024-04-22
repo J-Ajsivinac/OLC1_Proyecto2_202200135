@@ -43,25 +43,39 @@ export class Switch extends Instruction {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID();
-        var dot = `node${id} [label="Switch"];\n`;
-        //Hijo 1
+        var dot = `\nnode_${id} [label="SWITCH"];\n`;
+        dot += `\nnode_${id}_switch [label="switch" color="white" fontcolor="white"];\n`
+        dot += `\nnode_${id}_lparen[label="("]`
+        dot += `\nnode_${id} -> node_${id}_switch;\n`
+        dot += `node_${id} -> node_${id}_lparen;\n`
+
         const exp = this.exp.ast(ast);
-        dot += exp.dot;
-        dot += `node${id} -> node${exp.id}\n`;
+        dot += "\n" + exp.dot + "\n";
+        dot += `\nnode_${id} -> node_${exp.id}\n`;
+
+        dot += `\nnode_${id}_rparen[label=")"]`
+        dot += `\nnode_${id} -> node_${id}_rparen;`
+
+        dot += `\nnode_${id}_lbrac [label="{"]`
+        dot += `\nnode_${id} -> node_${id}_lbrac;`
+
+        dot += `\nnode_${id}_cases [label="CASES"];\n`
         if (this.cases) {
             for (let case_ of this.cases) {
-                //Hijo 2
                 const caseDot = case_.ast(ast);
-                dot += caseDot.dot;
-                dot += `node${id} -> node${caseDot.id}\n`;
+                dot += "\n" + caseDot.dot + "\n";
+                dot += `\nnode_${id}_cases -> node_${caseDot.id}\n`;
             }
         }
         if (this.defaultCase) {
-            //Hijo 3
             const defaultCase = this.defaultCase.ast(ast);
-            dot += defaultCase.dot;
-            dot += `node${id} -> node${defaultCase.id}\n`;
+            dot += "\n" + defaultCase.dot + "\n";
+            dot += `\nnode_${id}_cases -> node_${defaultCase.id}\n`;
         }
+        dot += `\nnode_${id} -> node_${id}_cases;`
+        dot += `\nnode_${id}_rbrac [label="}"]\n`
+        dot += `\nnode_${id} -> node_${id}_rbrac;`
+
         return { dot: dot, id: id };
     }
 

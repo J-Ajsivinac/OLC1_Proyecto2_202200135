@@ -34,21 +34,22 @@ export class For extends Instruction {
     }
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="For"];\n`
-        const init = this.init.ast(ast)
-        dot += init.dot
-        dot += `node${id} -> node${init.id}\n`
-        const condition = this.condition.ast(ast)
-        dot += condition.dot
-        dot += `node${id} -> node${condition.id}\n`
-        const increment = this.increment.ast(ast)
-        dot += increment.dot
-        dot += `node${id} -> node${increment.id}\n`
-        const block = this.block.ast(ast)
-        dot += block.dot
-        dot += `node${id} -> node${block.id}\n`
-        return {
-            dot: dot, id: id
-        }
+        var dot = `node_${id} [label="FOR"];\n`
+        dot += `\nnode_${id}_lim[label="Rango" color="red"]`
+        let limInferior: ReturnAST = this.init.ast(ast)
+        let limSuperior: ReturnAST = this.condition.ast(ast)
+        let limIncremento: ReturnAST = this.increment.ast(ast)
+        dot += "\n" + limInferior.dot
+        dot += "\n" + limSuperior.dot
+        dot += "\n" + limIncremento.dot
+        dot += `\nnode_${id}_lim -> node_${limInferior.id};`
+        dot += `\nnode_${id}_lim -> node_${limSuperior.id};`
+        dot += `\nnode_${id}_lim -> node_${limIncremento.id};`
+
+        let instructions: ReturnAST = this.block.ast(ast)
+        dot += "\n" + instructions.dot
+        dot += `\nnode_${id} -> node_${instructions.id};`
+        dot += `\nnode_${id} -> node_${id}_lim;`
+        return { dot: dot, id: id }
     }
 }

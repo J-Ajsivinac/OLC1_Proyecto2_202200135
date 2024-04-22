@@ -31,7 +31,12 @@ export class IncrDecr extends Expression {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node_${id}[label="${this.sign}" color="white" fontcolor="white"];`
+        // var dot = `node_${id}[label="${this.sign}" color="white" fontcolor="white"];`
+        var dot = `\nnode_${id}[label="INCRE_AND_DECRE" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id}id[label="${this.id}" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id}sign[label="${this.sign}" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id} -> node_${id}id;`
+        dot += `\nnode_${id} -> node_${id}sign;`
         return { dot: dot, id: id }
     }
 }

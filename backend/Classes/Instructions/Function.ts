@@ -20,15 +20,20 @@ export class Function extends Instruction {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="Function"];\n`
-        //Hijo 1
-        dot += `node${id} [label="Function"];\n`
-        //Hijo 1
-        dot += `node${id} [label="Function"];\n`
-        //Hijo 1
-        dot += `node${id} [label="Function"];\n`
-        //Hijo 1
-        dot += `node${id} [label="Function"];\n`
+        var dot = `node_${id}[label="FUNCTION" color="white" fontcolor="white"];`
+        dot += `\nnode_${id}_name[label="${this.id}" color="white" fontcolor="white"];`
+        dot += `\nnode_${id} -> node_${id}_name;`
+        if (this.params.length > 0) {
+            dot += `\nnode_${id}_params[label="PARAMS" color="white" fontcolor="white"];`
+            for (let i = 0; i < this.params.length; i++) {
+                dot += `\nnode_${id}_param_${i}[label="${this.params[i].id}" color="white" fontcolor="white"];`
+                dot += `\nnode_${id}_params -> node_${id}_param_${i};`
+            }
+            dot += `\nnode_${id}_name -> node_${id}_params;`
+        }
+        let inst: ReturnAST = this.block.ast(ast)
+        dot += '\n' + inst.dot
+        dot += `\nnode_${id}_name -> node_${inst.id};`
         return { dot: dot, id: id }
     }
 }

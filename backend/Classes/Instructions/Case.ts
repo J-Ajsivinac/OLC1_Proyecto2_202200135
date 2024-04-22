@@ -29,15 +29,20 @@ export class Case extends Instruction {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="Case"];\n`
-        //Hijo 1
+        var dot = `node_${id} [label="CASE"];\n`
+        dot += `node_${id}_case [label="case" color="white" fontcolor="white"];\n`
+        dot += `node_${id} -> node_${id}_case;\n`
         const exp = this.exp.ast(ast)
-        dot += exp.dot
-        dot += `node${id} -> node${exp.id}\n`
-        //Hijo 2
-        const block = this.block.ast(ast)
-        dot += block.dot
-        dot += `node${id} -> node${block.id}\n`
+        dot += "\n" + exp.dot + "\n"
+        dot += `node_${id} -> node_${exp.id};\n`
+        dot += `node_${id}_colon[label=":"]\n`
+        dot += `node_${id} -> node_${id}_colon;\n`
+        if (this.block) {
+            const block = this.block.ast(ast)
+            dot += block.dot
+            dot += `node_${id} -> node_${block.id};\n`
+        }
+
         return { dot: dot, id: id }
     }
 }

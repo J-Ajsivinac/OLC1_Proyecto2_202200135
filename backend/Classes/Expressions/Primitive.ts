@@ -36,7 +36,9 @@ export class Primitive extends Expression {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node_${id} [label="${this.value}", fillcolor="LightBlue", shape="box", style="filled", fontsize="15"]\n`
+        var dot = `\nnode_${id}[label="PRIMITIVO" color="white" fontcolor="white"]`
+        dot += `\nnode_${id}_value [label="${this.value}", fillcolor="LightBlue", shape="box", style="filled", fontsize="15"]\n`
+        dot += `node_${id} -> node_${id}_value`
         return { dot: dot, id: id }
     }
 }

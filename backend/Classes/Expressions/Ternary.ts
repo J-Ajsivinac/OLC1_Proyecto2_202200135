@@ -21,12 +21,24 @@ export class Ternary extends Expression {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID();
-        var dot = `node_${id} [label="Ternary", fillcolor="LightBlue", shape="box", style="filled", fontsize="15"]\n`;
+        var dot = `node_${id} [label="TERNARY", color="#7580f9" fontcolor="white"]\n`;
         let condition: ReturnAST = this.condition.ast(ast);
         let ifTrue: ReturnAST = this.ifTrue.ast(ast);
         let ifFalse: ReturnAST = this.ifFalse.ast(ast);
-        dot += condition.dot + '\n' + ifTrue.dot + '\n' + ifFalse.dot;
-        dot += `\nnode_${id} -> node_${condition.id};\nnode_${id} -> node_${ifTrue.id};\nnode_${id} -> node_${ifFalse.id};`;
+        dot += condition.dot;
+        dot += `\nnode_${id}_question [label="?", color="#7580f9" fontcolor="white"]\n`
+        dot += ifTrue.dot;
+        dot += `\nnode_${id}_colon [label=":", color="#7580f9" fontcolor="white"]\n`
+        dot += ifFalse.dot;
+
+        //conectando nodos
+        dot += `\nnode_${id} -> node_${condition.id};`
+        dot += `\nnode_${id} -> node_${id}_question;`
+        dot += `\nnode_${id} -> node_${ifTrue.id};`
+        dot += `\nnode_${id} -> node_${id}_colon;`
+        dot += `\nnode_${id} -> node_${ifFalse.id};`
+
+
         return { dot: dot, id: id };
     }
 }

@@ -29,15 +29,22 @@ export class DoWhile extends Instruction {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID();
-        var dot = `node${id} [label="Do While"];\n`;
-        //Hijo 1
-        const condition = this.condition.ast(ast);
-        dot += condition.dot;
-        dot += `node${id} -> node${condition.id}\n`;
-        //Hijo 2
-        const block = this.block.ast(ast);
-        dot += block.dot;
-        dot += `node${id} -> node${block.id}\n`;
+        var dot = `node_${id} [label="DO_WHILE"];\n`;
+        dot += `\nnode_${id}_do[label="do" color="white" fontcolor="white"];\n`
+        dot += `node_${id} -> node_${id}_do;\n`
+        var bloc = this.block.ast(ast);
+        var cond = this.condition.ast(ast);
+        dot += "\n" + bloc.dot + "\n";
+        dot += `node_${id} -> node_${bloc.id};\n`;
+        dot += `\nnode_${id}_while[label="while" color="white" fontcolor="white"];\n`
+        dot += `node_${id} -> node_${id}_while;\n`
+        dot += `\nnode_${id}_lparen[label="(" color="white" fontcolor="white"];\n`
+        dot += `node_${id} -> node_${id}_lparen;\n`
+        dot += "\n" + cond.dot + "\n";
+        dot += `node_${id} -> node_${cond.id};\n`;
+        dot += `\nnode_${id}_rparen[label=")" color="white" fontcolor="white"];\n`
+        dot += `node_${id} -> node_${id}_rparen;\n`
+
         return { dot: dot, id: id };
     }
 }

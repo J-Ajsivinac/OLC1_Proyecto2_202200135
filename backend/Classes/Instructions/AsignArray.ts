@@ -19,15 +19,27 @@ export class AsignArray extends Instruction {
     }
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="Asignacion Array"];\n`
-        //Hijo 1
+        var dot = `node_${id} [label="ASSIGN_ARRAY"];\n`
+
+        dot += `\nnode_${id}_id [label="${this.id}"];\n`
+        dot += `\nnode_${id}_lcor [label="["];\n`
+
+        dot += `\nnode_${id} -> node_${id}_id\n`
+        dot += `\nnode_${id} -> node_${id}_lcor\n`
+
         const index = this.index.ast(ast)
-        dot += index.dot
-        dot += `node${id} -> node${index.id}\n`
-        //Hijo 2
+        dot += "\n" + index.dot + "\n"
+        dot += `node_${id} -> node_${index.id}\n`
+
+        dot += `\nnode_${id}_rcor [label="]"];\n`
+        dot += `\nnode_${id} -> node_${id}_rcor\n`
+
+        dot += `\nnode_${id}_equal [label="="];\n`
+        dot += `\nnode_${id} -> node_${id}_equal\n`
+
         const value = this.value.ast(ast)
-        dot += value.dot
-        dot += `node${id} -> node${value.id}\n`
+        dot += "\n" + value.dot + "\n"
+        dot += `node_${id} -> node_${value.id}\n`
         return { dot: dot, id: id }
     }
 

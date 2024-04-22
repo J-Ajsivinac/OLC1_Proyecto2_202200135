@@ -23,12 +23,25 @@ export class Print extends Instruction {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="Print"];\n`
+        var dot = `node_${id} [label="PRINT"];\n`
+        dot += `\nnode_${id}_cout [label="cout" fillcolor="LightBlue" shape="box" style="filled" fontsize="15"]\n`
+        dot += `\nnode_${id}_menor [label="<<" fillcolor="LightBlue" shape="box" style="filled" fontsize="15"]\n`
+
+        dot += `node_${id} -> node_${id}_cout\n`
+        dot += `node_${id} -> node_${id}_menor\n`
         if (this.toPrint) {
             const value = this.toPrint.ast(ast)
             dot += value.dot
-            dot += `node${id} -> node${value.id}\n`
+            dot += `\nnode_${id} -> node_${value.id}\n`
         }
+        if (this.type) {
+            dot += `\nnode_${id}_menor1 [label="<<" fillcolor="LightBlue" shape="box" style="filled" fontsize="15"]\n`
+            dot += `node_${id} -> node_${id}_menor1\n`
+            dot += `node_${id}_endl [label="endl" fillcolor="LightBlue" shape="box" style="filled" fontsize="15"]\n`
+            dot += `node_${id} -> node_${id}_endl\n`
+        }
+        dot += `\nnode_${id}_pc[label=";" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id} -> node_${id}_pc;`
         return { dot: dot, id: id }
     }
 }

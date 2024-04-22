@@ -203,16 +203,38 @@ export class Arithmetic extends Expression {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node_${id}[label="${this.sign}" color="white" fontcolor="white"];`
+        var dot = `\nnode_${id}[label="ARITHMETIC" color="white" fontcolor="white"]\n`
         let value1: ReturnAST
-        if (this.exp1 != undefined) {
+
+        if (this.sign === '^') {
+            dot += `\nnode_${id}_arit[label="pow" color="white" fontcolor="white"];`
+            dot += `\nnode_${id}_lpars[label="(" color="white" fontcolor="white"];`
             value1 = this.exp1.ast(ast)
             dot += '\n' + value1.dot
+            dot += `\nnode_${id}_comma[label="," color="white" fontcolor="white"];`
+            let value2: ReturnAST = this.exp2.ast(ast)
+            dot += '\n' + value2.dot
+
+            dot += `\nnode_${id}_rpars[label=")" color="white" fontcolor="white"];`
+            dot += `\nnode_${id} -> node_${id}_arit;`
+            dot += `\nnode_${id} -> node_${id}_lpars;`
             dot += `\nnode_${id} -> node_${value1.id};`
+            dot += `\nnode_${id} -> node_${id}_comma;`
+            dot += `\nnode_${id} -> node_${value2.id};`
+            dot += `\nnode_${id} -> node_${id}_rpars;`
+        } else {
+            if (this.exp1 != undefined) {
+                value1 = this.exp1.ast(ast)
+                dot += '\n' + value1.dot
+                dot += `\nnode_${id} -> node_${value1.id};`
+            }
+            dot += `node_${id}_arit[label="${this.sign}" color="white" fontcolor="white"];`
+            dot += `\nnode_${id} -> node_${id}_arit;`
+            let value2: ReturnAST = this.exp2.ast(ast)
+            dot += '\n' + value2.dot
+            dot += `\nnode_${id} -> node_${value2.id};`
+            // dot += `\nnode_${id} -> node_${id}_arit;`
         }
-        let value2: ReturnAST = this.exp2.ast(ast)
-        dot += '\n' + value2.dot
-        dot += `\nnode_${id} -> node_${value2.id};`
         return { dot: dot, id: id }
     }
 

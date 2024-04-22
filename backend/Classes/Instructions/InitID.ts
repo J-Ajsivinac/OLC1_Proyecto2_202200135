@@ -55,15 +55,49 @@ export class InitID extends Instruction {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="InitID"];\n`
-        //Hijo 1
-        dot += `node${id} [label="InitID"];\n`
-        //Hijo 1
-        dot += `node${id} [label="InitID"];\n`
-        //Hijo 1
-        dot += `node${id} [label="InitID"];\n`
-        //Hijo 1
-        dot += `node${id} [label="InitID"];\n`
+        var dot = `\nnode_${id}[label="DECLARACION" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id}_type[label="${this.getType(this.type)}" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id} -> node_${id}_type;`
+
+        // dot += `\nnode_${id}_ids[label="IDS" color="red" fontcolor="white"];`
+
+        var dotIDs: String = ''
+        let i: number = 0
+        var raiz = ''
+        for (let id_dec of this.ids) {
+            if (i == 0) {
+                dotIDs += `\nnode_${id + i}_ids[label="IDS" color="#7580f9" fontcolor="white"];`
+                // raiz = id + i
+                dotIDs += `\nnode_${id + i}_id[label="${id_dec}" color="#7580f9" fontcolor="white"];`
+                dotIDs += `\nnode_${id + i}_ids -> node_${id + i}_id;`
+            }
+            else {
+                dotIDs += `\nnode_${id + i}_ids[label="IDS" color="#7580f9" fontcolor="white"];`
+                dotIDs += `\nnode_${id + i}_comma[label="," color="#7580f9" fontcolor="white"];`
+                dotIDs += `\nnode_${id + i}_id[label="${id_dec}" color="#7580f9" fontcolor="white"];`
+
+                dotIDs += `\nnode_${id + i}_ids -> node_${id + (i - 1)}_ids;`
+
+                dotIDs += `\nnode_${id + i}_ids -> node_${id + i}_comma;`
+                dotIDs += `\nnode_${id + i}_ids -> node_${id + i}_id;`
+            }
+            i++
+        }
+        dot += dotIDs
+        dot += `\nnode_${id} -> node_${id + (i - 1)}_ids;`
+        dot += `\nnode_${id}_equal[label="=" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id} -> node_${id}_equal;`
+
+        if (this.value) {
+            const val: ReturnAST = this.value.ast(ast)
+            dot += val.dot
+            dot += `\nnode_${id} -> node_${val.id};`
+        } else {
+            dot += `\nnode_${id}_defult[label="${getValueDefaultValue(this.type)}" color="#7580f9" fontcolor="white"];`
+            dot += `\nnode_${id} -> node_${id}_defult;`
+        }
+        dot += `\nnode_${id}_pc[label=";" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id} -> node_${id}_pc;`
         return { dot: dot, id: id }
     }
 }

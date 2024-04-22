@@ -117,7 +117,26 @@ export class Natives extends Expression {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node_${id}[label="${this.typeF}" color="white" fontcolor="white"];`
+        var dot = `\nnode_${id}[label="NATIVAS" color="white" fontcolor="white"]`
+
+        dot += `\nnode_${id}_name[label="${this.typeF}" color="white" fontcolor="white"]`
+        dot += `\nnode_${id}_lpars[label="(" color="white" fontcolor="white"]`
+        let expAST = this.exp.ast(ast)
+        dot += `\n${expAST.dot}`
+        dot += `\nnode_${id}_rpars[label=")" color="white" fontcolor="white"]`
+
+        if (this.typeF === 'c_str' || this.typeF === 'length') {
+            dot += `\nnode_${id}_dot[label="." color="white" fontcolor="white"]`
+            dot += `\nnode_${id} -> node_${expAST.id}`
+            dot += `\nnode_${id} -> node_${id}_dot`
+            dot += `\nnode_${id}_dot -> node_${id}_name`
+            dot += `\nnode_${id}_dot -> node_${id}_rpars`
+        } else {
+            dot += `\nnode_${id} -> node_${id}_name`
+            dot += `\nnode_${id} -> node_${id}_lpars`
+            dot += `\nnode_${id} -> node_${expAST.id}`
+            dot += `\nnode_${id} -> node_${id}_rpars`
+        }
         return { dot: dot, id: id }
     }
 

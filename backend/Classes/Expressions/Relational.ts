@@ -153,13 +153,16 @@ export class Relational extends Expression {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node_${id} [label="${this.sign}", fillcolor="LightBlue", shape="box", style="filled", fontsize="15"]\n`
-        let value1: ReturnAST = this.exp1.ast(ast)
-        dot += '\n' + value1.dot
-        dot += `\nnode_${id} -> node_${value1.id}\n`
-        let value2: ReturnAST = this.exp2.ast(ast)
-        dot += '\n' + value2.dot
-        dot += `\nnode_${id} -> node_${value2.id}\n`
+        var dot = `\nnode_${id}[label="RELATIONAL" color="#f39c12" fontcolor="white"];`
+        let val1 = this.exp1.ast(ast)
+        dot += val1.dot
+        dot += `\nnode_${id}_sign [label="${this.sign}", fillcolor="LightBlue", shape="box", style="filled", fontsize="15"]\n`
+        let val2 = this.exp2.ast(ast)
+        dot += val2.dot
+        // conectando nodos
+        dot += `\nnode_${id} -> node_${val1.id};`
+        dot += `\nnode_${id} -> node_${id}_sign;`
+        dot += `\nnode_${id} -> node_${val2.id};`
         return { dot: dot, id: id }
     }
 }

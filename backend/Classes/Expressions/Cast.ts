@@ -80,11 +80,18 @@ export class Cast extends Expression {
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
         var dot = `node_${id}[label="CAST" color="white" fontcolor="white"];`
+        dot += `\nnode_${id}_lpars[label="(" color="white" fontcolor="white"];`
+        dot += `\nnode_${id}_type[label="${this.targetT.toLowerCase()}" color="white" fontcolor="white"];`
+        dot += `\nnode_${id}_rpars[label=")" color="white" fontcolor="white"];`
+
         let value1: ReturnAST = this.exp.ast(ast)
         dot += '\n' + value1.dot
-        dot += `\nnode_${id}_type[label="${this.targetT.toLowerCase()}" color="white" fontcolor="white"];`
-        dot += `\nnode_${id} -> node_${value1.id};`
+
+        dot += `\nnode_${id} -> node_${id}_lpars;`
         dot += `\nnode_${id} -> node_${id}_type;`
+        dot += `\nnode_${id} -> node_${id}_rpars;`
+        dot += `\nnode_${id} -> node_${value1.id};`
+        // dot += `\nnode_${id} -> node_${id}_type;`
         return { dot: dot, id: id }
     }
 

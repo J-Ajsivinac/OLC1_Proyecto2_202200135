@@ -30,15 +30,15 @@ export class While extends Instruction {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="While"];\n`
-        //Hijo 1
-        const condition = this.condition.ast(ast)
-        dot += condition.dot
-        dot += `node${id} -> node${condition.id}\n`
-        //Hijo 2
-        const block = this.block.ast(ast)
-        dot += block.dot
-        dot += `node${id} -> node${block.id}\n`
+        var dot = `node_${id}[label="WHILE" color="white" fontcolor="white"];`
+        dot += `\nnode_${id}_cond[label="CONDICION" color="white" fontcolor="white"]`
+        let cond: ReturnAST = this.condition.ast(ast)
+        dot += '\n' + cond.dot
+        dot += `\nnode_${id}_cond -> node_${cond.id};`
+        let inst: ReturnAST = this.block.ast(ast)
+        dot += '\n' + inst.dot
+        dot += `\nnode_${id} -> node_${inst.id};`
+        dot += `\nnode_${id} -> node_${id}_cond;`
         return { dot: dot, id: id }
     }
 }

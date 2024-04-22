@@ -15,7 +15,7 @@ export class Break extends Instruction {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="Break"];\n`
+        var dot = `node_${id}[label="BREAK" color="white" fontcolor="white"];`
         return { dot: dot, id: id }
     }
 }

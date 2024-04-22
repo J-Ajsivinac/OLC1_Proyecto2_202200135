@@ -18,11 +18,12 @@ export class AsignID extends Instruction {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="Asignacion ID"];\n`
-        //Hijo 1
-        const value = this.value.ast(ast)
-        dot += value.dot
-        dot += `node${id} -> node${value.id}\n`
+        var dot = `\nnode_${id}[label="SET" color="white" fontcolor="white"];\n`
+        let value1: ReturnAST = this.value.ast(ast)
+        dot += `\nnode_${id}_id[label="${this.id}" color="white" fontcolor="white"]`
+        dot += `\nnode_${id} -> node_${id}_id`
+        dot += '\n' + value1.dot + '\n'
+        dot += `\nnode_${id} -> node_${value1.id};\n`
         return { dot: dot, id: id }
     }
 

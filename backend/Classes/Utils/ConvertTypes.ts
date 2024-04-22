@@ -8,7 +8,7 @@ export function convertToType(type: String): Types {
     if (type === 'double') {
         return Types.DOUBLE
     }
-    if (type === 'boolean') {
+    if (type === 'bool') {
         return Types.BOOLEAN
     }
     if (type === 'char') {

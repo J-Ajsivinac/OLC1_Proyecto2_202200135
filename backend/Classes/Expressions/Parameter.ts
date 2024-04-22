@@ -17,6 +17,31 @@ export class Parameter extends Expression {
     }
 
     public ast(ast: AST): ReturnAST {
-        throw new Error("Method not implemented.");
+        const id = ast.getNewID()
+        var dot = `node_${id}[label="PARAMETRO" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id}_id[label="${this.id}" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id}_type[label="${this.getType(this.type)}" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id} -> node_${id}_type;`
+        dot += `\nnode_${id} -> node_${id}_id;`
+        return { dot: dot, id: id }
+    }
+
+    private getType(type: Types): string {
+        switch (type) {
+            case Types.INT:
+                return "INT"
+            case Types.DOUBLE:
+                return "DOUBLE"
+            case Types.BOOLEAN:
+                return "BOOLEAN"
+            case Types.CHAR:
+                return "CHAR"
+            case Types.STRING:
+                return "STRING"
+            case Types.NULL:
+                return "NULL"
+            default:
+                return "NULL"
+        }
     }
 }

@@ -24,11 +24,12 @@ export class Block extends Instruction {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="Bloque"];\n`
-        for (let instruction of this.instructions) {
-            const ins = instruction.ast(ast)
-            dot += ins.dot
-            dot += `node${id} -> node${ins.id}\n`
+        var dot = `node_${id}[label="BLOCK" color="white" fontcolor="white"];`
+        let value1: ReturnAST
+        for (let i = 0; i < this.instructions.length; i++) {
+            value1 = this.instructions[i].ast(ast)
+            dot += '\n' + value1.dot
+            dot += `\nnode_${id} -> node_${value1.id};`
         }
         return { dot: dot, id: id }
     }

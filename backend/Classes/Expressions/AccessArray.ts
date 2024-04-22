@@ -30,7 +30,19 @@ export class AccessArray extends Expression {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="${this.id}"];\n`
+        var dot = `\nnode_${id} [label="ACCES_MATRIX"];\n`
+        dot += `node_${id}_id [label="${this.id}"];\n`
+        dot += `node_${id}_lparen [label="["];\n`
+        let index: ReturnAST = this.index.ast(ast)
+        dot += "\n" + index.dot
+        dot += `\nnode_${id}_rparen [label="]"];\n`
+
+        //conectando nodos
+        dot += `node_${id} -> node_${id}_id;\n`
+        dot += `node_${id} -> node_${id}_lparen;\n`
+        dot += `node_${id} -> node_${index.id};\n`
+        dot += `node_${id} -> node_${id}_rparen;\n`
+
         return { dot: dot, id: id }
     }
 

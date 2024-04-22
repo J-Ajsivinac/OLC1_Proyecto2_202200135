@@ -30,7 +30,24 @@ export class AccessMatrix extends Expression {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="${this.id}"];\n`
+        var dot = `node_${id} [label="ACCES_MATRIX"];\n`
+        dot += `node_${id}_id [label="${this.id}"];\n`
+        dot += `node_${id}_lparen [label="("];\n`
+        let index: ReturnAST = this.index.ast(ast)
+        dot += index.dot
+        let index2: ReturnAST = this.index2.ast(ast)
+        dot += index2.dot
+        dot += `node_${id}_rparen [label=")"];\n`
+
+        //conectando nodos
+        dot += `node_${id} -> node_${id}_id;\n`
+        dot += `node_${id} -> node_${id}_lparen;\n`
+        dot += `node_${id} -> node_${index.id};\n`
+        dot += `node_${id} -> node_${id}_rparen;\n`
+        dot += `node_${id} -> node_${id}_lparen;\n`
+        dot += `node_${id} -> node_${index2.id};\n`
+        dot += `node_${id} -> node_${id}_rparen;\n`
+        
         return { dot: dot, id: id }
     }
 

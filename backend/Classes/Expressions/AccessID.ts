@@ -25,7 +25,9 @@ export class AccessID extends Expression {
     }
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node_${id}[label="${this.id}" color="white" fontcolor="white"];`
+        var dot = `\nnode_${id}[label="ACCESS_ID" color="#7580f9" fontcolor="white"];`
+        dot += `\nnode_${id}_id[label="${this.id}" color="white" fontcolor="white"];`
+        dot += `\nnode_${id} -> node_${id}_id;`
         return { dot: dot, id: id }
     }
 }

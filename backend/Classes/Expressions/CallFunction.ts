@@ -2,9 +2,9 @@ import { Expression } from "../Abstracts/Expression";
 import { Environment } from "../Env/Environment";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
-import { Function } from "./Function";
+import { Function } from "../Instructions/Function";
 import { errores } from "../Utils/Outs";
-import { Parameter } from "../Expressions/Parameter";
+import { Parameter } from "./Parameter";
 import { Symbol } from "../Env/Symbol";
 import { symbolTable } from "../Env/SymbolTable";
 import { AST, ReturnAST } from "../Utils/AST";
@@ -61,18 +61,36 @@ export class CallFunction extends Expression {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="Call Function"];\n`
-        //Hijo 1
-        dot += `node${id}1 [label="${this.id}"];\n`
-        dot += `node${id} -> node${id}1\n`
-        //Hijo 2
-        const params: ReturnAST[] = []
+        var dot = `node_${id}[label="CALL FUNC" color="white" fontcolor="white"]`
+        dot += `\nnode_${id}_name[label="${this.id}" color="white" fontcolor="white"]`
+        dot += `\nnode_${id}_lpars[label="(" color="white" fontcolor="white"]`
+
+        dot += `\nnode_${id} -> node_${id}_name`
+        dot += `\nnode_${id} -> node_${id}_lpars`
+
+        // dot += `node${id}_params [label="PARAMETROS"];\n`
+        let i: number = 0
         this.params.forEach((param: Expression) => {
             const p = param.ast(ast)
-            dot += p.dot
-            dot += `node${id} -> node${p.id}\n`
-            params.push(p)
+            if (i == 0) {
+                dot += `\nnode_${id + i}_params[label="PARAMETROS" color="white" fontcolor="white"]`
+                dot += p.dot
+                dot += `\nnode_${id + i}_params -> node_${p.id}`
+            } else {
+                dot += `\nnode_${id + i}_params[label="PARAMETROS" color="white" fontcolor="white"]`
+                dot += `\nnode_${id + i}_comma[label="," color="white" fontcolor="white"]`
+                dot += p.dot
+                // Conectando nodos
+                dot += `\nnode_${id + 1}_params -> node_${id + (i - 1)}_params\n`
+                dot += `\nnode_${id + 1}_params -> node_${id + i}_comma\n`
+                dot += `\nnode_${id + 1}_params -> node_${p.id}\n`
+            }
+            i++;
         });
+        // dot += `\nnode_${id}_rpars[label=")" color="white" fontcolor="white"]`
+        dot += `\nnode_${id} -> node_${id + (i - 1)}_params`
+        dot += `\nnode_${id}_rpars[label=")" color="white" fontcolor="white"]`
+        dot += `\nnode_${id} -> node_${id}_rpars`
         return { dot: dot, id: id }
     }
 }
