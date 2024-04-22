@@ -115,6 +115,7 @@ const {Natives} = require('../Classes/Expressions/Natives')
 const {Return} = require('../Classes/Expressions/Return')
 const {AccessArray} = require('../Classes/Expressions/AccessArray')
 const {AccessMatrix} = require('../Classes/Expressions/AccessMatrix')
+const {CallFunction} = require('../Classes/Expressions/CallFunction')
 
 const {InitID} = require('../Classes/Instructions/InitID')
 const {AsignID} = require('../Classes/Instructions/AsignID')
@@ -127,7 +128,7 @@ const {For} = require('../Classes/Instructions/For')
 const {Block} = require('../Classes/Instructions/Block')
 const {If} = require('../Classes/Instructions/If')
 const {Function} = require('../Classes/Instructions/Function')
-const {CallFunction} = require('../Classes/Instructions/CallFunction')
+
 const {Switch} = require('../Classes/Instructions/Switch')
 const {Case} = require('../Classes/Instructions/Case')
 const {Break} = require('../Classes/Instructions/Break')
@@ -368,10 +369,10 @@ RETURN:
     ;
 
 FUNCTION:
-    TK_types TK_id TK_lparen PARAMETERS TK_rparen BLOCK  {$$ = new Function(@1.first_line,@1.first_column,$2,$4,$6,$1 )}         |
-    TK_types TK_id TK_lparen TK_rparen BLOCK             {$$ = new Function(@1.first_line,@1.first_column,$2,[],$6,$1 )}         |  
-    TK_void TK_id TK_lparen PARAMETERS TK_rparen BLOCK   {$$ = new Function(@1.first_line,@1.first_column,$2,$4,$6,$1 )} |
-    TK_void TK_id TK_lparen TK_rparen BLOCK              {$$ = new Function(@1.first_line,@1.first_column,$2,[],$6,$1 )} 
+    TK_types TK_id TK_lparen TK_rparen BLOCK             {$$ = new Function(@1.first_line,@1.first_column,$2,[],$5,$1 )} |  
+    TK_void TK_id TK_lparen TK_rparen BLOCK              {$$ = new Function(@1.first_line,@1.first_column,$2,[],$5,$1 )} |
+    TK_types TK_id TK_lparen PARAMETERS TK_rparen BLOCK  {$$ = new Function(@1.first_line,@1.first_column,$2,$4,$6,$1 )} |
+    TK_void TK_id TK_lparen PARAMETERS TK_rparen BLOCK   {$$ = new Function(@1.first_line,@1.first_column,$2,$4,$6,$1 )} 
     ;
 
 PARAMETERS:
