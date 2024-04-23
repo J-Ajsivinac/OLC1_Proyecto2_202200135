@@ -17,7 +17,7 @@ export class MExecute extends Instruction {
         const id = ast.getNewID()
         var dot = `node_${id} [label="EXECUTE"];\n`
         const call = this.callF.ast(ast)
-        dot += call.dot
+        dot += "\n" + call.dot + "\n"
         dot += `node_${id} -> node_${call.id}\n`
         return { dot: dot, id: id }
     }

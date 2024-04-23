@@ -105,7 +105,9 @@ export class CallFunction extends Expression {
             i++;
         });
         // dot += `\nnode_${id}_rpars[label=")" color="white" fontcolor="white"]`
-        dot += `\nnode_${id} -> node_${id + (i - 1)}_params`
+        if(this.params.length > 0){
+            dot += `\nnode_${id} -> node_${id + (i - 1)}_params`
+        }
         dot += `\nnode_${id}_rpars[label=")" color="white" fontcolor="white"]`
         dot += `\nnode_${id} -> node_${id}_rpars`
         return { dot: dot, id: id }

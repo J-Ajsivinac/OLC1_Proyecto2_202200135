@@ -26,11 +26,15 @@ export class Block extends Instruction {
         const id = ast.getNewID()
         var dot = `node_${id}[label="BLOCK" color="white" fontcolor="white"];`
         let value1: ReturnAST
+        dot += `node_${id}_lcorch[label="{" color="white" fontcolor="white"];`
+        dot += `node_${id} -> node_${id}_lcorch;`
         for (let i = 0; i < this.instructions.length; i++) {
             value1 = this.instructions[i].ast(ast)
             dot += '\n' + value1.dot
             dot += `\nnode_${id} -> node_${value1.id};`
         }
+        dot += `node_${id}_rcorch[label="}" color="white" fontcolor="white"];`
+        dot += `node_${id} -> node_${id}_rcorch;`
         return { dot: dot, id: id }
     }
 }

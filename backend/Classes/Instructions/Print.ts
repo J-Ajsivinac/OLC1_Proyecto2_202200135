@@ -15,6 +15,7 @@ export class Print extends Instruction {
         let value = this.toPrint ? this.toPrint.execute(env) : null;
         // console.log(value);
         if (this.type) {
+            console.log("ENTRO A PRINT CON ENDL")
             env.setPrint(value ? value.value + "\n" : "");
         } else {
             env.setPrint(value ? value.value : "");
