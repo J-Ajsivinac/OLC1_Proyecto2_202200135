@@ -19,11 +19,7 @@ content    ([^\n\"\\]?|\\.)
 \/\/.*                                  {}//comentario simple
 //DESCOMENTAR PARA COMENTARIOS MULTILINEA
 //[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]     {}//comentario multilínea
-// "int"                     return 'TK_dec_int';
-// "double"                  return 'TK_dec_double';
-// "char"                    return 'TK_dec_char';
-// "std::string"             return 'TK_dec_string';
-// "bool"                    return 'TK_dec_bool';
+
 (int|double|char|std\:\:string|bool)               return 'TK_types';
 "std::tostring"           return 'TK_tostring';
 "void"                    return 'TK_void';
@@ -128,6 +124,7 @@ const {For} = require('../Classes/Instructions/For')
 const {Block} = require('../Classes/Instructions/Block')
 const {If} = require('../Classes/Instructions/If')
 const {Function} = require('../Classes/Instructions/Function')
+const {MExecute} = require('../Classes/Instructions/MExecute')
 
 const {Switch} = require('../Classes/Instructions/Switch')
 const {Case} = require('../Classes/Instructions/Case')
@@ -165,7 +162,7 @@ INSTRUCTIONS:
     ;
 
 INSTRUCTION:
-    EXECUTE_STATEMENT|
+    EXECUTE_STATEMENT              {$$ = $1}|
     DECLARATION                    {$$ = $1}|
     ARRAY_NEW TK_semicolon         {$$ = $1}|
     ARRAY_ASSIGNMENT TK_semicolon  {$$ = $1}|
@@ -184,10 +181,8 @@ INSTRUCTION:
     error {errores.push(new Error($1.first_line, $1.first_column, TypesError.SINTACTICO,`No se esperaba ${yytext}`))}
     ;
 
-// INSTRUCTION: TK_execute EXPRESSION TK_semicolon         { $$ =  $2;};
-
 EXECUTE_STATEMENT:
-    TK_execute FUNCTION_CALL TK_semicolon
+    TK_execute FUNCTION_CALL TK_semicolon {$$ = new MExecute(@1.first_line,@1.first_column,$2)}
     ;
 
 DECLARATION:

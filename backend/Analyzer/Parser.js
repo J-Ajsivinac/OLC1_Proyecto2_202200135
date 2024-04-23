@@ -95,7 +95,7 @@ break;
 case 4:
 this.$ = [$$[$0]];
 break;
-case 6: case 10: case 11: case 12: case 15: case 39: case 40: case 43: case 44: case 45: case 46: case 47: case 48: case 49: case 50: case 68: case 90:
+case 5: case 6: case 10: case 11: case 12: case 15: case 39: case 40: case 43: case 44: case 45: case 46: case 47: case 48: case 49: case 50: case 68: case 90:
 this.$ = $$[$0]
 break;
 case 7: case 8: case 9: case 13: case 14: case 16: case 17: case 18: case 34: case 36: case 67:
@@ -109,6 +109,9 @@ this.$ = new Break(_$[$0-1].first_line,_$[$0-1].first_column)
 break;
 case 21:
 errores.push(new Error($$[$0].first_line, $$[$0].first_column, TypesError.SINTACTICO,`No se esperaba ${yytext}`))
+break;
+case 22:
+this.$ = new MExecute(_$[$0-2].first_line,_$[$0-2].first_column,$$[$0-1])
 break;
 case 23:
 this.$ = new InitID(_$[$0-4].first_line,_$[$0-4].first_column,$$[$0-4],$$[$0-3],$$[$0-1])
@@ -578,6 +581,7 @@ const {For} = require('../Classes/Instructions/For')
 const {Block} = require('../Classes/Instructions/Block')
 const {If} = require('../Classes/Instructions/If')
 const {Function} = require('../Classes/Instructions/Function')
+const {MExecute} = require('../Classes/Instructions/MExecute')
 
 const {Switch} = require('../Classes/Instructions/Switch')
 const {Case} = require('../Classes/Instructions/Case')
