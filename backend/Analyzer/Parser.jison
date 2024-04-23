@@ -178,7 +178,7 @@ INSTRUCTION:
     RETURN TK_semicolon            {$$ = $1}|
     TK_continue TK_semicolon       {$$ = new Continue(@1.first_line,@1.first_column) }|
     TK_break TK_semicolon          {$$ = new Break(@1.first_line,@1.first_column)}|
-    error {errores.push(new Error($1.first_line, $1.first_column, TypesError.SINTACTICO,`No se esperaba ${yytext}`))}
+    error {errores.push(new Error(@1.first_line, @1.first_column, TypesError.SINTACTICO,`No se esperaba ${yytext}`))}
     ;
 
 EXECUTE_STATEMENT:

@@ -108,7 +108,7 @@ case 20:
 this.$ = new Break(_$[$0-1].first_line,_$[$0-1].first_column)
 break;
 case 21:
-errores.push(new Error($$[$0].first_line, $$[$0].first_column, TypesError.SINTACTICO,`No se esperaba ${yytext}`))
+errores.push(new Error(_$[$0].first_line, _$[$0].first_column, TypesError.SINTACTICO,`No se esperaba ${yytext}`))
 break;
 case 22:
 this.$ = new MExecute(_$[$0-2].first_line,_$[$0-2].first_column,$$[$0-1])
