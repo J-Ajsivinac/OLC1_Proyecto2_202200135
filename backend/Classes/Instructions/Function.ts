@@ -14,7 +14,7 @@ export class Function extends Instruction {
         this.types = convertToType(tempType)
     }
     public execute(env: Environment) {
-        console.log("-Funcion-", this.id)
+        // console.log("-Funcion-", this.id)
         env.saveFunction(this.id, this)
     }
 

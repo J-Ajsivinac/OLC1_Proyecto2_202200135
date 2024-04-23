@@ -104,7 +104,8 @@ export class Environment {
     public getValueArray(id: string, i: number): Symbol | null {
         let env: Environment | null = this;
         while (env) {
-            // console.log("tttttt", env.ids, id.toLowerCase())
+            console.log("tttttt", env.ids, id.toLowerCase())
+            console.log("parametros de busqueda", id, i)
             if (env.ids.has(id.toLowerCase())) {
                 let symbol: Symbol = env.ids.get(id.toLowerCase())!
                 return symbol.value[i]
@@ -140,10 +141,10 @@ export class Environment {
             return 'char'
         }
         if (type === Types.STRING) {
-            return 'String'
+            return 'string'
         }
         if (type === Types.ARRAY) {
-            return 'Array'
+            return 'array'
         }
         return 'NULL'
     }

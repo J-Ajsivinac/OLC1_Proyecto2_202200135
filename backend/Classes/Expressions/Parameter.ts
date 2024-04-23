@@ -13,6 +13,9 @@ export class Parameter extends Expression {
     }
 
     public execute(env: Environment): ReturnType {
+        if (this.isArray) {
+            return { value: this.id, type: Types.ARRAY }
+        }
         return { value: this.id, type: this.type };
     }
 

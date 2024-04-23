@@ -5,20 +5,20 @@ import { AST, ReturnAST } from "../Utils/AST";
 import { TypesInstruction } from "../Utils/TypesIns";
 
 export class MExecute extends Instruction {
-    constructor(line: number, column: number, private CallF: Expression) {
+    constructor(line: number, column: number, private callF: Expression) {
         super(line, column, TypesInstruction.EXECUTE)
     }
 
     public execute(env: Environment) {
-        this.CallF.execute(env)
+        this.callF.execute(env)
     }
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node${id} [label="Execute"];\n`
-        const call = this.CallF.ast(ast)
+        var dot = `node_${id} [label="EXECUTE"];\n`
+        const call = this.callF.ast(ast)
         dot += call.dot
-        dot += `node${id} -> node${call.id}\n`
+        dot += `node_${id} -> node_${call.id}\n`
         return { dot: dot, id: id }
     }
 }

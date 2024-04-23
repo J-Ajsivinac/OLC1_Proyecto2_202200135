@@ -31,14 +31,13 @@ export class Controller {
                 console.log("Instruction", instruction, "-")
                 try {
 
-
                     instruction.execute(global)
                     resultAST = instruction.ast(astTree)
                     dotAST += '\n' + resultAST.dot
                     dotAST += `\nnode_r -> node_${resultAST.id};`
                     // console.log(getErrorsString())
                     // console.log(getConsoleString())
-                    global.printSymTab()
+                    // global.printSymTab()
                 } catch (err) {
                     console.error(err)
                     res.json({

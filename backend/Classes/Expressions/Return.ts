@@ -6,16 +6,16 @@ import { TypesExp } from "../Utils/TypesExp";
 
 export class Return extends Expression {
     private type: Types = Types.NULL;
-    constructor(line: number, column: number, public value: Expression,) {
+    constructor(line: number, column: number, public value: Expression) {
         super(line, column, TypesExp.RETURN);
     }
     public execute(env: Environment): ReturnType {
-        if (!this.value) {
-            return { value: null, type: Types.NULL }
+        if (this.value) {
+            let value: ReturnType = this.value.execute(env);
+            this.type = value.type;
+            return { value: value.value, type: this.type };
         }
-        let value: ReturnType = this.value.execute(env);
-        this.type = value.type;
-        return { value: value.value, type: value.type }
+        return { value: this.typeExp, type: this.type }
     }
 
     public ast(ast: AST): ReturnAST {
