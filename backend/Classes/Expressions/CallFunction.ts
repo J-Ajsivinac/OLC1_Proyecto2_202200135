@@ -15,9 +15,8 @@ export class CallFunction extends Expression {
     }
     public execute(env: Environment): ReturnType | any {
         const func: Function | null = env.getFunction(this.id);
-        // console.log("Funcion", this.id, func)
         if (!func) {
-            env.setErrore(this.line, this.column, `La función ${this.id} no existe`)
+            env.setErrore(this.line, this.column, `La función ${this.id} no existe en este contexto`)
             return
         }
 
@@ -31,17 +30,12 @@ export class CallFunction extends Expression {
 
         var value: ReturnType
         var param: Parameter
-        console.log("size", this.params.length, func.params.length)
+        // console.log("size", this.params.length, func.params.length)
         for (let i = 0; i < this.params.length; i++) {
-            console.log(
-                this.params[i], "---------------", func.params[i]
-            )
             value = this.params[i].execute(env)
             param = func.params[i]
 
             var tempTyp = value.type
-            
-            console.log("Param", value, "-", "-", param)
 
             if (value.type === param.type || (param.isArray && value.type === Types.STRING)) {
                 if (envFunc.ids.has(param.id.toLowerCase())) {
@@ -50,7 +44,7 @@ export class CallFunction extends Expression {
                 }
 
                 if (param.isArray && value.type === Types.STRING) {
-                    console.log("SE HA GUARDADO LA VARIABLE", param.id, tempTyp, value.value, param.line, param.column)
+                    // console.log("SE HA GUARDADO LA VARIABLE", param.id, tempTyp, value.value, param.line, param.column)
                     env.saveArray(param.id, tempTyp, value.value, param.line, param.column)
                     symbolTable.push(param.line, param.column + 1, param.id.toLowerCase(), 'Variable', env.getTypeOf(value.type), envFunc.name)
                     continue
@@ -64,10 +58,8 @@ export class CallFunction extends Expression {
                 env.setErrore(this.line, this.column, `El parametro ${param.id} no es del tipo ${env.getTypeOf(param.type)}`)
             }
         }
-        // param.isArray = false<
-        console.log("Execute CALL", "--------->")
         let execute: any = func.block.execute(envFunc)
-        console.log("Execute", execute)
+        // console.log("Execute", execute)
         if (execute) {
             if (execute.value === TypesExp.RETURN) {
                 return

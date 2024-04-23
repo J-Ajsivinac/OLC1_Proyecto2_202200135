@@ -16,6 +16,7 @@ export function getErrorsString(): string {
     let result: string = "";
     console.log(errores)
     errores.forEach(element => {
+        console.log(element)
         result += element.toString();
     });
     return result;
@@ -24,5 +25,5 @@ export function getErrorsString(): string {
 
 export function resetOuts() {
     printConsole = [];
-    errores = [];
+    errores.splice(0, errores.length)
 }

@@ -141,13 +141,8 @@ export class InitMatrix extends Instruction {
                     }
                     // dot += ``
                     dot += `\nnode_${id}_${i}_asign -> node_${id}_${i}_${index2}_values;\n`
-                    //conectar nodos
-
-
                     //fin datos
 
-                    // dot += value.dot
-                    //conectar nodos
                     dot += `\nnode_${id}_${i}_values -> node_${id}_${i - 1}_values;`
                     dot += `\nnode_${id}_${i}_values -> node_${id}_${i}_comma;\n`
                     dot += `node_${id}_${i}_values -> node_${id}_${i}_value;\n`

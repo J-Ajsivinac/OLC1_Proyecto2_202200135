@@ -19,7 +19,7 @@ export class AccessMatrix extends Expression {
         const value: Symbol | null = env.getValueMatrix(this.id, index.value, index2.value)
         if (!value) {
             errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se encontro el valor en el arreglo ${this.id} en la posicion ${index.value}`))
-            console.log(`Error: No se encontro el valor en el arreglo ${this.id} en la posicion ${index.value}`)
+            // console.log(`Error: No se encontro el valor en el arreglo ${this.id} en la posicion ${index.value}`)
             return { value: 'NULL', type: 0 }
         }
         this.types = value.type
@@ -47,7 +47,7 @@ export class AccessMatrix extends Expression {
         dot += `node_${id} -> node_${id}_lparen;\n`
         dot += `node_${id} -> node_${index2.id};\n`
         dot += `node_${id} -> node_${id}_rparen;\n`
-        
+
         return { dot: dot, id: id }
     }
 

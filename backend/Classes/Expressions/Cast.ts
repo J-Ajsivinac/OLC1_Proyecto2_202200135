@@ -4,6 +4,7 @@ import { AST, ReturnAST } from "../Utils/AST";
 import { Error, TypesError } from "../Utils/Error";
 import { errores } from "../Utils/Outs";
 import { ReturnType, Types } from "../Utils/Types";
+import { TypeError } from "../Utils/TypesError";
 import { TypesExp } from "../Utils/TypesExp";
 
 export class Cast extends Expression {
@@ -25,7 +26,7 @@ export class Cast extends Expression {
             case "char":
                 return this.toChar();
             default:
-                // errores.push(new Error(this.line, this.column, Types.SINTACTICO, `No se puede castear a ${targetType}`));
+                errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede castear a ${targetType}`));
                 return { value: 'NULL', type: Types.NULL };
         }
     }

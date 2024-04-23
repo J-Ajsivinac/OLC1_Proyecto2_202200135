@@ -19,7 +19,7 @@ export class AccessArray extends Expression {
         const value: Symbol | null = env.getValueArray(this.id, index.value)
         if (!value) {
             errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se encontro el valor en el arreglo ${this.id} en la posicion ${index.value}`))
-            console.log(`Error: No se encontro el valor en el arreglo ${this.id} en la posicion ${index.value}`)
+            // console.log(`Error: No se encontro el valor en el arreglo ${this.id} en la posicion ${index.value}`)
             return { value: 'NULL', type: 0 }
         }
         this.types = value.type

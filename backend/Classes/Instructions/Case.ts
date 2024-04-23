@@ -20,7 +20,7 @@ export class Case extends Instruction {
         let caseE: ReturnType = this.caseEvaluated
         let case_: ReturnType = this.exp.execute(envCase)
         envCase.name = `${env.name} case ${case_.value}`
-        console.log("Case", case_.value, caseE.value)
+        // console.log("Case", case_.value, caseE.value)
         if (case_.value === caseE.value) {
             let block: ReturnType = this.block.execute(envCase)
             if (block) return block

@@ -2,8 +2,11 @@ import { Expression } from "../Abstracts/Expression";
 import { Environment } from "../Env/Environment";
 import { Symbol } from "../Env/Symbol";
 import { AST, ReturnAST } from "../Utils/AST";
+import { Error, TypesError } from "../Utils/Error";
+import { errores } from "../Utils/Outs";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
+import { Return } from "./Return";
 
 export class AccessID extends Expression {
     private type: Types = Types.NULL
@@ -14,7 +17,8 @@ export class AccessID extends Expression {
     public execute(env: Environment): ReturnType {
         const value: Symbol | null = env.getValue(this.id);
         if (!value) {
-            throw new Error(`Identifier ${this.id} doesn't exist`);
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se encontro el valor de ${this.id}`))
+            return { value: 'NULL', type: 0 }
         }
         if (value.type === Types.ARRAY) {
             this.type = Types.STRING

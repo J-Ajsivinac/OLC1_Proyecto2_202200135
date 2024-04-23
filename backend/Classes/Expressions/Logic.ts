@@ -1,6 +1,8 @@
 import { Expression } from "../Abstracts/Expression";
 import { Environment } from "../Env/Environment";
 import { AST, ReturnAST } from "../Utils/AST";
+import { Error, TypesError } from "../Utils/Error";
+import { errores } from "../Utils/Outs";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 
@@ -20,6 +22,7 @@ export class Logic extends Expression {
             case '!':
                 return this.not()
             default:
+                errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `El operador ${this.sign} no es valido`))
                 return { value: -1, type: Types.NULL }
         }
     }

@@ -133,7 +133,8 @@ export class Arithmetic extends Expression {
             val2 = this.getValue(val2)
             if (val2.value === 0) {
                 //error
-                console.log('Division por 0')
+                //console.log('Division por 0')
+                errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Division por 0`));
                 return { value: -1, type: Types.NULL }
             }
             result = parseFloat(val1.value) / parseFloat(val2.value)

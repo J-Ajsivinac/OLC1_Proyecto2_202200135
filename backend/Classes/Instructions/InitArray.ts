@@ -20,10 +20,8 @@ export class InitArray extends Instruction {
         if (this.values) {
             for (let i = 0; i < this.values.length; i++) {
                 this.values[i] = this.values[i].execute(env)
-                console.log("Values --> ", this.values[i])
+
             }
-            console.log("Values xd --> ", this.values)
-            // console.log("Tipo --> ", this.type)
             env.saveArray(this.id, this.type, this.values, this.line, this.column)
         } else {
             let length: ReturnType = this.size.execute(env)

@@ -4,6 +4,8 @@ import { Environment } from "../Env/Environment";
 import { AST, ReturnAST } from "../Utils/AST";
 import { convertToType } from "../Utils/ConvertTypes";
 import { getValueDefaultValue } from "../Utils/Defaults";
+import { Error, TypesError } from "../Utils/Error";
+import { errores } from "../Utils/Outs";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
 
@@ -20,7 +22,8 @@ export class InitID extends Instruction {
             const val: ReturnType = this.value.execute(env)
             // console.log(val.type, this.type, val.value)
             if (val.type !== this.type) {
-                console.log(`Error: no se puede asignar el valor de tipo ${val.type} a la variable de tipo ${this.type}`)
+                // console.log(`Error: no se puede asignar el valor de tipo ${val.type} a la variable de tipo ${this.type}`)
+                errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede asignar el valor de tipo ${val.type} a la variable de tipo ${this.type}`))
                 return
             }
             for (let id of this.ids) {

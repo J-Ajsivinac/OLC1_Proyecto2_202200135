@@ -3,6 +3,8 @@ import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
 import { Primitive } from "../Expressions/Primitive";
 import { AST, ReturnAST } from "../Utils/AST";
+import { Error, TypesError } from "../Utils/Error";
+import { errores } from "../Utils/Outs";
 import { ReturnType } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
 
@@ -16,7 +18,10 @@ export class AsignMatrix extends Instruction {
         let index2: ReturnType = this.index2.execute(env)
         let value: ReturnType = this.value.execute(env)
         let primitive = new Primitive(this.line, this.column, value.value, value.type)
-        env.reasignMatrix(this.id, index.value, index2.value, primitive)
+        let resp = env.reasignMatrix(this.id, index.value, index2.value, primitive)
+        if (!resp) {
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Variable ${this.id} no encontrada`))
+        }
     }
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()

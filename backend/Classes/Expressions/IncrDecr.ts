@@ -2,6 +2,8 @@ import { Expression } from "../Abstracts/Expression";
 import { Environment } from "../Env/Environment";
 import { Symbol } from "../Env/Symbol";
 import { AST, ReturnAST } from "../Utils/AST";
+import { Error, TypesError } from "../Utils/Error";
+import { errores } from "../Utils/Outs";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 
@@ -18,15 +20,26 @@ export class IncrDecr extends Expression {
 
         switch (this.sign) {
             case '++':
+                if (value.type !== Types.INT && value.type !== Types.DOUBLE) {
+                    errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede incrementar un valor de tipo ${value.type}`))
+                    return { value: value.value, type: value.type }
+                }
                 value.value++
                 break
             case '--':
+                if (value.type !== Types.INT && value.type !== Types.DOUBLE) {
+                    errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede decrementar un valor de tipo ${value.type}`))
+                    return { value: value.value, type: value.type }
+                }
                 value.value--
                 break
         }
 
-        env.reasignID(this.id, { value: value.value, type: Types.INT })
-        return { value: value?.value, type: Types.INT }
+        let resp = env.reasignID(this.id, { value: value.value, type: value.type })
+        if (!resp) {
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede reasignar el valor de ${this.id} de tipo ${value.type} a ${value.value}`))
+        }
+        return { value: value?.value, type: value.type }
     }
 
     public ast(ast: AST): ReturnAST {

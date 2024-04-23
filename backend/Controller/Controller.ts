@@ -33,7 +33,7 @@ export class Controller {
             for (let instruction of ast) {
                 try {
                     if (instruction instanceof Function || instruction instanceof InitID || instruction instanceof InitArray || instruction instanceof InitMatrix) {
-                        console.log(instruction)
+                        // console.log(instruction)
                         instruction.execute(global)
                         resultAST = instruction.ast(astTree)
                         dotAST += '\n' + resultAST.dot
@@ -45,18 +45,19 @@ export class Controller {
                         dotAST += `\nnode_r -> node_${resultAST.id};`
                     }
                 } catch (err) {
-                    console.log(err)
+                    // console.log(err)
                 }
             }
             if (main) {
-                console.log("hay main", main)
+                // console.log("hay main", main)
                 main.execute(global)
             }
             dotAST += '\n}'
             res_dotAST = dotAST
             res.json({
                 console: getConsoleString(),
-                ast: dotAST
+                ast: dotAST,
+                errors: getErrorsString()
             })
         } catch (err) {
             res.json({

@@ -29,6 +29,7 @@ export class Relational extends Expression {
             case '<=':
                 return this.lessEqual()
             default:
+                errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `El operador ${this.sign} no es valido`))
                 return { value: -1, type: Types.NULL }
         }
     }

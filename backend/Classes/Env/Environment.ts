@@ -16,7 +16,10 @@ export class Environment {
         if (!env.ids.has(id)) {
             env.ids.set(id.toLowerCase(), new Symbol(value, id, type, undefined));
             symbolTable.push(line, column, id.toLowerCase(), 'Variable', this.getTypeOf(type), env.name);
+        } else {
+            errores.push(new Error(line, column, TypesError.SEMANTICO, `Variable ${id} ya existe en el entorno actual`))
         }
+
     }
 
     public getValue(id: string): Symbol | null {
@@ -36,13 +39,18 @@ export class Environment {
         while (env) {
             if (env.ids.has(id.toLowerCase())) {
                 let symbol: Symbol = env.ids.get(id.toLowerCase())!
+                if (symbol.type !== value.type) {
+                    // this.setErrore(, , `Variable ${id} no es de tipo ${this.getTypeOf(value.value)}`)
+                    // console.log(`Error: Variable ${id} no es de tipo ${this.getTypeOf(value.typeValue)}`)
+                    return false
+                }
                 symbol.value = value.value
                 env.ids.set(id.toLowerCase(), symbol)
                 return true
             }
             env = env.prev
         }
-        console.log(`Error: Variable ${id} not found`)
+        // console.log(`Error: Variable ${id} no encontrada`)
         return false
     }
 
@@ -55,7 +63,7 @@ export class Environment {
                 let temp: ReturnType = symbol.value[index]
                 if (temp.type !== value.typeValue) {
                     this.setErrore(value.line, value.column, `Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
-                    console.log(`Error: Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
+                    // console.log(`Error: Variable ${id} no es de tipo ${this.getTypeOf(value.typeValue)}`)
                     return false
 
                 }
@@ -65,7 +73,7 @@ export class Environment {
             }
             env = env.prev
         }
-        this.setErrore(value.line, value.column, `Variable ${id} not found`)
+        this.setErrore(value.line, value.column, `Variable ${id} no encontrada`)
         return false
     }
 
@@ -77,7 +85,7 @@ export class Environment {
                 let temp: ReturnType = symbol.value[i][j]
                 if (temp.type !== value.typeValue) {
                     this.setErrore(value.line, value.column, `Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
-                    console.log(`Error: Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
+                    // console.log(`Error: Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
                     return false
 
                 }
@@ -94,7 +102,7 @@ export class Environment {
     public saveArray(id: string, type: Types, values: any, line: number, column: number) {
         let env: Environment = this;
         if (env.ids.has(id.toLowerCase())) {
-            console.log(`Error: Variable ${id} already exists`)
+            this.setErrore(line, column, `Variable ${id} ya existe en el entorno actual`)
             return
         }
         env.ids.set(id.toLowerCase(), new Symbol(values, id, Types.ARRAY, type));
@@ -104,8 +112,6 @@ export class Environment {
     public getValueArray(id: string, i: number): Symbol | null {
         let env: Environment | null = this;
         while (env) {
-            console.log("tttttt", env.ids, id.toLowerCase())
-            console.log("parametros de busqueda", id, i)
             if (env.ids.has(id.toLowerCase())) {
                 let symbol: Symbol = env.ids.get(id.toLowerCase())!
                 return symbol.value[i]
@@ -160,10 +166,10 @@ export class Environment {
     public saveFunction(id: string, func: Function) {
         let env: Environment = this;
         if (env.functions.has(id.toLowerCase())) {
-            this.setErrore(func.line, func.column, `La función ${id} ya existe`)
+            this.setErrore(func.line, func.column, `La función ${id} ya existe en el entorno actual`)
             return
         }
-        console.log("se guardo la funcion", id.toLowerCase())
+        // console.log("se guardo la funcion", id.toLowerCase())
         env.functions.set(id.toLowerCase(), func);
         let typeFunc: string = this.getTypeOfFunc(func.types)
         symbolTable.push(func.line, func.column + 1, id.toLowerCase(), 'Function', typeFunc == 'void' ? 'Método' : 'Función', env.name);

@@ -2,6 +2,8 @@ import { Expression } from "../Abstracts/Expression";
 import { Instruction } from "../Abstracts/Instruction"
 import { Environment } from "../Env/Environment";
 import { AST, ReturnAST } from "../Utils/AST";
+import { Error, TypesError } from "../Utils/Error";
+import { errores } from "../Utils/Outs";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
 
@@ -12,8 +14,10 @@ export class AsignID extends Instruction {
 
     public execute(env: Environment) {
         const val: ReturnType = this.value.execute(env)
-        // console.log(val);
-        env.reasignID(this.id, val)
+        let resp = env.reasignID(this.id, val)
+        if (!resp) {
+            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Variable ${this.id} no encontrada`))
+        }
     }
 
     public ast(ast: AST): ReturnAST {
