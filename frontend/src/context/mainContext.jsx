@@ -15,6 +15,7 @@ export const useMain = () => {
 export const MainProvider = ({ children }) => {
     const [value, setValue] = useState("");
     const [consolePrint, setConsolePrint] = useState("");
+    const [error, setError] = useState("")
 
     const interpreter = async () => {
         try {
@@ -24,13 +25,14 @@ export const MainProvider = ({ children }) => {
             const res = await runInterpreter(valuetoSend)
             console.log(res.data)
             setConsolePrint(res.data.console)
+            setError(res.data.errors)
         } catch (error) {
             console.error(error)
         }
     }
 
     return (
-        <MainContext.Provider value={{ value, setValue, interpreter, consolePrint, setConsolePrint }}>
+        <MainContext.Provider value={{ value, setValue, interpreter, consolePrint, setConsolePrint, error }}>
             {children}
         </MainContext.Provider>
     );

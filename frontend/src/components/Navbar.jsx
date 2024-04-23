@@ -4,6 +4,7 @@ import { FaSquarePlus, FaFolderClosed, FaFloppyDisk, FaPlay, FaFile } from "reac
 import { Button } from './Button';
 import Modal from './Modal'
 import { useMain } from "../context/mainContext";
+// import { ModalReport } from "./ModalReport";
 
 export function Navbar() {
     const { interpreter } = useMain();
@@ -25,6 +26,7 @@ export function Navbar() {
                         {<FaPlay size={24} />}
                     </button>
                     <Modal opciones={opciones} name="Reportes" position={66} Icon={FaFile} />
+                    {/* <ModalReport /> */}
                 </div>
             </div>
         </nav >
