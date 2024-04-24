@@ -6,7 +6,7 @@ import { tokyoNight } from '@uiw/codemirror-theme-tokyo-night'
 import { PiWarningCircleFill } from "react-icons/pi";
 import { FaChevronDown } from "react-icons/fa6";
 import { useMain } from "../context/mainContext";
-// import { Graphviz } from 'graphviz-react';
+import { Toaster } from 'sonner';
 
 function Index() {
     // const error = "---> Este es un error de ejemplo  \n---> Error No. 2";
@@ -17,16 +17,6 @@ function Index() {
         setValue(val);
     }, []);
 
-    // useEffect(() => {
-    //     codeMirror.current = consolePrint;
-    //     console.log("consolePrint")
-    //     setConsolePrint("")
-    // }, [consolePrint])
-
-
-    // const handlerClick = () => {
-    //     console.log(value)
-    // }
     return (
         <>
             <div className='flex h-screen bg-bg-dark'>
@@ -68,13 +58,7 @@ function Index() {
                     </div>
                 </div>
             </div >
-            {/* <Graphviz dot={`graph {
-  grandparent -- "parent A";
-  child;
-  "parent B" -- child;
-  grandparent --  "parent B";
-}`} options={{zoom:true}} />
-        </> */}
+            <Toaster position="top-center" richColors theme="dark" />
         </>
     )
 }
