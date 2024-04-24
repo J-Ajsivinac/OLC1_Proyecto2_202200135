@@ -3,25 +3,24 @@
     let {TypesError} = require('../Classes/Utils/Error')
     let {errores} = require('../Classes/Utils/Outs')
 %}
-
-%lex // Inicia parte léxica
-
+//Analizador léxico
+%lex 
 %options case-insensitive
 
 content    ([^\n\"\\]?|\\.)
 
 %%
 
-\s+                                 		//ignora espacios
-\n             								//ignora saltos de línea
-[\r\t]+                             	    //ignora tabulaciones
+\s+                                 	{}	//ignora espacios
+\n             							{}	//ignora saltos de línea
+[\r\t]+                             	{}    //ignora tabulaciones
 
 \/\/.*                                  {}//comentario simple
-//DESCOMENTAR PARA COMENTARIOS MULTILINEA
-//[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]     {}//comentario multilínea
+
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]     {}//comentario multilínea
 
 (int|double|char|std\:\:string|bool)               return 'TK_types';
-"std::tostring"           return 'TK_tostring';
+"std::tostring"           {return 'TK_tostring';}
 "void"                    return 'TK_void';
 "endl"                    return 'TK_endl';
 "pow"                     return 'TK_pow';
