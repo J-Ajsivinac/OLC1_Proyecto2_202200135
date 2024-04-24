@@ -1,0 +1,242 @@
+<INIT>::=
+    <INSTRUCTIONS> 
+    
+
+<INSTRUCTIONS>::=
+    <INSTRUCTIONS> <INSTRUCTION> |
+    <INSTRUCTION>              
+    
+
+<INSTRUCTION>::=
+    <EXECUTE_STATEMENT>              |
+    <DECLARATION>                    |
+    <ARRAY_NEW> TK_semicolon         |
+    <ARRAY_ASSIGNMENT> TK_semicolon  |
+    <ASSIGNMENT> TK_semicolon        |
+    <IF>                             |
+    <LOOP>                           |
+    <SWITCH>                         |
+    <PRINT> TK_semicolon             |
+    <NATIVE_FUNCTIONS> TK_semicolon  |
+    <FUNCTION>                       |
+    <FUNCTION_CALL>   TK_semicolon   |
+    <INCRE_AND_DECRE> TK_semicolon   |
+    <RETURN> TK_semicolon            |
+    TK_continue TK_semicolon       |
+    TK_break TK_semicolon          
+    
+
+<EXECUTE_STATEMENT>::=
+    TK_execute <FUNCTION_CALL> TK_semicolon 
+    
+
+<DECLARATION>::=
+    TK_types IDS TK_asign <EXPRESSION> TK_semicolon          |
+    TK_types IDS TK_semicolon                      
+    
+
+<PRINT>::=
+    TK_cout TK_double_less <EXPRESSION>                                 |
+    TK_cout TK_double_less <EXPRESSION> TK_double_less TK_endl         
+    
+
+
+<IDS>::= 
+    <IDS> TK_comma TK_id       | 
+    TK_id                
+    
+
+<ASSIGNMENT>::=
+    TK_id TK_asign <EXPRESSION> 
+    
+
+<ARRAY_NEW>::=
+    TK_types TK_id TK_lbracket TK_rbracket TK_asign TK_new TK_types <ARRAY_BRACKETS>                                               |
+    TK_types TK_id TK_lbracket TK_rbracket TK_lbracket TK_rbracket TK_asign TK_new TK_types <ARRAY_BRACKETS> <ARRAY_BRACKETS> |
+    TK_types TK_id TK_lbracket TK_rbracket TK_asign <ASIGN_ARRAY>                                                                  |
+    TK_types TK_id TK_lbracket TK_rbracket TK_lbracket TK_rbracket TK_asign <ASIGN_ARRAY>  
+    
+
+<ASIGN_ARRAY>::=
+    TK_lbracket <VALUES_ARRAY> TK_rbracket   |
+    <EXPRESSION> TK_dot TK_c_str TK_lparen TK_rparen   
+    
+
+<ARRAY_BRACKETS>::=
+    TK_lbracket <EXPRESSION> TK_rbracket  
+    
+
+<VALUES_ARRAY>::=
+    <VALUES_ARRAY> TK_comma <VALUE_ARRAY>  |
+    <VALUE_ARRAY>                       
+    
+
+<VALUE_ARRAY>::=
+    <EXPRESSION>           |
+    <ASIGN_ARRAY>         
+    
+
+<ARRAY_ASSIGNMENT>::=
+    TK_id TK_lbracket EXPRESSION TK_rbracket TK_asign EXPRESSION  |
+    TK_id TK_lbracket EXPRESSION TK_rbracket TK_lbracket EXPRESSION TK_rbracket TK_asign EXPRESSION 
+    
+
+<EXPRESSION>::=
+    <ARITHMETICS>            |
+    <LOGICAL_EXPRESSION>     |
+    <CASTING>                |
+    <TERNARY>                |
+    <ACCESARRAY>             |
+    <FUNCTION_CALL>          |
+    <INCRE_AND_DECRE>        |
+    <NATIVE_FUNCTION>        |
+    TK_id                  |
+    TK_integer             | 
+    TK_double              |
+    TK_char                |
+    TK_string              |
+    TK_true                |
+    TK_false              
+    
+
+<ACCESARRAY>::=
+    TK_id TK_lbracket <EXPRESSION> TK_rbracket    |
+    TK_id TK_lbracket <EXPRESSION> TK_rbracket TK_lbracket <EXPRESSION> TK_rbracket             
+    
+
+<TERNARY>::=
+    <EXPRESSION> TK_question <EXPRESSION> TK_colon <EXPRESSION> 
+    
+
+<ARITHMETICS>::=
+    <EXPRESSION> TK_plus <EXPRESSION>             |
+    <EXPRESSION> TK_minus <EXPRESSION>            |
+    <EXPRESSION> TK_mul <EXPRESSION>              |
+    <EXPRESSION> TK_div <EXPRESSION>              |
+    <EXPRESSION> TK_mod <EXPRESSION>              |
+    TK_minus <EXPRESSION> %prec UMINUS          |
+    TK_lparen <EXPRESSION> TK_rparen            |
+    POW                                                                                             
+    
+
+POW::=
+    TK_pow TK_lparen <EXPRESSION> TK_comma <EXPRESSION> TK_rparen 
+    
+
+<LOGICAL_EXPRESSION>::=
+    <EXPRESSION> TK_equal <EXPRESSION>                        |
+    <EXPRESSION> TK_notequal <EXPRESSION>                     |
+    <EXPRESSION> TK_less <EXPRESSION>                         |
+    <EXPRESSION> TK_greater <EXPRESSION>                      |
+    <EXPRESSION> TK_less_equal <EXPRESSION>                   |
+    <EXPRESSION> TK_greater_equal <EXPRESSION>                |
+    <EXPRESSION> TK_and <EXPRESSION>                          |
+    <EXPRESSION> TK_or <EXPRESSION>                           |
+    TK_not <EXPRESSION>                                                           
+    
+
+<CASTING>::=
+    TK_lparen TK_types TK_rparen <EXPRESSION> %prec UMINUS   
+    
+
+<IF>::=
+    TK_if TK_lparen <EXPRESSION> TK_rparen <BLOCK>                 |
+    TK_if TK_lparen <EXPRESSION> TK_rparen <BLOCK> TK_else <BLOCK>   |
+    TK_if TK_lparen <EXPRESSION> TK_rparen <BLOCK> TK_else <IF>     
+    
+
+<BLOCK>::=
+    TK_lbrace <INSTRUCTIONS> TK_rbrace   |
+    TK_lbrace TK_rbrace              
+    
+
+<LOOP>::=
+    TK_while TK_lparen <EXPRESSION> TK_rparen <BLOCK>                     |
+    TK_do <BLOCK> TK_while TK_lparen <EXPRESSION> TK_rparen              |
+    TK_for TK_lparen <FOR_LOOP> TK_rparen <BLOCK>            
+    
+
+<FOR_LOOP>::=
+    <ID_FOR> TK_semicolon <EXPRESSION> TK_semicolon <UPDATE>  
+    
+
+<ID_FOR>::=
+    TK_types TK_id TK_asign <EXPRESSION>  |
+    <ASSIGNMENT> 
+    
+
+<UPDATE>::=
+    INCRE_AND_DECRE   |
+    <ASSIGNMENT>       
+    
+
+<INCRE_AND_DECRE>::=
+    TK_id TK_incr  |
+    TK_id TK_decr  
+    
+
+<SWITCH>::=
+    TK_switch TK_lparen <EXPRESSION> TK_rparen TK_lbrace <CASES_BLOCK> TK_rbrace 
+    
+
+<CASES_BLOCK>::=
+    <CASES> DEFAULT         |
+    <CASES>          |
+    <DEFAULT>       
+    
+
+<CASES>::=
+    <CASES> <CASE>  |
+    <CASE>       
+    
+
+CA<SE::=
+    TK_case <EXPRESSION> TK_colon <INSTRUCTIONS>      |
+    TK_case <EXPRESSION> TK_colon       
+    
+
+<DEFAULT>::=
+    TK_default TK_colon <INSTRUCTIONS>  |
+    TK_default TK_colon       
+    
+
+<RETURN>::=
+    TK_return <EXPRESSION>  |
+    TK_return            
+    
+
+<FUNCTION>::=
+    TK_types TK_id TK_lparen TK_rparen <BLOCK>              |  
+    TK_void TK_id TK_lparen TK_rparen <BLOCK>               |
+    TK_types TK_id TK_lparen <PARAMETERS> TK_rparen <BLOCK>   |
+    TK_void TK_id TK_lparen <PARAMETERS> TK_rparen <BLOCK>    
+    
+
+<PARAMETERS>::=
+    <PARAMETERS> TK_comma <PARAMETER>   |
+    <PARAMETER>                      
+    
+
+<PARAMETER>::=
+    TK_types TK_id  |
+    TK_types TK_id TK_lbracket TK_rbracket  
+    
+
+<FUNCTION_CALL>::=
+    TK_id TK_lparen <PARAMETERS_CALL> TK_rparen |
+    TK_id TK_lparen TK_rparen                 
+    
+
+<PARAMETERS_CALL>::=
+    <PARAMETERS_CALL> TK_comma <EXPRESSION>  |
+    <EXPRESSION>                          
+    
+
+<NATIVE_FUNCTION>::=
+    TK_tolower TK_lparen <EXPRESSION> TK_rparen       |
+    TK_toupper TK_lparen <EXPRESSION> TK_rparen       |
+    TK_round TK_lparen <EXPRESSION> TK_rparen         |
+    TK_typeof TK_lparen <EXPRESSION> TK_rparen        |
+    TK_tostring TK_lparen <EXPRESSION> TK_rparen      |
+    <EXPRESSION> TK_dot TK_length TK_lparen TK_rparen 
+    
