@@ -32,7 +32,7 @@ export class Natives extends Expression {
             case 'tostring':
                 return this.getString(value);
             case 'c_str':
-                return this.getCStr(value);
+                return { value: this.getCStr(value.value), type: Types.ARRAY }
             default:
                 return { value: 'NULL', type: Types.NULL }
         }
@@ -101,18 +101,15 @@ export class Natives extends Expression {
         return { value: 'NULL', type: Types.NULL }
     }
 
-    getCStr(value: ReturnType): ReturnType {
-        if (value.type === Types.STRING) {
-            // let array = value.value.split('')
-            // return { value: array, type: Types.ARRAY }
-            let charArray: Primitive[] = []
-            for (let char of value.value) {
-                charArray.push(new Primitive(this.line, this.column, char, Types.CHAR))
-            }
-            return { value: charArray, type: Types.CHAR }
+    getCStr(value: string) {
+
+        // let array = value.value.split('')
+        let charArray: ReturnType[] = []
+        for (let character of value) {
+            charArray.push({ value: character, type: Types.CHAR })
         }
-        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede obtener el valor c_str del tipo de dato ${value.type}`));
-        return { value: 'NULL', type: Types.NULL }
+        return charArray
+
     }
 
     public ast(ast: AST): ReturnAST {

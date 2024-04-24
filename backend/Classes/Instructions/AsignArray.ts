@@ -14,6 +14,7 @@ export class AsignArray extends Instruction {
     public execute(env: Environment) {
         let index: ReturnType = this.index.execute(env)
         let value: ReturnType = this.value.execute(env)
+        // console.log("index  asigns", value.type)
         let primitive = new Primitive(this.line, this.column, value.value, value.type)
         env.reasignArrayList(this.id, index.value, primitive)
     }

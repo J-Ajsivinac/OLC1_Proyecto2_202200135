@@ -11,7 +11,9 @@ export class Return extends Expression {
     }
     public execute(env: Environment): ReturnType {
         if (this.value) {
+            // console.log(this.value)
             let value: ReturnType = this.value.execute(env);
+            // console.log(this.value, value)
             this.type = value.type;
             return { value: value.value, type: this.type };
         }
@@ -20,7 +22,7 @@ export class Return extends Expression {
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
-        var dot = `node_${id} [label="Return", fillcolor="LightBlue", shape="box", style="filled", fontsize="15"]\n`
+        var dot = `node_${id} [label="Return", fontcolor="white" color="white"]\n`
         if (this.value) {
             let value1: ReturnAST = this.value.ast(ast)
             dot += '\n' + value1.dot

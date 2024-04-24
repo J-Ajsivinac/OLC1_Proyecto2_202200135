@@ -14,13 +14,17 @@ export function getConsoleString(): string {
 
 export function getErrorsString(): string {
     let result: string = "";
-    console.log(errores)
+    // console.log(errores)
     errores.forEach(element => {
-        console.log(element)
+        // console.log(element)
         result += element.toString();
     });
     return result;
 
+}
+
+export function getErrors(): Error[] {
+    return errores;
 }
 
 export function resetOuts() {

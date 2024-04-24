@@ -18,13 +18,14 @@ export class AccessID extends Expression {
         const value: Symbol | null = env.getValue(this.id);
         if (!value) {
             errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se encontro el valor de ${this.id}`))
-            return { value: 'NULL', type: 0 }
+            return { value: 'NULL', type: Types.NULL }
         }
         if (value.type === Types.ARRAY) {
             this.type = Types.STRING
             return { value: value.value, type: this.type }
         }
         this.type = value.type
+        // console.log("AccessID CLASS", this.id, value.value, value.type)
         return { value: value.value, type: this.type };
     }
     public ast(ast: AST): ReturnAST {

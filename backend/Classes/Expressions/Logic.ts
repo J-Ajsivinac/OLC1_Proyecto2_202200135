@@ -8,41 +8,39 @@ import { TypesExp } from "../Utils/TypesExp";
 
 export class Logic extends Expression {
     private type: Types = Types.NULL
-    private env!: Environment;
     constructor(line: number, column: number, public exp1: Expression, public sign: string, public exp2: Expression) {
         super(line, column, TypesExp.LOGICAL)
     }
     public execute(env: Environment): ReturnType {
-        this.env = env
         switch (this.sign) {
             case '&&':
-                return this.and()
+                return this.and(env)
             case '||':
-                return this.or()
+                return this.or(env)
             case '!':
-                return this.not()
+                return this.not(env)
             default:
                 errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `El operador ${this.sign} no es valido`))
                 return { value: -1, type: Types.NULL }
         }
     }
 
-    and(): ReturnType {
-        let val1: ReturnType = this.exp1.execute(this.env)
-        let val2: ReturnType = this.exp2.execute(this.env)
+    and(env: Environment): ReturnType {
+        let val1: ReturnType = this.exp1.execute(env)
+        let val2: ReturnType = this.exp2.execute(env)
         this.type = Types.BOOLEAN
         return { value: val1.value && val2.value, type: this.type }
     }
 
-    or(): ReturnType {
-        let val1: ReturnType = this.exp1.execute(this.env)
-        let val2: ReturnType = this.exp2.execute(this.env)
+    or(env: Environment): ReturnType {
+        let val1: ReturnType = this.exp1.execute(env)
+        let val2: ReturnType = this.exp2.execute(env)
         this.type = Types.BOOLEAN
         return { value: val1.value || val2.value, type: this.type }
     }
 
-    not(): ReturnType {
-        let val: ReturnType = this.exp2.execute(this.env)
+    not(env: Environment): ReturnType {
+        let val: ReturnType = this.exp2.execute(env)
         this.type = Types.BOOLEAN
         return { value: !val.value, type: this.type }
     }
@@ -54,13 +52,13 @@ export class Logic extends Expression {
         let value2: ReturnAST = this.exp2.ast(ast)
         if (this.exp1 != undefined) {
             dot += '\n' + value1.dot
-            dot += `\nnode_${id}_sign [label="${this.sign}", fillcolor="LightBlue", shape="box", style="filled", fontsize="15"]\n`
+            dot += `\nnode_${id}_sign [label="${this.sign}" fontcolor="white" color="white"]\n`
             dot += '\n' + value2.dot
             dot += `\nnode_${id} -> node_${value1.id};`
             dot += `\nnode_${id} -> node_${id}_sign;`
             dot += `\nnode_${id} -> node_${value2.id};`
         } else {
-            dot += `\nnode_${id}_sign [label="${this.sign}", fillcolor="LightBlue", shape="box", style="filled", fontsize="15"]\n`
+            dot += `\nnode_${id}_sign [label="${this.sign}" fontcolor="white" color="white"]\n`
             dot += '\n' + value2.dot
             dot += `\nnode_${id} -> node_${id}_sign;`
             dot += `\nnode_${id} -> node_${value2.id};`

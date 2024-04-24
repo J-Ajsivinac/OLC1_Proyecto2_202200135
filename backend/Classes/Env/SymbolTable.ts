@@ -33,6 +33,10 @@ export class SymbolTable {
     public getsymbolTable(): Array<SymbolTab> {
         return this.symbolTable;
     }
+
+    public splice() {
+        this.symbolTable.splice(0)
+    }
 }
 
 export let symbolTable: SymbolTable = new SymbolTable()

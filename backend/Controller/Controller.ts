@@ -1,12 +1,15 @@
 import { Request, Response } from "express";
 import { Environment } from "../Classes/Env/Environment"
-import { getConsoleString, getErrorsString, resetOuts } from "../Classes/Utils/Outs"
+import { getConsoleString, getErrors, getErrorsString, resetOuts } from "../Classes/Utils/Outs"
 import { InitID } from "../Classes/Instructions/InitID";
 import { InitArray } from "../Classes/Instructions/InitArray";
 import { AST, ReturnAST } from "../Classes/Utils/AST";
 import { MExecute } from "../Classes/Instructions/MExecute";
 import { InitMatrix } from "../Classes/Instructions/InitMatrix";
 import { Function } from "../Classes/Instructions/Function";
+import { symbolTable } from "../Classes/Env/SymbolTable";
+
+var dotAST: string = ''
 export class Controller {
     public runing(_: Request, res: Response) {
         console.log("Interpreter is running...")
@@ -16,17 +19,18 @@ export class Controller {
     }
     public parser(req: Request, res: Response) {
         let code: string = req.body.code
-        console.log("Code", code, "fin")
+        // console.log("Code", code, "fin")
         // console.log(typeof code)
         let parser = require('../Analyzer/Parser')
         try {
             var res_dotAST: string = ''
             resetOuts()
+            symbolTable.splice()
             let ast = parser.parse(code)
             const global: Environment = new Environment(null, 'Global')
 
             let astTree: AST = new AST()
-            var dotAST: string = 'digraph G{\nnode[color="#cec9f1" fontcolor="white" fontname=Verdana];\nedge[dir=none color="#cec9f1"];\nbgcolor = "#0D1117";\n'
+            dotAST = 'digraph G{\nnode[color="#cec9f1" fontcolor="white" fontname=Verdana];\nedge[dir=none color="#cec9f1"];\nbgcolor = "#0D1117";\n'
             dotAST += '\nnode_r[label="INSTRUCCIONES" color="#7580f9" fontcolor="white"];'
             var resultAST: ReturnAST
             let main: MExecute | null = null
@@ -56,12 +60,48 @@ export class Controller {
             res_dotAST = dotAST
             res.json({
                 console: getConsoleString(),
-                ast: dotAST,
                 errors: getErrorsString()
             })
         } catch (err) {
             res.json({
                 console: err
+            })
+        }
+    }
+
+    public getSymbolTable(_: Request, res: Response) {
+        try {
+            res.json({
+                table: symbolTable.getsymbolTable()
+            })
+        } catch (error) {
+            res.json({
+                table: error
+            })
+        }
+    }
+
+    public getAST(_: Request, res: Response) {
+        // console.log("AST", dotAST)
+        try {
+            res.json({
+                ast: dotAST
+            })
+        } catch (error) {
+            res.json({
+                ast: error
+            })
+        }
+    }
+
+    public getErrors(_: Request, res: Response) {
+        try {
+            res.json({
+                errors: getErrors()
+            })
+        } catch (error) {
+            res.json({
+                errors: error
             })
         }
     }

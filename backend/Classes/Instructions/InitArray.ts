@@ -19,9 +19,21 @@ export class InitArray extends Instruction {
     public execute(env: Environment) {
         if (this.values) {
             for (let i = 0; i < this.values.length; i++) {
-                this.values[i] = this.values[i].execute(env)
+                // console.log("values", this.values[i])
+                if (this.values[i] instanceof Natives) {
+                    let temp: ReturnType = this.values[i].execute(env)
 
+                    let values_t: ReturnType[] = temp.value
+                    for (let j = 0; j < values_t.length; j++) {
+                        console.log("values_t", values_t[j])
+                        this.values[j] = values_t[j]
+                    }
+                    break
+                } else {
+                    this.values[i] = this.values[i].execute(env)
+                }
             }
+            console.log("values", this.values)
             env.saveArray(this.id, this.type, this.values, this.line, this.column)
         } else {
             let length: ReturnType = this.size.execute(env)
@@ -77,7 +89,7 @@ export class InitArray extends Instruction {
                     dot += `\nnode_${id}_${i}_val [label="${this.values[i].value}"];\n`
                     // dot += value.dot
                     //conectar nodos
-                    dot += `\nnode_${id}_${i}_values -> node_${id}_${i-1}_values;`
+                    dot += `\nnode_${id}_${i}_values -> node_${id}_${i - 1}_values;`
                     dot += `\nnode_${id}_${i}_values -> node_${id}_${i}_comma;\n`
                     dot += `node_${id}_${i}_values -> node_${id}_${i}_value;\n`
                     dot += `node_${id}_${i}_value -> node_${id}_${i}_val;\n`

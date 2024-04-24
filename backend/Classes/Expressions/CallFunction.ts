@@ -28,34 +28,32 @@ export class CallFunction extends Expression {
             return
         }
 
-        var value: ReturnType
-        var param: Parameter
-        // console.log("size", this.params.length, func.params.length)
-        for (let i = 0; i < this.params.length; i++) {
-            value = this.params[i].execute(env)
-            param = func.params[i]
-
+        // var value: ReturnType
+        let validateArray: Parameter
+        // console.log("size", this.params.length, func.params.length) 
+        for (let i = 0; i < func.params.length; i++) {
+            const value: ReturnType = this.params[i].execute(env)
+            const param: ReturnType = func.params[i].execute(env)
+            validateArray = func.params[i]
             var tempTyp = value.type
-
-            if (value.type === param.type || (param.isArray && value.type === Types.STRING)) {
-                if (envFunc.ids.has(param.id.toLowerCase())) {
-                    env.setErrore(param.line, param.column, `El parametro ${param.id} ya existe`)
+            if (value.type === param.type || (validateArray.isArray && value.type === Types.STRING)) {
+                if (envFunc.ids.has(func.params[i].id.toLowerCase())) {
+                    env.setErrore(validateArray.line, validateArray.column, `El parametro ${validateArray.id} ya existe`)
                     return
                 }
-
-                if (param.isArray && value.type === Types.STRING) {
-                    // console.log("SE HA GUARDADO LA VARIABLE", param.id, tempTyp, value.value, param.line, param.column)
-                    env.saveArray(param.id, tempTyp, value.value, param.line, param.column)
-                    symbolTable.push(param.line, param.column + 1, param.id.toLowerCase(), 'Variable', env.getTypeOf(value.type), envFunc.name)
+                // envFunc.saveId(param.value, value.value, value.type, func.params[i].line, func.params[i].column)
+                if (validateArray.isArray && value.type === Types.STRING) {
+                    env.saveArray(validateArray.id, tempTyp, value.value, validateArray.line, validateArray.column)
+                    symbolTable.push(validateArray.line, validateArray.column + 1, validateArray.id.toLowerCase(), 'Variable', env.getTypeOf(value.type), envFunc.name)
                     continue
                 } else {
-                    // console.log("AccessID", param.id, value.value, value.type)
-                    envFunc.saveId(param.id, value.value, param.type, param.line, param.column)
-                    symbolTable.push(param.line, param.column + 1, param.id.toLowerCase(), 'Variable', env.getTypeOf(value.type), envFunc.name)
+                    envFunc.saveId(param.value, value.value, value.type, func.params[i].line, func.params[i].column)                    // envFunc.saveId(param.id, value.value, param.type, param.line, param.column)
+                    symbolTable.push(func.params[i].line, func.params[i].column + 1, func.params[i].id.toLowerCase(), 'Variable', env.getTypeOf(value.type), envFunc.name)
                     continue
                 }
-            } else {
-                env.setErrore(this.line, this.column, `El parametro ${param.id} no es del tipo ${env.getTypeOf(param.type)}`)
+            }
+            else {
+                env.setErrore(this.line, this.column, `El parametro ${param.value} no es del tipo ${env.getTypeOf(param.type)}`)
             }
         }
         let execute: any = func.block.execute(envFunc)
@@ -82,23 +80,23 @@ export class CallFunction extends Expression {
         this.params.forEach((param: Expression) => {
             const p = param.ast(ast)
             if (i == 0) {
-                dot += `\nnode_${id + i}_params[label="PARAMETROS" color="white" fontcolor="white"]`
+                dot += `\nnode_${id}_${i}_params[label="PARAMETROS" color="white" fontcolor="white"]`
                 dot += p.dot
-                dot += `\nnode_${id + i}_params -> node_${p.id}`
+                dot += `\nnode_${id}_${i}_params -> node_${p.id}`
             } else {
-                dot += `\nnode_${id + i}_params[label="PARAMETROS" color="white" fontcolor="white"]`
-                dot += `\nnode_${id + i}_comma[label="," color="white" fontcolor="white"]`
+                dot += `\nnode_${id}_${i}_params[label="PARAMETROS" color="white" fontcolor="white"]`
+                dot += `\nnode_${id}_${i}_comma[label="," color="white" fontcolor="white"]`
                 dot += p.dot
                 // Conectando nodos
-                dot += `\nnode_${id + 1}_params -> node_${id + (i - 1)}_params\n`
-                dot += `\nnode_${id + 1}_params -> node_${id + i}_comma\n`
-                dot += `\nnode_${id + 1}_params -> node_${p.id}\n`
+                dot += `\nnode_${id}_${i}_params -> node_${id}_${i - 1}_params\n`
+                dot += `\nnode_${id}_${i}_params -> node_${id}_${i}_comma\n`
+                dot += `\nnode_${id}_${i}_params -> node_${p.id}\n`
             }
             i++;
         });
         // dot += `\nnode_${id}_rpars[label=")" color="white" fontcolor="white"]`
-        if(this.params.length > 0){
-            dot += `\nnode_${id} -> node_${id + (i - 1)}_params`
+        if (this.params.length > 0) {
+            dot += `\nnode_${id} -> node_${id}_${i - 1}_params`
         }
         dot += `\nnode_${id}_rpars[label=")" color="white" fontcolor="white"]`
         dot += `\nnode_${id} -> node_${id}_rpars`

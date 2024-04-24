@@ -17,15 +17,13 @@ export class AccessArray extends Expression {
     public execute(env: Environment): ReturnType {
         let index: ReturnType = this.index.execute(env)
         const value: Symbol | null = env.getValueArray(this.id, index.value)
-        if (!value) {
-            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se encontro el valor en el arreglo ${this.id} en la posicion ${index.value}`))
-            // console.log(`Error: No se encontro el valor en el arreglo ${this.id} en la posicion ${index.value}`)
-            return { value: 'NULL', type: 0 }
+        // console.log(value)
+        // const value: Symbol | null = env.getValueArrayList(this.id, index.value)
+        if (value) {
+            this.types = value.type
+            return { value: value.value, type: this.types }
         }
-        this.types = value.type
-        return {
-            value: value.value, type: this.types
-        }
+        return { value: 'NULL', type: Types.NULL }
     }
 
     public ast(ast: AST): ReturnAST {

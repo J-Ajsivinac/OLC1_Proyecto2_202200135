@@ -3,6 +3,7 @@ import { ACCEPTED_ORIGINS } from '../middlewares/cors'
 import cors from "cors";
 
 import router from "../routes/Interpreter"
+import { saveFile } from "../Controller/SaveFiles";
 
 export const createApp = () => {
     const app = express()
@@ -29,6 +30,8 @@ export const createApp = () => {
         res.send('Backend is running...')
     })
     app.use('/interpreter', router)
+
+    app.post('/save', saveFile)
 
     const PORT = process.env.PORT || 3002
     app.listen(PORT, () => {

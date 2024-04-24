@@ -8,38 +8,38 @@ import { Error, TypesError } from "../Utils/Error";
 import { AST, ReturnAST } from "../Utils/AST";
 export class Arithmetic extends Expression {
     private type: Types = Types.NULL
-    private env!: Environment;
     constructor(line: number, column: number, public exp1: Expression, public sign: string, public exp2: Expression) {
         super(line, column, TypesExp.ARITHMETIC);
     }
 
     public execute(env: Environment): ReturnType {
-        this.env = env
+
         switch (this.sign) {
             case '+':
-                return this.plus();
+                return this.plus(env);
             case '-':
                 if (this.exp1 != undefined) {
-                    return this.minus();
+                    return this.minus(env);
                 }
-                return this.negative();
+                return this.negative(env);
             case '*':
-                return this.mult();
+                return this.mult(env);
             case '/':
-                return this.div();
+                return this.div(env);
             case '^':
-                return this.pow();
+                return this.pow(env);
             case '%':
-                return this.mod();
+                return this.mod(env);
             default:
                 errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, 'Operador no valido en operacion aritmetica'))
                 return { value: -1, type: Types.NULL };
         }
     }
 
-    plus(): ReturnType {
-        let val1: ReturnType = this.exp1.execute(this.env);
-        let val2: ReturnType = this.exp2.execute(this.env);
+    plus(env: Environment): ReturnType {
+        let val1: ReturnType = this.exp1.execute(env);
+        let val2: ReturnType = this.exp2.execute(env);
+
         this.type = plus[val1.type][val2.type];
         // console.log('type 1', val1.type, 'type 2', val2.type)
         let result: any = 'NULL'
@@ -62,9 +62,9 @@ export class Arithmetic extends Expression {
         return { value: result, type: this.type }
     }
 
-    minus(): ReturnType {
-        let val1: ReturnType = this.exp1.execute(this.env);
-        let val2: ReturnType = this.exp2.execute(this.env);
+    minus(env: Environment): ReturnType {
+        let val1: ReturnType = this.exp1.execute(env);
+        let val2: ReturnType = this.exp2.execute(env);
         this.type = minus[val1.type][val2.type];
         let result: any = 'NULL'
         if (this.type === Types.NULL) {
@@ -85,8 +85,8 @@ export class Arithmetic extends Expression {
         return { value: result, type: this.type }
     }
 
-    negative(): ReturnType {
-        let value: ReturnType = this.exp2.execute(this.env);
+    negative(env: Environment): ReturnType {
+        let value: ReturnType = this.exp2.execute(env);
         this.type = value.type
         if (this.type === Types.INT || this.type === Types.DOUBLE) {
             return { value: -value.value, type: this.type }
@@ -95,9 +95,9 @@ export class Arithmetic extends Expression {
         return { value: 'NULL', type: Types.NULL }
     }
 
-    mult(): ReturnType {
-        let val1: ReturnType = this.exp1.execute(this.env);
-        let val2: ReturnType = this.exp2.execute(this.env);
+    mult(env: Environment): ReturnType {
+        let val1: ReturnType = this.exp1.execute(env);
+        let val2: ReturnType = this.exp2.execute(env);
         this.type = mult[val1.type][val2.type];
         let result: any = 'NULL'
         if (this.type === Types.NULL) {
@@ -118,9 +118,9 @@ export class Arithmetic extends Expression {
         return { value: result, type: this.type }
     }
 
-    div(): ReturnType {
-        let val1: ReturnType = this.exp1.execute(this.env);
-        let val2: ReturnType = this.exp2.execute(this.env);
+    div(env: Environment): ReturnType {
+        let val1: ReturnType = this.exp1.execute(env);
+        let val2: ReturnType = this.exp2.execute(env);
         this.type = div[val1.type][val2.type];
         let result: any = 'NULL'
         if (this.type === Types.NULL) {
@@ -142,9 +142,9 @@ export class Arithmetic extends Expression {
         return { value: result, type: this.type }
     }
 
-    pow(): ReturnType {
-        let val1: ReturnType = this.exp1.execute(this.env);
-        let val2: ReturnType = this.exp2.execute(this.env);
+    pow(env: Environment): ReturnType {
+        let val1: ReturnType = this.exp1.execute(env);
+        let val2: ReturnType = this.exp2.execute(env);
         this.type = pow[val1.type][val2.type];
         let result: any = 'NULL'
         if (this.type === Types.NULL) {
@@ -163,9 +163,9 @@ export class Arithmetic extends Expression {
         return { value: result, type: this.type }
     }
 
-    mod(): ReturnType {
-        let val1: ReturnType = this.exp1.execute(this.env);
-        let val2: ReturnType = this.exp2.execute(this.env);
+    mod(env: Environment): ReturnType {
+        let val1: ReturnType = this.exp1.execute(env);
+        let val2: ReturnType = this.exp2.execute(env);
         this.type = mod[val1.type][val2.type];
         let result: any = 'NULL'
         if (this.type === Types.NULL) {

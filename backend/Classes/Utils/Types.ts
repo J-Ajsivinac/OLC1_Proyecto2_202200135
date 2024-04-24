@@ -1,9 +1,9 @@
 export enum Types {
     INT,
     DOUBLE,
+    BOOLEAN,
     CHAR,
     STRING,
-    BOOLEAN,
     ARRAY,
     NULL
 }

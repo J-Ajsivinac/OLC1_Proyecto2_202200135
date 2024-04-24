@@ -61,13 +61,14 @@ export class Environment {
                 let symbol: Symbol = env.ids.get(id.toLowerCase())!
                 // console.log("symbol", symbol.type, "value", value.typeValue)
                 let temp: ReturnType = symbol.value[index]
+                // console.log("temp", temp, "value", value)
                 if (temp.type !== value.typeValue) {
                     this.setErrore(value.line, value.column, `Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
-                    // console.log(`Error: Variable ${id} no es de tipo ${this.getTypeOf(value.typeValue)}`)
                     return false
 
                 }
                 symbol.value[index] = value
+                symbol.value[index].type = value.typeValue
                 env.ids.set(id.toLowerCase(), symbol)
                 return true
             }
@@ -90,6 +91,7 @@ export class Environment {
 
                 }
                 symbol.value[i][j] = value
+                symbol.value[i][j].type = value.typeValue
                 env.ids.set(id.toLowerCase(), symbol)
                 return true
             }
@@ -105,18 +107,21 @@ export class Environment {
             this.setErrore(line, column, `Variable ${id} ya existe en el entorno actual`)
             return
         }
+        // console.log("value", values)
+        // console.log("type", type)
         env.ids.set(id.toLowerCase(), new Symbol(values, id, Types.ARRAY, type));
         symbolTable.push(line, column, id.toLowerCase(), 'Variable', this.getTypeOf(type), env.name);
     }
 
     public getValueArray(id: string, i: number): Symbol | null {
-        let env: Environment | null = this;
+        let env: Environment | null = this
         while (env) {
             if (env.ids.has(id.toLowerCase())) {
                 let symbol: Symbol = env.ids.get(id.toLowerCase())!
+                // console.log("symbol  ->", symbol.value[i])
                 return symbol.value[i]
             }
-            env = env.prev;
+            env = env.prev
         }
         return null
     }
