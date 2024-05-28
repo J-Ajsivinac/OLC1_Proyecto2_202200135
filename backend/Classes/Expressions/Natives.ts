@@ -55,9 +55,11 @@ export class Natives extends Expression {
     }
 
     getLenght(value: ReturnType): ReturnType {
-        if (value.type === Types.STRING || value.type === Types.ARRAY) {
+        if (value.type === Types.STRING || value.type === Types.ARRAY || Array.isArray(value)) {
+            // console.log("Longitud de:", value.value)
             return { value: value.value.length, type: Types.INT }
         }
+        // console.log("Longitud de:", value)
         errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se puede obtener la longitud del tipo de dato ${value.type}`));
         return { value: -1, type: Types.NULL }
     }

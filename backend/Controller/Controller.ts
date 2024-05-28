@@ -8,6 +8,9 @@ import { MExecute } from "../Classes/Instructions/MExecute";
 import { InitMatrix } from "../Classes/Instructions/InitMatrix";
 import { Function } from "../Classes/Instructions/Function";
 import { symbolTable } from "../Classes/Env/SymbolTable";
+import { AsignArray } from "../Classes/Instructions/AsignArray";
+import { AsignMatrix } from "../Classes/Instructions/AsignMatrix";
+import { AsignID } from "../Classes/Instructions/AsignID";
 
 var dotAST: string = ''
 export class Controller {
@@ -36,8 +39,8 @@ export class Controller {
             let main: MExecute | null = null
             for (let instruction of ast) {
                 try {
-                    if (instruction instanceof Function || instruction instanceof InitID || instruction instanceof InitArray || instruction instanceof InitMatrix) {
-                        // console.log(instruction)
+
+                    if (instruction instanceof Function || instruction instanceof InitID || instruction instanceof InitArray || instruction instanceof InitMatrix || instruction instanceof AsignArray || instruction instanceof AsignMatrix || instruction instanceof AsignID) {
                         instruction.execute(global)
                         resultAST = instruction.ast(astTree)
                         dotAST += '\n' + resultAST.dot

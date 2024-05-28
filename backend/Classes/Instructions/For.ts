@@ -16,7 +16,7 @@ export class For extends Instruction {
         let condition: ReturnType = this.condition.execute(forEnv)
         // console.log(condition)
         while (condition.value) {
-            // console.log(condition.value)
+            // console.log(this.block)
             let block: any = this.block.execute(forEnv)
             if (block) {
                 if (block.value == TypesInstruction.BREAK) {

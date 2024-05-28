@@ -48,10 +48,10 @@ export class Relational extends Expression {
             return { value: -1, type: Types.NULL }
         }
 
-        if (val1.type === Types.STRING && val2.type === Types.STRING) {
+        if (val1.type === Types.STRING && val2.type === Types.STRING || val1.type === Types.BOOLEAN && val2.type === Types.BOOLEAN) {
             return { value: val1.value === val2.value, type: this.type }
         }
-        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, 'No se puede comparar el tipo ' + val1.type + ' con ' + val2.type))
+        errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, '2 No se puede comparar el tipo ' + val1.type + ' con ' + val2.type))
         return { value: -1, type: Types.NULL }
     }
 
@@ -84,8 +84,6 @@ export class Relational extends Expression {
         let val2: ReturnType = this.exp2.execute(env)
         this.type = Types.BOOLEAN
 
-        // console.log(this.exp1, this.exp2, "\n>-------<")
-        // console.log(val1, val2, "\n777777777")
         if (val1.type === Types.INT || val1.type === Types.DOUBLE || val1.type === Types.CHAR) {
             if (val2.type === Types.INT || val2.type === Types.DOUBLE || val2.type === Types.CHAR) {
                 val1 = this.getValue(val1)

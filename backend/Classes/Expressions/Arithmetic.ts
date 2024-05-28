@@ -49,13 +49,13 @@ export class Arithmetic extends Expression {
         }
 
         if (this.type === Types.INT) {
-            val1 = this.getValue(val1)
-            val2 = this.getValue(val2)
+            val1 = this.getValue(val1, env)
+            val2 = this.getValue(val2, env)
             result = val1.value + val2.value
         }
         else if (this.type === Types.DOUBLE) {
-            val1 = this.getValue(val1)
-            val2 = this.getValue(val2)
+            val1 = this.getValue(val1, env)
+            val2 = this.getValue(val2, env)
             result = parseFloat(val1.value) + parseFloat(val2.value)
         }
         result = val1.value + val2.value
@@ -73,13 +73,13 @@ export class Arithmetic extends Expression {
         }
 
         if (this.type === Types.INT) {
-            val1 = this.getValue(val1)
-            val2 = this.getValue(val2)
+            val1 = this.getValue(val1, env)
+            val2 = this.getValue(val2, env)
             result = val1.value - val2.value
         }
         else if (this.type === Types.DOUBLE) {
-            val1 = this.getValue(val1)
-            val2 = this.getValue(val2)
+            val1 = this.getValue(val1, env)
+            val2 = this.getValue(val2, env)
             result = parseFloat(val1.value) - parseFloat(val2.value)
         }
         return { value: result, type: this.type }
@@ -106,13 +106,13 @@ export class Arithmetic extends Expression {
         }
 
         if (this.type === Types.INT) {
-            val1 = this.getValue(val1)
-            val2 = this.getValue(val2)
+            val1 = this.getValue(val1, env)
+            val2 = this.getValue(val2, env)
             result = val1.value * val2.value
         }
         else if (this.type === Types.DOUBLE) {
-            val1 = this.getValue(val1)
-            val2 = this.getValue(val2)
+            val1 = this.getValue(val1, env)
+            val2 = this.getValue(val2, env)
             result = parseFloat(val1.value) * parseFloat(val2.value)
         }
         return { value: result, type: this.type }
@@ -129,12 +129,13 @@ export class Arithmetic extends Expression {
         }
 
         else if (this.type === Types.DOUBLE) {
-            val1 = this.getValue(val1)
-            val2 = this.getValue(val2)
+            val1 = this.getValue(val1, env)
+            val2 = this.getValue(val2, env)
             if (val2.value === 0) {
                 //error
                 //console.log('Division por 0')
-                errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Division por 0`));
+                // errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Division por 0`));
+                env.setErrore(this.line, this.column + 1, `Division por 0`)
                 return { value: -1, type: Types.NULL }
             }
             result = parseFloat(val1.value) / parseFloat(val2.value)
@@ -156,8 +157,8 @@ export class Arithmetic extends Expression {
             result = val1.value ** val2.value
         }
         else if (this.type === Types.DOUBLE) {
-            val1 = this.getValue(val1)
-            val2 = this.getValue(val2)
+            val1 = this.getValue(val1, env)
+            val2 = this.getValue(val2, env)
             result = parseFloat(val1.value) ** parseFloat(val2.value)
         }
         return { value: result, type: this.type }
@@ -183,7 +184,7 @@ export class Arithmetic extends Expression {
         return { value: result, type: this.type }
     }
 
-    getValue(value: ReturnType): ReturnType {
+    getValue(value: ReturnType, env: Environment): ReturnType {
         if (value.type === Types.BOOLEAN) {
             // si es verdadero retornar 1, si es falso retornar 0
             return { value: value.value ? 1 : 0, type: Types.INT }
@@ -195,7 +196,8 @@ export class Arithmetic extends Expression {
         //validar limites de enteros
         if (value.type === Types.INT) {
             if (value.value < -2147483648 || value.value > 2147483647) {
-                errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Valor entero fuera de rango`))
+                // errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Valor entero fuera de rango`))
+                env.setErrore(this.line, this.column + 1, `Valor entero fuera de rango`)
                 return { value: null, type: Types.NULL }
             }
         }

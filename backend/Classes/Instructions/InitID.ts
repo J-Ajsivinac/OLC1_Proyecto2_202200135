@@ -19,6 +19,7 @@ export class InitID extends Instruction {
 
     public execute(env: Environment) {
         if (this.value) {
+            // console.log(this.ids, " <-> ", this.value)
             const val: ReturnType = this.value.execute(env)
             // console.log(val.type, this.type, val.value)
             if (val.type !== this.type) {

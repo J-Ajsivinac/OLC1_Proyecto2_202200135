@@ -6,7 +6,6 @@ import { Error, TypesError } from "../Utils/Error";
 import { errores } from "../Utils/Outs";
 import { ReturnType, Types } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
-import { Return } from "./Return";
 
 export class AccessID extends Expression {
     private type: Types = Types.NULL
@@ -17,6 +16,7 @@ export class AccessID extends Expression {
     public execute(env: Environment): ReturnType {
         const value: Symbol | null = env.getValue(this.id);
         if (!value) {
+            // console.log("AccessID", this.id, value)
             errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `No se encontro el valor de ${this.id}`))
             return { value: 'NULL', type: Types.NULL }
         }

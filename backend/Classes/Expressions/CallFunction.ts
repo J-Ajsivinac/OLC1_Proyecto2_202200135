@@ -8,6 +8,7 @@ import { Parameter } from "./Parameter";
 import { Symbol } from "../Env/Symbol";
 import { symbolTable } from "../Env/SymbolTable";
 import { AST, ReturnAST } from "../Utils/AST";
+import { TypeParam } from "../Utils/TypeParam";
 
 export class CallFunction extends Expression {
     constructor(line: number, column: number, public id: string, public params: Expression[]) {
@@ -28,22 +29,24 @@ export class CallFunction extends Expression {
             return
         }
 
-        // var value: ReturnType
         let validateArray: Parameter
-        // console.log("size", this.params.length, func.params.length) 
+
         for (let i = 0; i < func.params.length; i++) {
             const value: ReturnType = this.params[i].execute(env)
             const param: ReturnType = func.params[i].execute(env)
             validateArray = func.params[i]
             var tempTyp = value.type
-            if (value.type === param.type || (validateArray.isArray && value.type === Types.STRING)) {
+            if (value.type === param.type || ((validateArray.typeParam === TypeParam.ARRAY || validateArray.typeParam === TypeParam.MATRIX) && value.type === Types.STRING)) {
                 if (envFunc.ids.has(func.params[i].id.toLowerCase())) {
                     env.setErrore(validateArray.line, validateArray.column, `El parametro ${validateArray.id} ya existe`)
                     return
                 }
-                // envFunc.saveId(param.value, value.value, value.type, func.params[i].line, func.params[i].column)
-                if (validateArray.isArray && value.type === Types.STRING) {
-                    env.saveArray(validateArray.id, tempTyp, value.value, validateArray.line, validateArray.column)
+                if (validateArray.typeParam === TypeParam.ARRAY || validateArray.typeParam === TypeParam.MATRIX) {
+                    if (value.type !== Types.STRING) {
+                        env.setErrore(validateArray.line, validateArray.column, `El parametro ${validateArray.id} no es del tipo ARRAY o MATRIX`)
+                        return
+                    }
+                    envFunc.saveArray(validateArray.id, tempTyp, value.value, validateArray.line, validateArray.column)
                     symbolTable.push(validateArray.line, validateArray.column + 1, validateArray.id.toLowerCase(), 'Variable', env.getTypeOf(value.type), envFunc.name)
                     continue
                 } else {
@@ -53,11 +56,12 @@ export class CallFunction extends Expression {
                 }
             }
             else {
-                env.setErrore(this.line, this.column, `El parametro ${param.value} no es del tipo ${env.getTypeOf(param.type)}`)
+                envFunc.setErrore(this.line, this.column, `El parametro ${param.value} no es del tipo ${env.getTypeOf(param.type)}`)
             }
         }
         let execute: any = func.block.execute(envFunc)
-        // console.log("Execute", execute)
+
+
         if (execute) {
             if (execute.value === TypesExp.RETURN) {
                 return

@@ -17,7 +17,10 @@ export class AccessArray extends Expression {
     public execute(env: Environment): ReturnType {
         let index: ReturnType = this.index.execute(env)
         const value: Symbol | null = env.getValueArray(this.id, index.value)
-        // console.log(value)
+
+        if (Array.isArray(value)) {
+            return { value: value, type: Types.ARRAY }
+        }
         // const value: Symbol | null = env.getValueArrayList(this.id, index.value)
         if (value) {
             this.types = value.type

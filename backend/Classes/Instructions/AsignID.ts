@@ -16,7 +16,8 @@ export class AsignID extends Instruction {
         const val: ReturnType = this.value.execute(env)
         let resp = env.reasignID(this.id, val)
         if (!resp) {
-            errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Variable ${this.id} no encontrada`))
+            // errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Variable ${this.id} no encontrada ->`))
+            env.setErrore(this.line, this.column + 1, `Variable ${this.id} no encontrada`)
         }
     }
 

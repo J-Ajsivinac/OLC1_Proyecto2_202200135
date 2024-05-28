@@ -6,6 +6,7 @@ import { Function } from "../Instructions/Function";
 import { error } from "console";
 import { Error, TypesError } from "../Utils/Error";
 import { Primitive } from "../Expressions/Primitive";
+import { types } from "util";
 export class Environment {
     public ids: Map<string, Symbol> = new Map<string, Symbol>();
     public functions: Map<string, Function> = new Map<string, Function>();
@@ -25,8 +26,8 @@ export class Environment {
     public getValue(id: string): Symbol | null {
         let env: Environment | null = this;
         while (env) {
+            // console.log(env.ids)
             if (env.ids.has(id.toLowerCase())) {
-                // console.log(id.toLowerCase(), env.ids.get(id.toLowerCase()))
                 return env.ids.get(id.toLowerCase()) as Symbol;
             }
             env = env.prev;
@@ -61,7 +62,14 @@ export class Environment {
                 let symbol: Symbol = env.ids.get(id.toLowerCase())!
                 // console.log("symbol", symbol.type, "value", value.typeValue)
                 let temp: ReturnType = symbol.value[index]
-                // console.log("temp", temp, "value", value)
+
+                if (temp.type === Types.ARRAY) {
+                    // console.log("temp", temp, "value", value)
+                    symbol.value[index] = value
+                    symbol.value[index].type = Types.ARRAY
+                    return true
+                }
+
                 if (temp.type !== value.typeValue) {
                     this.setErrore(value.line, value.column, `Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
                     return false
@@ -83,15 +91,13 @@ export class Environment {
         while (env) {
             if (env.ids.has(id.toLowerCase())) {
                 let symbol: Symbol = env.ids.get(id.toLowerCase())!
-                let temp: ReturnType = symbol.value[i][j]
-                if (temp.type !== value.typeValue) {
+                let temp: ReturnType = symbol.value[i]
+                if (temp.value[j].type !== value.typeValue) {
                     this.setErrore(value.line, value.column, `Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
-                    // console.log(`Error: Variable ${id} is not of type ${this.getTypeOf(value.typeValue)}`)
                     return false
-
                 }
-                symbol.value[i][j] = value
-                symbol.value[i][j].type = value.typeValue
+                temp.value[j] = value
+                temp.value[j].type = value.typeValue
                 env.ids.set(id.toLowerCase(), symbol)
                 return true
             }
@@ -103,12 +109,13 @@ export class Environment {
 
     public saveArray(id: string, type: Types, values: any, line: number, column: number) {
         let env: Environment = this;
+        // console.log(id, " :) ")
+        // console.log(id, type, " :D")
         if (env.ids.has(id.toLowerCase())) {
             this.setErrore(line, column, `Variable ${id} ya existe en el entorno actual`)
             return
         }
-        // console.log("value", values)
-        // console.log("type", type)
+
         env.ids.set(id.toLowerCase(), new Symbol(values, id, Types.ARRAY, type));
         symbolTable.push(line, column, id.toLowerCase(), 'Variable', this.getTypeOf(type), env.name);
     }
@@ -131,7 +138,11 @@ export class Environment {
         while (env) {
             if (env.ids.has(id.toLowerCase())) {
                 let symbol: Symbol = env.ids.get(id.toLowerCase())!
-                return symbol.value[i][j]
+                let temp: ReturnType = symbol.value[i]
+                if (!temp.value[j]) {
+                    return null
+                }
+                return temp.value[j]
             }
             env = env.prev;
         }
