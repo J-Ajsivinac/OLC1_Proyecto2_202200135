@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Victor+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
 .cm-content {
     font-size: 14px;
     background: #131417;
@@ -15,4 +17,8 @@
 .cm-gutter {
     font-size: 14px;
     background: #131417;
+}
+
+.text-monospace {
+    font-family: "JetBrains Mono", monospace;
 }

@@ -45,7 +45,7 @@ const SpringModal = ({ isOpen, setIsOpen }) => {
 
 
                         <div ref={containerRef} className="flex items-center justify-center box-border w-full h-full z-10 ">
-                            {ast === '' ? <h1 className="text-center text-2xl font-bold">No hay AST</h1> : <Graphviz dot={ast} options={{ zoom: true, width: width, height: height, fit: true }} className='flex-grow w-full' />
+                            {ast === '' ? <h1 className="text-center text-2xl font-bold">Esperando AST</h1> : <Graphviz dot={ast} options={{ zoom: true, width: width, height: height, fit: true }} className='flex-grow w-full' />
                             }
 
                         </div>
