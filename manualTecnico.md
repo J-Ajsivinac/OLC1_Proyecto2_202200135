@@ -59,218 +59,204 @@ El interprete hace uso del patrón interprete para realizar las acciones del len
 Para ello hacen uso de las siguientes clases Absatractas
 
 
+Aquí tienes el markdown parafraseado y reorganizado para mejorar la comprensión:
+
 ### Expresión
-Se implementó la clase Expression que es la clase padre de todas aquellas funcionalidades del lenguaje que retornan un valor, tales como:
- 
-* Llamada a Función
-* Acceso a Variables
-    - Primitivas
-    - Posiciones de Arreglos
-    - Posiciones de Listas
-* Sentencia `Return`
-* Operaciones
-    - Aritméticas
-    - Relacionales
-    - Lógicas
-* Funciones Nativas
-    - To Lower
-    - To Upper
-    - Length
-    - Round
-    - Type Of
-    - To Char Array
-* Operador Ternario
-* Casteo
-* Incremento
-* Decremento
+La clase `Expression` actúa como la clase base para todas las funcionalidades del lenguaje que devuelven un valor. Estas funcionalidades incluyen:
+
+- **Invocación de Funciones**
+- **Acceso a Variables**
+  - Primitivas
+  - Elementos de Arreglos
+  - Elementos de Listas
+- **Sentencia `Return`**
+- **Operaciones**
+  - Aritméticas
+  - Relacionales
+  - Lógicas
+- **Funciones Incorporadas**
+  - `To Lower`
+  - `To Upper`
+  - `Length`
+  - `Round`
+  - `Type Of`
+  - `To Char Array`
+- **Operador Ternario**
+- **Conversión de Tipos**
+- **Incremento**
+- **Decremento**
 
 ### Instrucción
-Se implementó la clase Instruction que es la clase padre de todas aquellas funcionalidades del lenguaje que no retornan un valor, tales como:
+La clase `Instruction` sirve como la clase base para todas las funcionalidades del lenguaje que no retornan un valor. Estas funcionalidades abarcan:
 
-* Inicialización de Variables
-    - Primitivas
-    - Arreglos
-    - Matrices
-* Sentencias de Transferencia
-    - Continue
-    - Break
-* Reasignación de Valores
-    - Variables Primitivas
-    - Posiciones de Arreglos
-    - Posiciones de Matrices
-* Declaración de Funciones
-* Estructuras de Control
-    - If
-    - Else If
-    - Else
-    - Switch Case
-    - Ciclos
-        * For
-        * While
-        * Do While
-* Bloques de Instrucciones
-  
+- **Inicialización de Variables**
+  - Primitivas
+  - Arreglos
+  - Matrices
+- **Sentencias de Control de Flujo**
+  - `Continue`
+  - `Break`
+- **Asignación de Valores**
+  - Variables Primitivas
+  - Elementos de Arreglos
+  - Elementos de Matrices
+- **Declaración de Funciones**
+- **Estructuras de Control**
+  - `If`
+  - `Else If`
+  - `Else`
+  - `Switch Case`
+  - **Bucles**
+    - `For`
+    - `While`
+    - `Do While`
+- **Bloques de Instrucciones**
 
-### Analisis
-Para analizar el código se hace uso de `jison`, el es el encargado de analizar lexicamente y sintactimante el codigo enviado
+### Análisis
+Para analizar el código se utiliza `jison`, que se encarga del análisis léxico y sintáctico del código recibido.
 
+#### Análisis Sintáctico
+La parte sintáctica sigue la siguiente gramática: [Gramática](grammar.txt)
 
-**Análisis Sintáctico**
+### Operaciones Aritméticas
+Para realizar operaciones, se utiliza la siguiente matriz que valida el tipo de operación ejecutada:
 
-La parte sintáctica sigue la siguiente grámatica
-[Gramática](grammar.txt)
-_____
+#### Suma
+| +       | INT    | DOUBLE | BOOLEAN | CHAR   | STRING |
+| ------- | ------ | ------ | ------- | ------ | ------ |
+| INT     | INT    | DOUBLE | INT     | INT    | STRING |
+| DOUBLE  | DOUBLE | DOUBLE | DOUBLE  | DOUBLE | STRING |
+| BOOLEAN | INT    | DOUBLE | NULL    | NULL   | STRING |
+| CHAR    | INT    | DOUBLE | NULL    | STRING | STRING |
+| STRING  | STRING | STRING | STRING  | STRING | STRING |
 
-**Funciónes Aritmeticas**
+#### Resta
+| -       | INT    | DOUBLE | BOOLEAN | CHAR   | STRING |
+| ------- | ------ | ------ | ------- | ------ | ------ |
+| INT     | INT    | DOUBLE | INT     | INT    | NULL   |
+| DOUBLE  | DOUBLE | DOUBLE | DOUBLE  | DOUBLE | NULL   |
+| BOOLEAN | INT    | DOUBLE | NULL    | NULL   | NULL   |
+| CHAR    | INT    | DOUBLE | NULL    | NULL   | NULL   |
+| STRING  | NULL   | NULL   | NULL    | NULL   | NULL   |
 
-Para la realización de operaciones se hace uso de la siguiente matriz, para validar el tipo de operacion realizada:
+#### Multiplicación
+| *       | INT    | DOUBLE | BOOLEAN | CHAR   | STRING |
+| ------- | ------ | ------ | ------- | ------ | ------ |
+| INT     | INT    | DOUBLE | NULL    | INT    | NULL   |
+| DOUBLE  | DOUBLE | DOUBLE | NULL    | DOUBLE | NULL   |
+| BOOLEAN | NULL   | NULL   | NULL    | NULL   | NULL   |
+| CHAR    | INT    | DOUBLE | NULL    | NULL   | NULL   |
+| STRING  | NULL   | NULL   | NULL    | NULL   | NULL   |
 
-> * Suma
-> 
-> | +       | INT    | DOUBLE | BOOLEAN | CHAR   | STRING |
-> | ------- | ------ | ------ | ------- | ------ | ------ |
-> | INT     | INT    | DOUBLE | INT     | INT    | STRING |
-> | DOUBLE  | DOUBLE | DOUBLE | DOUBLE  | DOUBLE | STRING |
-> | BOOLEAN | INT    | DOUBLE | NULL    | NULL   | STRING |
-> | CHAR    | INT    | DOUBLE | NULL    | STRING | STRING |
-> | STRING  | STRING | STRING | STRING  | STRING | STRING |
+#### División
+| /       | INT    | DOUBLE | BOOLEAN | CHAR   | STRING |
+| ------- | ------ | ------ | ------- | ------ | ------ |
+| INT     | DOUBLE | DOUBLE | NULL    | DOUBLE | NULL   |
+| DOUBLE  | DOUBLE | DOUBLE | NULL    | DOUBLE | NULL   |
+| BOOLEAN | NULL   | NULL   | NULL    | NULL   | NULL   |
+| CHAR    | DOUBLE | DOUBLE | NULL    | NULL   | NULL   |
+| STRING  | NULL   | NULL   | NULL    | NULL   | NULL   |
 
+#### Potencia
+| ^       | INT    | DOUBLE | BOOLEAN | CHAR | STRING |
+| ------- | ------ | ------ | ------- | ---- | ------ |
+| INT     | INT    | DOUBLE | NULL    | NULL | NULL   |
+| DOUBLE  | DOUBLE | DOUBLE | NULL    | NULL | NULL   |
+| BOOLEAN | NULL   | NULL   | NULL    | NULL | NULL   |
+| CHAR    | NULL   | NULL   | NULL    | NULL | NULL   |
+| STRING  | NULL   | NULL   | NULL    | NULL | NULL   |
 
->
-> * Resta
->
-> | -       | INT    | DOUBLE | BOOLEAN | CHAR   | STRING |
-> | ------- | ------ | ------ | ------- | ------ | ------ |
-> | INT     | INT    | DOUBLE | INT     | INT    | NULL   |
-> | DOUBLE  | DOUBLE | DOUBLE | DOUBLE  | DOUBLE | NULL   |
-> | BOOLEAN | INT    | DOUBLE | NULL    | NULL   | NULL   |
-> | CHAR    | INT    | DOUBLE | NULL    | NULL   | NULL   |
-> | STRING  | NULL   | NULL   | NULL    | NULL   | NULL   |
-
-
-> * Multiplicación
-> 
-> | *       | INT    | DOUBLE | BOOLEAN | CHAR   | STRING |
-> | ------- | ------ | ------ | ------- | ------ | ------ |
-> | INT     | INT    | DOUBLE | NULL    | INT    | NULL   |
-> | DOUBLE  | DOUBLE | DOUBLE | NULL    | DOUBLE | NULL   |
-> | BOOLEAN | NULL   | NULL   | NULL    | NULL   | NULL   |
-> | CHAR    | INT    | DOUBLE | NULL    | NULL   | NULL   |
-> | STRING  | NULL   | NULL   | NULL    | NULL   | NULL   |
-
-
-> * División
-> 
-> | /       | INT    | DOUBLE | BOOLEAN | CHAR   | STRING |
-> | ------- | ------ | ------ | ------- | ------ | ------ |
-> | INT     | DOUBLE | DOUBLE | NULL    | DOUBLE | NULL   |
-> | DOUBLE  | DOUBLE | DOUBLE | NULL    | DOUBLE | NULL   |
-> | BOOLEAN | NULL   | NULL   | NULL    | NULL   | NULL   |
-> | CHAR    | DOUBLE | DOUBLE | NULL    | NULL   | NULL   |
-> | STRING  | NULL   | NULL   | NULL    | NULL   | NULL   |
-
-> * Potencia
-> 
-> | ^       | INT    | DOUBLE | BOOLEAN | CHAR | STRING |
-> | ------- | ------ | ------ | ------- | ---- | ------ |
-> | INT     | INT    | DOUBLE | NULL    | NULL | NULL   |
-> | DOUBLE  | DOUBLE | DOUBLE | NULL    | NULL | NULL   |
-> | BOOLEAN | NULL   | NULL   | NULL    | NULL | NULL   |
-> | CHAR    | NULL   | NULL   | NULL    | NULL | NULL   |
-> | STRING  | NULL   | NULL   | NULL    | NULL | NULL   |
-
-
-> * 2.1.6. Módulo
-> 
-> | %       | INT    | DOUBLE | BOOLEAN | CHAR | STRING |
-> | ------- | ------ | ------ | ------- | ---- | ------ |
-> | INT     | DOUBLE | DOUBLE | NULL    | NULL | NULL   |
-> | DOUBLE  | DOUBLE | DOUBLE | NULL    | NULL | NULL   |
-> | BOOLEAN | NULL   | NULL   | NULL    | NULL | NULL   |
-> | CHAR    | NULL   | NULL   | NULL    | NULL | NULL   |
-> | STRING  | NULL   | NULL   | NULL    | NULL | NULL   |
+#### Módulo
+| %       | INT    | DOUBLE | BOOLEAN | CHAR | STRING |
+| ------- | ------ | ------ | ------- | ---- | ------ |
+| INT     | DOUBLE | DOUBLE | NULL    | NULL | NULL   |
+| DOUBLE  | DOUBLE | DOUBLE | NULL    | NULL | NULL   |
+| BOOLEAN | NULL   | NULL   | NULL    | NULL | NULL   |
+| CHAR    | NULL   | NULL   | NULL    | NULL | NULL   |
+| STRING  | NULL   | NULL   | NULL    | NULL | NULL   |
 
 Operaciones disponibles:
-* Suma
-* Resta
-* Multiplicación
-* División
-* Módulo
-* Elevación a un exponencial N
+- Suma
+- Resta
+- Multiplicación
+- División
+- Módulo
+- Potencia
 
 ### Entornos
-En el entorno se guarda la referencia hacia cada variable, arreglo, método o función declarada.
-Para declarar una variable nueva primero se debe verificar que no exista previamente, en el Map de identificadores del entorno, una variable con el mismo nombre sin importar el tipo, si ya existe se agregara como un error semantico.
+El entorno mantiene una referencia para cada variable, arreglo, método o función declarada. Para declarar una nueva variable, primero se verifica que no exista previamente en el mapa de identificadores del entorno. Si ya existe, se registra como un error semántico.
 
-* Guardado de Variables
+#### Guardar Variables
 
-```ts
+```typescript
 public saveId(id: string, value: any, type: Types, line: number, column: number) {
-        let env: Environment = this;
-        if (!env.ids.has(id)) {
-            env.ids.set(id.toLowerCase(), new Symbol(value, id, type, undefined));
-            symbolTable.push(line, column, id.toLowerCase(), 'Variable', this.getTypeOf(type), env.name);
-        } else {
-            errores.push(new Error(line, column, TypesError.SEMANTICO, `Variable ${id} ya existe en el entorno actual`))
-        }
-    }
-```
-
-* Guardado de Funciones
-
-```ts
- public saveFunction(id: string, func: Function) {
-        let env: Environment = this;
-        if (env.functions.has(id.toLowerCase())) {
-            this.setErrore(func.line, func.column, `La función ${id} ya existe en el entorno actual`)
-            return
-        }
-        env.functions.set(id.toLowerCase(), func);
-        let typeFunc: string = this.getTypeOfFunc(func.types)
-        symbolTable.push(func.line, func.column + 1, id.toLowerCase(), 'Function', typeFunc == 'void' ? 'Método' : 'Función', env.name);
-    }
-```
-
-* Guardado de Arreglos
-
-```ts
-public saveArray(id: string, type: Types, values: any, line: number, column: number) {
-        let env: Environment = this;
-        if (env.ids.has(id.toLowerCase())) {
-            this.setErrore(line, column, `Variable ${id} ya existe en el entorno actual`)
-            return
-        }
-
-        env.ids.set(id.toLowerCase(), new Symbol(values, id, Types.ARRAY, type));
+    let env: Environment = this;
+    if (!env.ids.has(id)) {
+        env.ids.set(id.toLowerCase(), new Symbol(value, id, type, undefined));
         symbolTable.push(line, column, id.toLowerCase(), 'Variable', this.getTypeOf(type), env.name);
+    } else {
+        errores.push(new Error(line, column, TypesError.SEMANTICO, `Variable ${id} ya existe en el entorno actual`));
     }
+}
 ```
 
-Para la creación del servidor se utilizo de Express de la siguiente forma
+#### Guardar Funciones
 
-```ts
-    app.use(cors(corsOptions));
-    app.use(function (req, res, next) {
-        res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
-        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-        res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
-        res.setHeader('Access-Control-Allow-Credentials', 'true'); 
-        next();
-    });
-
-    app.get('/', (req, res) => {
-        res.send('Backend is running...')
-    })
-    app.use('/interpreter', router)
-
-    app.post('/save', saveFile)
-
-    const PORT = process.env.PORT || 3002
-    app.listen(PORT, () => {
-        console.log(`server listening on port http://localhost:${PORT}`)
-    })
-
+```typescript
+public saveFunction(id: string, func: Function) {
+    let env: Environment = this;
+    if (env.functions.has(id.toLowerCase())) {
+        this.setErrore(func.line, func.column, `La función ${id} ya existe en el entorno actual`);
+        return;
+    }
+    env.functions.set(id.toLowerCase(), func);
+    let typeFunc: string = this.getTypeOfFunc(func.types);
+    symbolTable.push(func.line, func.column + 1, id.toLowerCase(), 'Function', typeFunc == 'void' ? 'Método' : 'Función', env.name);
+}
 ```
+
+#### Guardar Arreglos
+
+```typescript
+public saveArray(id: string, type: Types, values: any, line: number, column: number) {
+    let env: Environment = this;
+    if (env.ids.has(id.toLowerCase())) {
+        this.setErrore(line, column, `Variable ${id} ya existe en el entorno actual`);
+        return;
+    }
+
+    env.ids.set(id.toLowerCase(), new Symbol(values, id, Types.ARRAY, type));
+    symbolTable.push(line, column, id.toLowerCase(), 'Variable', this.getTypeOf(type), env.name);
+}
+```
+
+### Creación del Servidor
+Para crear el servidor, se utilizó Express de la siguiente manera:
+
+```typescript
+app.use(cors(corsOptions));
+app.use(function (req, res, next) {
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    next();
+});
+
+app.get('/', (req, res) => {
+    res.send('Backend is running...');
+});
+app.use('/interpreter', router);
+
+app.post('/save', saveFile);
+
+const PORT = process.env.PORT || 3002;
+app.listen(PORT, () => {
+    console.log(`Server listening on port http://localhost:${PORT}`);
+});
+```
+
+Este markdown está reorganizado y parafraseado para mejorar la comprensión, utilizando diferentes términos y una estructura clara.
 
 
 El código configura un servidor Node.js utilizando Express, un framework para aplicaciones web en Node.js. Las principales características son:
