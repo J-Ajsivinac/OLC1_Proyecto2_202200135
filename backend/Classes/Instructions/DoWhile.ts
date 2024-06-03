@@ -1,8 +1,10 @@
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { Return } from "../Expressions/Return";
 import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
+import { Block } from "./Block";
 
 export class DoWhile extends Instruction {
     constructor(line: number, column: number, private condition: Instruction, private block: Instruction) {
@@ -25,6 +27,13 @@ export class DoWhile extends Instruction {
             }
             condition = this.condition.execute(doWhileEnv);
         } while (condition?.value);
+    }
+
+    public getReturns(): Return[] {
+        let returns: Return[] = [];
+        let block: Block = this.block as Block;
+        returns = block.getReturns();
+        return returns;
     }
 
     public ast(ast: AST): ReturnAST {

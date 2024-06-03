@@ -55,8 +55,9 @@ export class Controller {
                     // console.log(err)
                 }
             }
+            // const test: Environment = new Environment(null, 'Test')
+            // global.validateReturns(test)
             if (main) {
-                // console.log("hay main", main)
                 main.execute(global)
             }
             dotAST += '\n}'

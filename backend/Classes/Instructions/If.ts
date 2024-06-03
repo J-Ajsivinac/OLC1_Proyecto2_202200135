@@ -1,8 +1,10 @@
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { Return } from "../Expressions/Return";
 import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
+import { Block } from "./Block";
 
 export class If extends Instruction {
 
@@ -25,6 +27,17 @@ export class If extends Instruction {
                 return elseBlock;
             }
         }
+    }
+
+    public getReturns(): Return[] {
+        let returns: Return[] = []
+        let block: Block = this.block as Block
+        returns = block.getReturns()
+        if (this.elseBlock) {
+            let elseBlock: Block = this.elseBlock as Block
+            returns = returns.concat(elseBlock.getReturns())
+        }
+        return returns
     }
 
     public ast(ast: AST): ReturnAST {

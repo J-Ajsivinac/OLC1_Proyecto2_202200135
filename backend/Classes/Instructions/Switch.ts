@@ -1,10 +1,12 @@
 import { Expression } from "../Abstracts/Expression";
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { Return } from "../Expressions/Return";
 import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesExp } from "../Utils/TypesExp";
 import { TypesInstruction } from "../Utils/TypesIns";
+import { Block } from "./Block";
 import { Case } from "./Case";
 
 export class Switch extends Instruction {
@@ -39,6 +41,20 @@ export class Switch extends Instruction {
             }
 
         }
+    }
+
+    public getReturns(): Return[] {
+        let returns: Return[] = []
+        if (this.cases) {
+            for (let case_ of this.cases) {
+                returns = returns.concat(case_.getReturns())
+            }
+        }
+        if (this.defaultCase) {
+            let block: any = this.defaultCase as Block
+            returns = returns.concat(block.getReturns())
+        }
+        return returns
     }
 
     public ast(ast: AST): ReturnAST {

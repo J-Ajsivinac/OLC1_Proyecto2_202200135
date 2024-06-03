@@ -132,9 +132,6 @@ export class Arithmetic extends Expression {
             val1 = this.getValue(val1, env)
             val2 = this.getValue(val2, env)
             if (val2.value === 0) {
-                //error
-                //console.log('Division por 0')
-                // errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Division por 0`));
                 env.setErrore(this.line, this.column + 1, `Division por 0`)
                 return { value: -1, type: Types.NULL }
             }
@@ -197,8 +194,11 @@ export class Arithmetic extends Expression {
         if (value.type === Types.INT) {
             if (value.value < -2147483648 || value.value > 2147483647) {
                 // errores.push(new Error(this.line, this.column, TypesError.SEMANTICO, `Valor entero fuera de rango`))
-                env.setErrore(this.line, this.column + 1, `Valor entero fuera de rango`)
-                return { value: null, type: Types.NULL }
+                env.setErrore(this.line, this.column + 1, `Valor entero fuera de rango, rango entre -2147483648 y 2147483647`)
+                if (value.value < -2147483648) {
+                    return { value: -2147483648, type: Types.INT }
+                }
+                return { value: 2147483647, type: Types.INT }
             }
         }
         return value

@@ -1,11 +1,21 @@
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { CallFunction } from "../Expressions/CallFunction";
 import { IncrDecr } from "../Expressions/IncrDecr";
+import { Primitive } from "../Expressions/Primitive";
+import { Return } from "../Expressions/Return";
 import { AST, ReturnAST } from "../Utils/AST";
+import { getValueDefaultValue } from "../Utils/Defaults";
 import { TypesInstruction } from "../Utils/TypesIns";
+import { DoWhile } from "./DoWhile";
+import { For } from "./For";
+import { Function } from "./Function";
+import { If } from "./If";
+import { Switch } from "./Switch";
+import { While } from "./While";
 
 export class Block extends Instruction {
-    constructor(line: number, column: number, private instructions: Instruction[]) {
+    constructor(line: number, column: number, public instructions: Instruction[]) {
         super(line, column, TypesInstruction.BLOCK)
     }
 
@@ -21,6 +31,27 @@ export class Block extends Instruction {
         }
     }
 
+    public getReturns(): Return[] {
+        let returns: Return[] = []
+        for (let instruction of this.instructions) {
+            if (instruction instanceof Return) {
+                returns.push(instruction)
+            } else if (instruction instanceof Block) {
+                returns = returns.concat(instruction.getReturns())
+            } else if (instruction instanceof If) {
+                returns = returns.concat(instruction.getReturns())
+            } else if (instruction instanceof For) {
+                returns = returns.concat(instruction.getReturns())
+            } else if (instruction instanceof While) {
+                returns = returns.concat(instruction.getReturns())
+            } else if (instruction instanceof DoWhile) {
+                returns = returns.concat(instruction.getReturns())
+            } else if (instruction instanceof Switch) {
+                returns = returns.concat(instruction.getReturns())
+            }
+        }
+        return returns
+    }
 
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()

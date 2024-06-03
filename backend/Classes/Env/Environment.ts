@@ -7,6 +7,19 @@ import { error } from "console";
 import { Error, TypesError } from "../Utils/Error";
 import { Primitive } from "../Expressions/Primitive";
 import { types } from "util";
+import { Block } from "../Instructions/Block";
+import { Instruction } from "../Abstracts/Instruction";
+import { Return } from "../Expressions/Return";
+import { If } from "../Instructions/If";
+import { For } from "../Instructions/For";
+import { While } from "../Instructions/While";
+import { DoWhile } from "../Instructions/DoWhile";
+import { Switch } from "../Instructions/Switch";
+import { getValueDefaultValue } from "../Utils/Defaults";
+import { CallFunction } from "../Expressions/CallFunction";
+import { nextTick } from "process";
+import { AccessID } from "../Expressions/AccessID";
+import { AccessArray } from "../Expressions/AccessArray";
 export class Environment {
     public ids: Map<string, Symbol> = new Map<string, Symbol>();
     public functions: Map<string, Function> = new Map<string, Function>();
@@ -186,9 +199,90 @@ export class Environment {
             return
         }
         // console.log("se guardo la funcion", id.toLowerCase())
-        env.functions.set(id.toLowerCase(), func);
+        env.functions.set(id.toLowerCase(), func)
         let typeFunc: string = this.getTypeOfFunc(func.types)
+        // console.log("se guardo la funcion", func, "->", typeFunc)
+        let validate: Block = func.block as Block
+        let instructions: Instruction[] = validate.instructions
+
+        // console.log("se guardo la funcion", instructions)
         symbolTable.push(func.line, func.column + 1, id.toLowerCase(), 'Function', typeFunc == 'void' ? 'Método' : 'Función', env.name);
+    }
+
+    public validateReturns(tEnv : Environment) {
+        let env: Environment | null = this
+
+        let functions: Map<string, Function> = env.functions
+        for (let [key, value] of functions) {
+            let typeFunc: string = this.getTypeOfFunc(value.types)
+            if (typeFunc != 'void') {
+                let validate: Block = value.block as Block
+                let instructions: Instruction[] = validate.instructions
+                let rets: Return[] = this.getReturns(instructions)
+
+                // console.log(rets)
+                if (rets.length === 0) {
+                    this.setErrore(value.line, value.column, `La función ${key} debe tener un retorno`)
+                    return
+                }
+
+                rets.forEach(ret => {
+                    let typeReturn = ret.value
+                    if (typeReturn === undefined) {
+                        this.setErrore(ret.line, ret.column, `La función ${key} debe tener un retorno de tipo ${this.getTypeOf(value.types)}`)
+                        return
+                    }
+                    const type = typeReturn.execute(tEnv)
+                    console.log(type)
+                    if (type instanceof Primitive) {
+                        if (type.type != value.types) {
+                            this.setErrore(typeReturn.line, typeReturn.column, `La función ${key} debe tener un retorno de tipo ${this.getTypeOf(value.types)}`)
+                            return
+                        }
+                    } else if (type instanceof CallFunction ) {
+                        return
+                    } else {
+                        console.log("->", typeReturn)
+                        this.setErrore(typeReturn.line, typeReturn.column, `La función ${key} debe tener un retorno de tipo ${this.getTypeOf(value.types)}`)
+                        return
+                    }
+
+
+                });
+
+            }
+        }
+    }
+
+    public getReturns(instructions: Instruction[]): Return[] {
+        let rets: Return[] = []
+        instructions.forEach(instruction => {
+            // console.log(instruction)
+            if (instruction instanceof Return) {
+                rets.push(instruction as Return)
+            }
+            if (instruction instanceof If) {
+                let validate: If = instruction as If
+                rets = rets.concat(validate.getReturns())
+            } else if (instruction instanceof For) {
+                let validate: For = instruction as For
+                rets = rets.concat(validate.getReturns())
+            } else if (instruction instanceof While) {
+                let validate: While = instruction as While
+                rets = rets.concat(validate.getReturns())
+            } else if (instruction instanceof DoWhile) {
+                let validate: DoWhile = instruction as DoWhile
+                rets = rets.concat(validate.getReturns())
+            } else if (instruction instanceof Switch) {
+                let validate: Switch = instruction as Switch
+                rets = rets.concat(validate.getReturns())
+            } else if (instruction instanceof Block) {
+                let validate: Block = instruction as Block
+                rets = rets.concat(validate.getReturns())
+            }
+        });
+
+        return rets
     }
 
     public setErrore(line: number, column: number, description: string) {

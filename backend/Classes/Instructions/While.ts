@@ -1,8 +1,10 @@
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { Return } from "../Expressions/Return";
 import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
+import { Block } from "./Block";
 
 export class While extends Instruction {
 
@@ -26,6 +28,13 @@ export class While extends Instruction {
             }
             condition = this.condition.execute(whileEnv)
         }
+    }
+
+    public getReturns(): Return[] {
+        let returns: Return[] = []
+        let block: Block = this.block as Block
+        returns = block.getReturns()
+        return returns
     }
 
     public ast(ast: AST): ReturnAST {

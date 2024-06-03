@@ -21,8 +21,6 @@ export class CallFunction extends Expression {
             return
         }
 
-        let isFunction: boolean = func.types === Types.NULL ? false : true
-
         const envFunc: Environment = new Environment(env, `Funcion ${this.id.toLowerCase()}`);
         if (func.params.length != this.params.length) {
             env.setErrore(this.line, this.column, `La función ${this.id} requiere ${func.params.length} parametros, ${this.params.length} fueron dados`)

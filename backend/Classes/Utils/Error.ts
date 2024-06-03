@@ -2,7 +2,7 @@ export class Error {
     constructor(public line: number, public column: number, public type: TypesError, public description: string) { }
 
     public toString(): string {
-        return ` --> Error ${this.type}, ${this.description} En la linea: ${this.line}, columna: ${this.column} \n`;
+        return ` ¤ Error ${this.type}, ${this.description} En la linea: ${this.line}, columna: ${this.column} \n`;
     }
 
     public toHTML(): string {

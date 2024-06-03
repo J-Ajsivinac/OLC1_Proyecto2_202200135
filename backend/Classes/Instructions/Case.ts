@@ -1,6 +1,7 @@
 import { Expression } from "../Abstracts/Expression";
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { Return } from "../Expressions/Return";
 import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
@@ -25,6 +26,13 @@ export class Case extends Instruction {
             let block: ReturnType = this.block.execute(envCase)
             if (block) return block
         }
+    }
+
+    public getReturns():Return[]{
+        let returns:Return[] = []
+        let block: any = this.block as Instruction
+        returns = block.getReturns()
+        return returns
     }
 
     public ast(ast: AST): ReturnAST {

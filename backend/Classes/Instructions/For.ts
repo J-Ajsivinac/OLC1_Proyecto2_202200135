@@ -1,8 +1,10 @@
 import { Instruction } from "../Abstracts/Instruction";
 import { Environment } from "../Env/Environment";
+import { Return } from "../Expressions/Return";
 import { AST, ReturnAST } from "../Utils/AST";
 import { ReturnType } from "../Utils/Types";
 import { TypesInstruction } from "../Utils/TypesIns";
+import { Block } from "./Block";
 
 export class For extends Instruction {
     constructor(line: number, column: number, private init: Instruction, private condition: Instruction, private increment: Instruction, private block: Instruction) {
@@ -32,6 +34,14 @@ export class For extends Instruction {
             condition = this.condition.execute(forEnv)
         }
     }
+
+    public getReturns(): Return[] {
+        let returns: Return[] = []
+        let block: Block = this.block as Block
+        returns = block.getReturns()
+        return returns
+    }
+
     public ast(ast: AST): ReturnAST {
         const id = ast.getNewID()
         var dot = `node_${id} [label="FOR"];\n`
