@@ -37,8 +37,6 @@ utilizando Typescript.
         <li>macOS Catalina o Superior</li>
         <li>Linux: Ubuntu, Debian, CentOS, Fedora, etc.</li>
     </ul>
-    <li>Java 19 o Superior</li>
-    <li>NetBeans 20 o superior</li>
     <li>Librerias Backend</li>
    <ul>
         <li>cors</li>
