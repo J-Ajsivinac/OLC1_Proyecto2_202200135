@@ -19,24 +19,24 @@ function Index() {
 
     return (
         <>
-            <div className='flex h-screen bg-bg-dark'>
+            <div className='flex h-screen bg-bg-dark w-full'>
                 <Navbar />
                 <div className="flex mt-28 h-[100%-112px] w-full px-6 pb-5 gap-4">
-                    <div className="w-3/5">
-                        <div className="flex flex-col w-full rounded-md bg-panel-dark h-full overflow-auto px-4 -z-30">
+                    <div className="w-3/5 flex-shrink-0">
+                        <div className="flex flex-col w-full rounded-md bg-panel-dark h-full overflow-auto px-4 -z-30 ">
                             <span className="text-[#bdbec0] pt-3 pb-5 font-bold">Código</span>
-                            <CodeMirror value={value} height="555px" onChange={onChange} extensions={cpp()} theme={tokyoNight} aria-autocomplete={true} className="-z-0" />
+                            <CodeMirror value={value} onChange={onChange} extensions={cpp()} theme={tokyoNight} aria-autocomplete={true} className="-z-0 h-full" />
                             {/* <span className="text-text-gray w-full text-end">Joab Ajsivinac - 202200135</span> */}
                         </div>
                     </div>
-                    <div className="w-2/5 flex flex-shrink-0 ">
+                    <div className="w-2/5 flex flex-shrink-0 pr-3 ">
                         <div className="flex flex-shrink-0 flex-col w-full rounded-md bg-panel-dark h-full px-4">
                             <span className="text-[#bdbec0] pt-3 pb-5 font-bold text-monospace">Consola</span>
                             <div className="w-full h-full flex flex-col mb-2 gap-y-4">
                                 <textarea value={consolePrint} name="" id="" className="w-full h-full bg-panel-dark text-[#adb6c4] outline-none resize-none text-monospace" readOnly wrap="off"></textarea>
 
                                 <div
-                                    className={`group flex flex-col gap-2 rounded-lg bg-panel-dark border-2 border-gray-200/10 p-5 text-white ${isOpen ? 'group-focus:-translate-y-5' : ''}`}
+                                    className={`group outline-none flex flex-col gap-2 rounded-lg bg-panel-dark border-2 border-gray-200/10 p-5 text-white ${isOpen ? 'group-focus:-translate-y-5' : ''}`}
                                     tabIndex="1"
                                 >
                                     <div className="flex cursor-pointer items-center justify-between" onClick={() => setIsOpen(!isOpen)}>

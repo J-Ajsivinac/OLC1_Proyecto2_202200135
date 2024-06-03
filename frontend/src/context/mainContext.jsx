@@ -111,7 +111,8 @@ export const MainProvider = ({ children }) => {
             symbolTable,
             getErrorsReport,
             errorsReport,
-            saveFile
+            saveFile,
+            filename
         }}>
             {children}
         </MainContext.Provider>
